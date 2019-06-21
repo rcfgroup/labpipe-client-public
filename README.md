@@ -17,6 +17,8 @@ To build from source code, you will need to install the following components:
 - Node.js (Tested with 12.4.0)
 - Yarn (Tested with 1.16.0)
 
+### Build and run
+
 ```
 yarn install
 yarn start
