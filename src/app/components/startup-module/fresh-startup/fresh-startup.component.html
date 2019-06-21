@@ -1,0 +1,5 @@
+<div *ngIf="!isRegularStartup">
+    <h1>First use mandatory settings</h1>
+    <app-mandatory-setting></app-mandatory-setting>
+    <button class="btn btn-primary mt-5" (click)="continueLaunch()">Continue</button>
+</div>

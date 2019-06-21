@@ -1,0 +1,54 @@
+<clr-tabs>
+  <clr-tab>
+    <button clrTabLink>General</button>
+    <clr-tab-content *clrIfActive>
+      <app-mandatory-setting></app-mandatory-setting>
+      <hr>
+      <div class="clr-form-control">
+        <label class="clr-control-label">Developer Tool</label>
+        <div class="clr-control-container">
+          <button class="btn btn-warning btn-sm" (click)="showDevTools()">Show</button>
+        </div>
+      </div>
+      <div class="clr-form-control">
+        <label class="clr-control-label">Clear cache</label>
+        <div class="clr-control-container">
+
+          <button class="btn btn-danger btn-sm" (click)="clearAppDataDirectory()">Clear cache</button>
+          <span class="clr-subtext">
+              {{appCachePath}}
+          </span>
+          <span class="clr-subtext">
+          <span class="text-danger">
+              <clr-icon shape="warning-standard" class="is-solid"></clr-icon>
+                All current settings will be lost.
+              </span>
+          </span>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+</clr-tabs>
+
+<clr-modal [(clrModalOpen)]="dialogClearCacheOpened">
+  <h3 class="modal-title">Confirm your action</h3>
+  <div class="modal-body">
+    <h4 class="text-danger">Are you sure you want to continue?</h4>
+    <p class="text-danger">You will lose all saved settings. Restart is required afterwards.</p>
+    <p class="text-primary">However, your data directory will not be affected.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirmClearCache(false)">Cancel</button>
+    <button class="btn btn-danger" type="button" (click)="onConfirmClearCache(true)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="dialogRelaunchOpened">
+  <h3 class="modal-title">Application restarting</h3>
+  <div class="modal-body">
+    <p>Your application is now restarting.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" type="button" (click)="restart()">Restart</button>
+  </div>
+</clr-modal>

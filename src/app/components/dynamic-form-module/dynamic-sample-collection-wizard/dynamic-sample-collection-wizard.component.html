@@ -1,0 +1,9 @@
+<form class="clr-form clr-form-vertical" [formGroup]="studyForm">
+  <clr-select-container>
+    <label>Study</label>
+    <select clrSelect name="select-study" formControlName="study" required>
+      <option *ngFor="let s of projects$" [ngValue]="s">{{s.name}}</option>
+    </select>
+  </clr-select-container>
+  <button class="btn btn-primary mt-2" *ngIf="studyForm.valid" (click)="showDataCollectionForm()">Start</button>
+</form>

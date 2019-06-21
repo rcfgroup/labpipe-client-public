@@ -1,0 +1,50 @@
+<div [formGroup]="form" class="clr-form clr-form-vertical">
+  <div [ngSwitch]="qBase.controlType">
+
+    <clr-input-container *ngSwitchCase="'input'" >
+      <label>{{qBase.label}}</label>
+      <input clrInput [type]="qBase.type" [formControlName]="qBase.key" [id]="qBase.key" [pattern]="inputPattern" [required]="qBase.required" />
+      <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+    </clr-input-container>
+
+    <clr-select-container *ngSwitchCase="'select'">
+      <label>{{qBase.label}}</label>
+      <select clrSelect [id]="qBase.key" [formControlName]="qBase.key" [required]="qBase.required">
+        <option *ngFor="let opt of options" [ngValue]="opt.value">{{opt.name}}</option>
+      </select>
+      <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+    </clr-select-container>
+
+    <clr-radio-container *ngSwitchCase="'truefalse'" clrInline>
+      <label>{{qBase.label}}</label>
+      <clr-radio-wrapper>
+        <input type="radio" clrRadio [formControlName]="qBase.key" [required]="qBase.required" [value]="true"/>
+        <label>Yes</label>
+      </clr-radio-wrapper>
+      <clr-radio-wrapper>
+        <input type="radio" clrRadio [formControlName]="qBase.key" [required]="qBase.required" [value]="false"/>
+        <label>No</label>
+      </clr-radio-wrapper>
+      <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+    </clr-radio-container>
+
+    <div *ngSwitchCase="'file'">
+      <div class="clr-form-control">
+        <label class="clr-control-label">{{qBase.label}}</label>
+        <div class="clr-control-container">
+          <button class="btn btn-primary" (click)="addFile()">Browse</button>
+        </div>
+        <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+      </div>
+      <clr-datagrid *ngIf="this.form.get(qBase.key).value">
+        <clr-dg-column>File</clr-dg-column>
+
+        <clr-dg-row *ngFor="let file of this.form.get(qBase.key).value">
+          <clr-dg-cell>{{file | filename:"base"}}</clr-dg-cell>
+        </clr-dg-row>
+
+        <clr-dg-footer>{{this.form.get(qBase.key).value.length}} files</clr-dg-footer>
+      </clr-datagrid>
+    </div>
+  </div>
+</div>

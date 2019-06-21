@@ -1,0 +1,59 @@
+<div class="main-container">
+  <section class="title">
+    <h3 class="welcome">Welcome to LabPipe</h3>
+    <h5 class="hint">Use your allocated ID and password to sign in</h5>
+  </section>
+  <form class="clr-form clr-form-vertical" [formGroup]="loginForm">
+    <clr-select-container>
+      <label>Location</label>
+      <select clrSelect name="select-location" formControlName="location" required>
+        <option *ngFor="let l of locations$" [ngValue]="l">{{l.name}}</option>
+      </select>
+    </clr-select-container>
+    <clr-select-container>
+      <label>Instrument</label>
+      <select clrSelect name="select-instrument" formControlName="instrument" required>
+        <option *ngFor="let i of instruments$" [ngValue]="i">{{i.name}}</option>
+      </select>
+    </clr-select-container>
+    <clr-input-container>
+      <label>User ID</label>
+      <input clrInput type="text" formControlName="operator" required />
+    </clr-input-container>
+    <clr-password-container>
+      <label>Password</label>
+      <input clrPassword name="password" formControlName="password" required />
+    </clr-password-container>
+    <button class="btn btn-primary mt-2" *ngIf="loginForm.valid" (click)="onSubmit()">Sign in</button>
+  </form>
+</div>
+<clr-modal [(clrModalOpen)]="confirmLoginDialogOpened">
+    <h3 class="modal-title">Confirm your details</h3>
+      <div class="modal-body">
+        <p>Are you sure you want to continue?</p>
+        <dl class="clr-row">
+          <dt class="clr-col-4 text-primary"><strong>Location:</strong></dt>
+          <dd class="clr-col-8 text-success"><strong>{{ selectedLocation?.name }}</strong></dd>
+
+          <dt class="clr-col-4 text-primary"><strong>Instrument:</strong></dt>
+          <dd class="clr-col-8 text-success"><strong>{{ selectedInstrument?.name }}</strong></dd>
+
+          <dt class="clr-col-4 text-primary"><strong>Operator:</strong></dt>
+          <dd class="clr-col-8 text-success"><strong>{{ currentOperator?.name }}</strong></dd>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" type="button" (click)="onConfirm(false)">Cancel</button>
+        <button class="btn btn-primary" type="button" (click)="onConfirm(true)">Continue</button>
+      </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="incorrectLoginDialogOpened">
+  <h3 class="modal-title">Incorrect login credentials</h3>
+  <div class="modal-body">
+    <p>You have entered incorrect user ID or password.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" (click)="onRetry()">Retry</button>
+  </div>
+</clr-modal>
