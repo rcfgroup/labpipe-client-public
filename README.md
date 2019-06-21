@@ -1,27 +1,33 @@
-# LabpipeClientPublic
+# LabPipe Client
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
+Client to work with LabPipe Server to assist with data collection:
 
-## Development server
+- **dynamic**: server-side form configuration
+- **simple**: wizard style step-by-step guide through forms
+- **standalone**: server connection only required at first use*
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+<sup>*</sup> Server connection is still required if you wish to use functions provided on the server, e.g. notification, backup, and other post upload processes.
 
-## Code scaffolding
+## Build from source code
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+### Prerequisite
 
-## Build
+To build `LabPipe Client` from source code, you will need to install the following components:
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+- Node.js (Tested with 12.4.0)
+- Yarn (Tested with 1.16.0)
 
-## Running unit tests
+```
+yarn install
+yarn start
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+#### More documentations are being added
 
-## Running end-to-end tests
+## Roadmap
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+- [ ] To support more dynamic form field types
+- [ ] To support more form validation types
+- [ ] To support dynamic form layout
+- [ ] To support more built-in form processes
+- [ ] To support conditional access to forms, e.g record form might require daily quality control form to be completed upfront
