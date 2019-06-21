@@ -1,0 +1,75 @@
+<form class="clr-form clr-form-vertical" [formGroup]="settingForm">
+  <div class="clr-form-control">
+    <label class="clr-control-label">Data Directory</label>
+    <div class="clr-control-container">
+      <button class="btn btn-primary" (click)="setDataDirectory()">Browse</button>
+      <span class="clr-subtext">{{this.settingForm.get('dirData').value}}</span>
+    </div>
+  </div>
+  <div class="clr-form-control">
+    <label class="clr-control-label">API Root URL</label>
+    <div class="clr-control-container">
+      <div class="clr-row">
+        <div class="clr-col">
+          <input clrInput type="text" formControlName="apiRoot" required/>
+        </div>
+        <div class="clr-col">
+          <button class="btn btn-primary" (click)="validateApiRoot()">Validate</button>
+        </div>
+      </div>
+      <span class="clr-subtext">
+              <span *ngIf="isApiRootValid">
+              <clr-icon shape="success-standard" class="is-solid text-success mr-2"></clr-icon>
+                {{this.settingForm.get('apiRoot').value}}
+              </span>
+              <span *ngIf="!isApiRootValid" class="text-danger">
+              <clr-icon shape="error-standard" class="is-solid mr-2"></clr-icon>
+                No valid API root url.
+              </span></span>
+    </div>
+  </div>
+  <div class="clr-form-control">
+    <label class="clr-control-label">API Token</label>
+    <div class="clr-control-container">
+      <div class="clr-row">
+        <div class="clr-col">
+          <input clrInput type="text" formControlName="apiToken" required/>
+        </div>
+        <div class="clr-col">
+          <input clrInput type="text" formControlName="apiKey" required/>
+        </div>
+        <div class="clr-col">
+          <button class="btn btn-primary" (click)="validateApiTokenKey()">Validate</button>
+        </div>
+      </div>
+      <span class="clr-subtext">
+              <span *ngIf="isApiTokenKeyValid">
+              <clr-icon shape="success-standard" class="is-solid text-success mr-2"></clr-icon>
+                <span class="label label-info">
+                  {{settingForm.get('apiToken').value}}
+                  <span class="badge">Token</span>
+                </span>
+                <span class="label label-info">
+                  {{settingForm.get('apiKey').value}}
+                  <span class="badge">Key</span>
+                </span>
+              </span>
+              <span *ngIf="!isApiTokenKeyValid" class="text-danger">
+              <clr-icon shape="error-standard" class="is-solid mr-2"></clr-icon>
+                No valid API token/key.
+              </span></span>
+    </div>
+  </div>
+
+  <clr-input-container>
+    <label>Server Monitor Interval (milliseconds)</label>
+    <input clrInput type="number" step="1" min="5000" formControlName="serverMonitorInterval" required />
+    <clr-control-helper>Updated value will take effect on next startup.</clr-control-helper>
+  </clr-input-container>
+
+  <clr-input-container>
+    <label>Server Monitor Retry Interval (milliseconds)</label>
+    <input clrInput type="number" step="1" min="1000" formControlName="serverMonitorRetryInterval" required />
+    <clr-control-helper>Updated value will take effect on next startup.</clr-control-helper>
+  </clr-input-container>
+</form>

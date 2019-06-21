@@ -1,0 +1,32 @@
+<header class="header header-6">
+    <div class="branding">
+        <a href="#" class="nav-link">
+            <clr-icon shape="cloud-traffic"></clr-icon>
+            <span class="title">LabPipe</span>
+        </a>
+    </div>
+    <div class="header-actions">
+        <a class="nav-link nav-icon-text" (click)=reload()>
+            <clr-icon shape="recycle"></clr-icon>
+            <span class="nav-text">Reload</span>
+        </a>
+        <a *ngIf="currentUser" class="nav-link nav-icon-text" (click)=logout()>
+            <clr-icon shape="logout"></clr-icon>
+            <span class="nav-text">Logout</span>
+        </a>
+        <a *ngIf="currentUser" class="nav-link nav-icon-text">
+            <clr-icon shape="user"></clr-icon>
+            <span class="nav-text">{{currentUser.name}}</span>
+        </a>
+    </div>
+</header>
+<nav class="subnav">
+    <ul class="nav">
+        <li class="nav-item">
+            <a class="nav-link" *ngIf="currentUser" (click)=toSettings()>Settings</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" *ngIf="currentUser" (click)=toTasks()>Portal</a>
+        </li>
+    </ul>
+</nav>

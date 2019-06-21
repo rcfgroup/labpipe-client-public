@@ -1,0 +1,15 @@
+<clr-datagrid>
+  <clr-dg-column>Form</clr-dg-column>
+  <clr-dg-column>Field</clr-dg-column>
+  <clr-dg-column>Value</clr-dg-column>
+  <clr-dg-row *ngFor="let r of result">
+    <clr-dg-cell>{{r.form}}</clr-dg-cell>
+    <clr-dg-cell>{{r.field}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="!r.iterable">{{r.value}}</clr-dg-cell>
+    <clr-dg-cell *ngIf="r.iterable">
+      <div *ngFor="let item of r.value">
+      <span class="label label-blue">{{item}}</span>
+    </div>
+    </clr-dg-cell>
+  </clr-dg-row>
+</clr-datagrid>
