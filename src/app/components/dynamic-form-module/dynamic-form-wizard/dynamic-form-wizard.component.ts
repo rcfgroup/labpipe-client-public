@@ -23,6 +23,7 @@ import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
+    formCode: string;
     wizardTemplate: Wizard;
     form: FormGroup;
     remoteUrl: string;
@@ -44,6 +45,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+      // TODO get formCode from current study
         this.getFormTemplate();
     }
 
@@ -53,7 +55,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
     getFormTemplate() {
         const apiRoot = this.us.getApiRoot();
-        const url = apiRoot + '/api/dev/form-template';
+        const url = apiRoot + '/api/form/template/' + this.formCode;
         this.http.get(url).subscribe((data: any) => {
             this.formData = {form_code: data.code};
             this.remoteUrl = data.url;
