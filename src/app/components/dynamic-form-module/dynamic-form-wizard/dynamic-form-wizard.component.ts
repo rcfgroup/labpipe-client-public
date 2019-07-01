@@ -57,7 +57,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
         const apiRoot = this.us.getApiRoot();
         const url = apiRoot + '/api/form/template/' + this.formCode;
         this.http.get(url).subscribe((data: any) => {
-            this.formData = {form_code: data.code};
+            this.formData = {form_code: data.code, study_code: data.study_code};
             this.remoteUrl = data.url;
             this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
             data.template.pages.forEach(page => {
