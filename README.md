@@ -12,10 +12,12 @@ Client to work with LabPipe Server to assist with data collection:
 
 ### Prerequisite
 
-To build `LabPipe Client` from source code, you will need to install the following components:
+To build from source code, you will need to install the following components:
 
 - Node.js (Tested with 12.4.0)
 - Yarn (Tested with 1.16.0)
+
+### Build and run
 
 ```
 yarn install
