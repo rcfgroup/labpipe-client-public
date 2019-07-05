@@ -4,7 +4,7 @@ node_js:
 cache:
   yarn: true
 before_script:
-  - yarn install -g @angular/cli
+  - yarn global add @angular/cli
 script: yarn build
 after_script:
   - cd electron-app
