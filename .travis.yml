@@ -1,0 +1,12 @@
+language: node_js
+node_js:
+  - "12"
+cache:
+  yarn: true
+before_script:
+  - yarn install -g @angular/cli
+script: yarn build
+after_script:
+  - cd electron-app
+  - yarn install
+  - yarn build
