@@ -58,8 +58,35 @@
         <p class="text-danger">Please note that your record has not been saved yet. If you need to make any change, you can reopen the form and make necessary changes.</p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="showNotSavedWarning = false">Ok</button>
+        <button type="button" class="btn btn-primary" (click)="showNotSavedWarning = false">OK</button>
     </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showMultipleFormCodeDialog">
+  <h3 class="modal-title">Multiple forms available</h3>
+  <div class="modal-body">
+    <clr-select-container>
+      <label>Select a form</label>
+    <select clrSelect [(ngModel)]="formCode" required>
+      <option *ngFor="let f of formTemplates" [ngValue]="f.code">[{{f.code}}] {{f.name}}</option>
+    </select>
+      <clr-control-helper>Select a form to continue</clr-control-helper>
+    </clr-select-container>
+    <br>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" (click)="getFormTemplateWithCode()">OK</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showNoFormDialog">
+  <h3 class="modal-title">No form available</h3>
+  <div class="modal-body">
+    <p>No form is not available yet for your current instrument in this study.</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" (click)="toPortal()">Go back to Portal</button>
+  </div>
 </clr-modal>
 
 
