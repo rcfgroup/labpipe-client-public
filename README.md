@@ -1,5 +1,7 @@
 # LabPipe Client
 
+[![Build Status](https://travis-ci.com/colin-bz/labpipe-server-public.svg?branch=master)](https://travis-ci.com/colin-bz/labpipe-server-public)
+
 Client to work with LabPipe Server to assist with data collection:
 
 - **dynamic**: server-side form configuration
