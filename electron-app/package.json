@@ -11,8 +11,8 @@
   "author": "Bo Zhao",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^5.0.1",
-    "electron-builder": "^20.40.2"
+    "electron": "^5.0.6",
+    "electron-builder": "^20.44.4"
   },
   "repository": {
     "type": "git",
@@ -51,10 +51,10 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "electron-debug": "^3.0.0",
+    "electron-debug": "^3.0.1",
     "electron-log": "^3.0.6",
     "electron-settings": "^3.2.0",
-    "electron-updater": "^4.0.6",
+    "electron-updater": "^4.0.14",
     "nedb": "^1.8.0",
     "nedb-promises": "^3.0.6",
     "uuid": "^3.3.2"
