@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ElectronService} from 'ngx-electron';
 import {CodeName} from '../models/code-name.model';
-import {AdminOperator, SupportedProjects} from '../models/parameter.model';
+import {AdminOperator, RequiredParameterName, SupportedProjects} from '../models/parameter.model';
 
 @Injectable({
   providedIn: 'root'
@@ -89,19 +89,19 @@ export class UserSettingsService {
   }
 
   updateOperators(operators: any[]): void {
-    this.setting.set('operators', operators);
+    this.setting.set(RequiredParameterName.OPERATORS, operators);
   }
 
   getOperators(): any[] {
-    return this.setting.get('operators');
+    return this.setting.get(RequiredParameterName.OPERATORS);
   }
 
   updateCollectors(collectors: any[]): void {
-    this.setting.set('collectors', collectors);
+    this.setting.set(RequiredParameterName.COLLECTORS, collectors);
   }
 
   getCollectors(): any[] {
-    return this.setting.get('collectors');
+    return this.setting.get(RequiredParameterName.COLLECTORS);
   }
 
   updateCurrentOperator(operator: any): void {
@@ -121,11 +121,11 @@ export class UserSettingsService {
   }
 
   updateInstruments(collectors: any[]): void {
-    this.setting.set('instruments', collectors);
+    this.setting.set(RequiredParameterName.INSTRUMENTS, collectors);
   }
 
   getInstruments(): any[] {
-    return this.setting.get('instruments');
+    return this.setting.get(RequiredParameterName.INSTRUMENTS);
   }
 
   updateCurrentInstrument(instrument: any): void {
@@ -137,23 +137,19 @@ export class UserSettingsService {
   }
 
   updateStudies(studies: any[]): void {
-    this.setting.set('studies', studies);
+    this.setting.set(RequiredParameterName.STUDIES, studies);
   }
 
   getStudies(): any[] {
-    return this.setting.get('studies');
+    return this.setting.get(RequiredParameterName.STUDIES);
   }
 
   updateLocations(collectors: any[]): void {
-    this.setting.set('locations', collectors);
-  }
-
-  getSupportedProjects(): SupportedProjects {
-    return this.setting.get('studies');
+    this.setting.set(RequiredParameterName.LOCATIONS, collectors);
   }
 
   getLocations(): any[] {
-    return this.setting.get('locations');
+    return this.setting.get(RequiredParameterName.LOCATIONS);
   }
 
   updateCurrentLocation(location: any): void {
@@ -175,30 +171,6 @@ export class UserSettingsService {
     return this.setting.get('config_admins');
   }
 
-  isCurrentReciva(): boolean {
-    return this.getCurrentInstrument().code === 'R';
-  }
-
-  isCurrentPtr(): boolean {
-    return this.getCurrentInstrument().code === 'PTR';
-  }
-
-  isCurrentCms(): boolean {
-    return this.getCurrentInstrument().code === 'CMS';
-  }
-
-  isCurrentIms(): boolean {
-    return this.getCurrentInstrument().code === 'IMS';
-  }
-
-  updateCurrentPrivilege(level: number): void {
-    this.setting.set('running_privilege', level);
-  }
-
-  getCurrentPrivilege(): number {
-    return this.setting.get('running_privilege');
-  }
-
   updateCurrentStudy(project: CodeName): void {
     this.setting.set('running_project', project);
   }
@@ -207,48 +179,8 @@ export class UserSettingsService {
     return this.setting.get('running_project');
   }
 
-  isCurrentMologic(): boolean {
-    return this.getCurrentProject().code === 'HEAD';
-  }
-
   updateCurrentVisitType(isNormalVisit: boolean): void {
     this.setting.set('running_is_normal_visit', isNormalVisit);
-  }
-
-  getCurrentVisitType(): boolean {
-    return this.setting.get('running_is_normal_visit');
-  }
-
-  setAdvionCmdQualityControlZScoreMax(max: number): void {
-    this.setting.set('config_advion_cms_qc_zscore_max', max);
-  }
-
-  getAdvionCmdQualityControlZScoreMax(): number {
-    return this.setting.get('config_advion_cms_qc_zscore_max');
-  }
-
-  setAdvionCmdQualityControlZScoreMin(min: number): void {
-    this.setting.set('config_advion_cms_qc_zscore_min', min);
-  }
-
-  getAdvionCmdQualityControlZScoreMin(): number {
-    return this.setting.get('config_advion_cms_qc_zscore_min');
-  }
-
-  setAdvionCmdQualityControlReferenceValidPeriod(days: number): void {
-    this.setting.set('config_advion_cms_qc_ref_valid_period', days);
-  }
-
-  getAdvionCmdQualityControlReferenceValidPeriod(): number {
-    return this.setting.get('config_advion_cms_qc_ref_valid_period');
-  }
-
-  getDefaultFilePath(): number {
-    return this.setting.get('default_file_path');
-  }
-
-  updateDefaultFilePath(project: CodeName): void {
-    this.setting.set('default_file_path', project);
   }
 
   // =====================================================
