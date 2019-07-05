@@ -24,6 +24,7 @@ import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
     formCode: string;
+    formTemplates: any[] = [];
     wizardTemplate: Wizard;
     form: FormGroup;
     remoteUrl: string;
@@ -34,6 +35,8 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     @ViewChild('formDataPreview', {static: false}) formDataPreview: DynamicFormResultPreviewComponent;
 
     showNotSavedWarning: boolean;
+    showMultipleFormCodeDialog: boolean;
+  showNoFormDialog: boolean;
 
     constructor(private us: UserSettingsService,
                 private dfs: DynamicFormService,
@@ -55,49 +58,76 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
     getFormTemplate() {
         const apiRoot = this.us.getApiRoot();
-        const url = apiRoot + '/api/form/template/' + this.formCode;
-        this.http.get(url).subscribe((data: any) => {
-            this.formData = {form_code: data.code, study_code: data.study_code};
-            this.remoteUrl = data.url;
-            this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
-            data.template.pages.forEach(page => {
-                const p = new WizardPage({
-                    key: page.key,
-                    title: page.title,
-                    navTitle: page.navTitle,
-                    requireValidForm: page.requireValidForm,
-                    order: page.order
-                });
-                page.questions.forEach((q: QuestionBase<any>) => {
-                    switch (q.controlType) {
-                        case 'input':
-                            p.questions.push(new InputQuestion(q));
-                            break;
-                        case 'select':
-                            p.questions.push(new SelectQuestion(q));
-                            break;
-                        case 'truefalse':
-                            p.questions.push(new TrueFalseQuestion(q));
-                            break;
-                        case 'file':
-                            p.questions.push(new FileQuestion(q));
-                            break;
-                    }
-                });
-                page.formValidProcess.forEach(fvp => {
-                    p.formValidProcess.push(new FormValidProcess(fvp));
-                });
-                this.wizardTemplate.pages.push(p);
-            });
-            this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
-            if (this.wizardTemplate) {
-                for (let i = 0; i < this.wizardTemplate.pages.length; i++) {
-                    this.wizardTemplate.pages[i].pageForm = this.dfs.toFormGroup(this.wizardTemplate.pages[i].questions);
-                }
-                this.isFormReady = true;
-            }
+        const url = apiRoot + '/api/form/template/study/' + this.us.getCurrentProject().code + '/instrument/' + this.us.getCurrentInstrument().code;
+        this.http.get(url).subscribe((data: any[]) => {
+          this.formTemplates = data;
+          switch (this.formTemplates.length) {
+            case 0:
+              this.showNoFormDialog = true;
+              break;
+            case 1:
+              this.prepareForm(this.formTemplates[0]);
+              break;
+            default:
+              this.showMultipleFormCodeDialog = true;
+              break;
+          }
+
         });
     }
+
+  getFormTemplateWithCode() {
+      if (this.formCode) {
+        this.showMultipleFormCodeDialog = false;
+        const apiRoot = this.us.getApiRoot();
+        const url = apiRoot + '/api/form/template/code/' + this.formCode;
+        this.http.get(url).subscribe((data: any) => {
+          this.prepareForm(data);
+        });
+      }
+  }
+
+  prepareForm(data: any) {
+    this.formData = {form_code: data.code, study_code: data.study_code};
+    this.remoteUrl = data.url;
+    this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
+    data.template.pages.forEach(page => {
+      const p = new WizardPage({
+        key: page.key,
+        title: page.title,
+        navTitle: page.navTitle,
+        requireValidForm: page.requireValidForm,
+        order: page.order
+      });
+      page.questions.forEach((q: QuestionBase<any>) => {
+        switch (q.controlType) {
+          case 'input':
+            p.questions.push(new InputQuestion(q));
+            break;
+          case 'select':
+            p.questions.push(new SelectQuestion(q));
+            break;
+          case 'truefalse':
+            p.questions.push(new TrueFalseQuestion(q));
+            break;
+          case 'file':
+            p.questions.push(new FileQuestion(q));
+            break;
+        }
+      });
+      page.formValidProcess.forEach(fvp => {
+        p.formValidProcess.push(new FormValidProcess(fvp));
+      });
+      this.wizardTemplate.pages.push(p);
+    });
+    this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
+    if (this.wizardTemplate) {
+      for (let i = 0; i < this.wizardTemplate.pages.length; i++) {
+        this.wizardTemplate.pages[i].pageForm = this.dfs.toFormGroup(this.wizardTemplate.pages[i].questions);
+      }
+      this.isFormReady = true;
+    }
+  }
 
     showForm() {
         this.isFormVisible = true;
@@ -117,9 +147,9 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
                 console.log(parentPage.formValidProcess[i].processType);
                 switch (parentPage.formValidProcess[i].processType) {
                     case 'concat':
-                        let df = parentPage.formValidProcess[i].dataField.split('::');
+                        const df = parentPage.formValidProcess[i].dataField.split('::');
                         const separator = df.shift();
-                        let data = df.map(fieldName => parentPage.pageForm.get(fieldName).value);
+                        const data = df.map(fieldName => parentPage.pageForm.get(fieldName).value);
                         parentPage.formValidProcess[i].result = data.join(separator);
                         break;
                 }
@@ -155,5 +185,11 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     clipboardCopy(value: any) {
         this.es.clipboard.writeText(value);
     }
+
+  toPortal() {
+      this.showNoFormDialog = false;
+      this.us.clearForNewTask();
+      this.router.navigate(['tasks']);
+  }
 
 }
