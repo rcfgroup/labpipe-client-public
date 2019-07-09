@@ -35,3 +35,6 @@ yarn start
 - [ ] To support dynamic form layout
 - [ ] To support more built-in form processes
 - [ ] To support conditional access to forms, e.g record form might require daily quality control form to be completed upfront
+
+## License
+This project is open  under Non-Profit Open Software License 3.0 (NPOSL-3.0).
