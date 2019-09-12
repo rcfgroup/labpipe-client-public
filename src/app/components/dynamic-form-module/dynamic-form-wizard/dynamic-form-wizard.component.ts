@@ -16,75 +16,75 @@ import {TrueFalseQuestion} from '../../../models/dynamic-form-models/question-tr
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 
 @Component({
-    selector: 'app-dynamic-form-wizard',
-    templateUrl: './dynamic-form-wizard.component.html',
-    styleUrls: ['./dynamic-form-wizard.component.css']
+  selector: 'app-dynamic-form-wizard',
+  templateUrl: './dynamic-form-wizard.component.html',
+  styleUrls: ['./dynamic-form-wizard.component.css']
 })
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
-    formCode: string;
-    formTemplates: any[] = [];
-    wizardTemplate: Wizard;
-    form: FormGroup;
-    remoteUrl: string;
-    isFormReady: boolean;
-    isFormVisible: boolean;
-    result: any;
-    formData: any;
-    @ViewChild('formDataPreview', {static: false}) formDataPreview: DynamicFormResultPreviewComponent;
+  formCode: string;
+  formTemplates: any[] = [];
+  wizardTemplate: Wizard;
+  form: FormGroup;
+  remoteUrl: string;
+  isFormReady: boolean;
+  isFormVisible: boolean;
+  result: any;
+  formData: any;
+  @ViewChild('formDataPreview', {static: false}) formDataPreview: DynamicFormResultPreviewComponent;
 
-    showNotSavedWarning: boolean;
-    showMultipleFormCodeDialog: boolean;
+  showNotSavedWarning: boolean;
+  showMultipleFormCodeDialog: boolean;
   showNoFormDialog: boolean;
 
-    constructor(private us: UserSettingsService,
-                private dfs: DynamicFormService,
-                private ds: DatabaseService,
-                private es: ElectronService,
-                private zone: NgZone,
-                private http: HttpClient,
-                private router: Router) {
-    }
+  constructor(private us: UserSettingsService,
+              private dfs: DynamicFormService,
+              private ds: DatabaseService,
+              private es: ElectronService,
+              private zone: NgZone,
+              private http: HttpClient,
+              private router: Router) {
+  }
 
-    ngOnInit() {
-      // TODO get formCode from current study
-        this.getFormTemplate();
-    }
+  ngOnInit() {
+    // TODO get formCode from current study
+    this.getFormTemplate();
+  }
 
-    ngOnDestroy() {
-        this.us.clearForNewTask();
-    }
+  ngOnDestroy() {
+    this.us.clearForNewTask();
+  }
 
-    getFormTemplate() {
-        const apiRoot = this.us.getApiRoot();
-        const url = apiRoot + '/api/form/template/study/' + this.us.getCurrentProject().code + '/instrument/' + this.us.getCurrentInstrument().code;
-        this.http.get(url).subscribe((data: any[]) => {
-          this.formTemplates = data;
-          switch (this.formTemplates.length) {
-            case 0:
-              this.showNoFormDialog = true;
-              break;
-            case 1:
-              this.prepareForm(this.formTemplates[0]);
-              break;
-            default:
-              this.showMultipleFormCodeDialog = true;
-              break;
-          }
+  getFormTemplate() {
+    const apiRoot = this.us.getApiRoot();
+    const url = apiRoot + '/api/form/template/study/' + this.us.getCurrentProject().code + '/instrument/' + this.us.getCurrentInstrument().code;
+    this.http.get(url).subscribe((data: any[]) => {
+      this.formTemplates = data;
+      switch (this.formTemplates.length) {
+        case 0:
+          this.showNoFormDialog = true;
+          break;
+        case 1:
+          this.prepareForm(this.formTemplates[0]);
+          break;
+        default:
+          this.showMultipleFormCodeDialog = true;
+          break;
+      }
 
-        });
-    }
+    });
+  }
 
   getFormTemplateWithCode() {
-      if (this.formCode) {
-        this.showMultipleFormCodeDialog = false;
-        const apiRoot = this.us.getApiRoot();
-        const url = apiRoot + '/api/form/template/code/' + this.formCode;
-        this.http.get(url).subscribe((data: any) => {
-          this.prepareForm(data);
-        });
-      }
+    if (this.formCode) {
+      this.showMultipleFormCodeDialog = false;
+      const apiRoot = this.us.getApiRoot();
+      const url = apiRoot + '/api/form/template/code/' + this.formCode;
+      this.http.get(url).subscribe((data: any) => {
+        this.prepareForm(data);
+      });
+    }
   }
 
   prepareForm(data: any) {
@@ -129,67 +129,68 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     }
   }
 
-    showForm() {
-        this.isFormVisible = true;
-    }
+  showForm() {
+    this.isFormVisible = true;
+  }
 
-    onQuestionValue(parentPage: WizardPage, controlKey: string, questionValue: any) {
-        const updatedValue = {};
-        updatedValue[controlKey] = questionValue;
-        parentPage.pageForm.patchValue(updatedValue, {emitEvent: false});
-        this.onFormValid(parentPage);
-    }
+  onQuestionValue(parentPage: WizardPage, controlKey: string, questionValue: any) {
+    const updatedValue = {};
+    updatedValue[controlKey] = questionValue;
+    parentPage.pageForm.patchValue(updatedValue, {emitEvent: false});
+    this.onFormValid(parentPage);
+  }
 
-    onFormValid(parentPage: WizardPage) {
-        if (parentPage.pageForm.valid) {
-            console.log(parentPage.key);
-            for (let i = 0; i < parentPage.formValidProcess.length; i++) {
-                console.log(parentPage.formValidProcess[i].processType);
-                switch (parentPage.formValidProcess[i].processType) {
-                    case 'concat':
-                        const df = parentPage.formValidProcess[i].dataField.split('::');
-                        const separator = df.shift();
-                        const data = df.map(fieldName => parentPage.pageForm.get(fieldName).value);
-                        parentPage.formValidProcess[i].result = data.join(separator);
-                        break;
-                }
-            }
-            this.formData[parentPage.key] = parentPage.pageForm.value;
-            parentPage.formValidProcess.forEach(page => {
-                if (page.newField) {
-                    this.formData[parentPage.key][page.newField] = page.result;
-                }
-            });
+  onFormValid(parentPage: WizardPage) {
+    if (parentPage.pageForm.valid) {
+      this.formData[parentPage.key] = parentPage.pageForm.value;
+      console.log(parentPage.key);
+      for (let i = 0; i < parentPage.formValidProcess.length; i++) {
+        console.log(parentPage.formValidProcess[i].processType);
+        switch (parentPage.formValidProcess[i].processType) {
+          case 'concat':
+            const df = parentPage.formValidProcess[i].dataField.split('::');
+            const separator = df.shift();
+            const data = df.map(fieldName => fieldName.startsWith('--') ? fieldName.replace('--', '') : this.formData[parentPage.key][fieldName]);
+            parentPage.formValidProcess[i].result = data.join(separator);
+            break;
         }
-    }
-
-    onWizardFinish() {
-        this.result = this.formData;
-        this.formDataPreview.updateResult();
-        this.showNotSavedWarning = true;
-    }
-
-    saveResult() {
-        this.ds.saveData(this.result);
-        if (this.us.getRunningMode() === 'server' && this.us.getApiRoot() && this.remoteUrl) {
-            const requestOptions = {
-                headers: new HttpHeaders({
-                    Authorization: btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
-                })};
-            this.http.post(this.us.getApiRoot() + this.remoteUrl, this.result, requestOptions)
-                .subscribe(() => console.log('result sent to server'), error => console.warn(error));
+      }
+      parentPage.formValidProcess.forEach(page => {
+        if (page.newField) {
+          this.formData[parentPage.key][page.newField] = page.result;
         }
-        this.router.navigate(['tasks']);
+      });
     }
+  }
 
-    clipboardCopy(value: any) {
-        this.es.clipboard.writeText(value);
+  onWizardFinish() {
+    this.result = this.formData;
+    this.formDataPreview.updateResult();
+    this.showNotSavedWarning = true;
+  }
+
+  saveResult() {
+    this.ds.saveData(this.result);
+    if (this.us.getRunningMode() === 'server' && this.us.getApiRoot() && this.remoteUrl) {
+      const requestOptions = {
+        headers: new HttpHeaders({
+          Authorization: btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
+        })
+      };
+      this.http.post(this.us.getApiRoot() + this.remoteUrl, this.result, requestOptions)
+        .subscribe(() => console.log('result sent to server'), error => console.warn(error));
     }
+    this.router.navigate(['tasks']);
+  }
+
+  clipboardCopy(value: any) {
+    this.es.clipboard.writeText(value);
+  }
 
   toPortal() {
-      this.showNoFormDialog = false;
-      this.us.clearForNewTask();
-      this.router.navigate(['tasks']);
+    this.showNoFormDialog = false;
+    this.us.clearForNewTask();
+    this.router.navigate(['tasks']);
   }
 
 }
