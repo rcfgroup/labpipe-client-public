@@ -72,7 +72,7 @@ export class MandatorySettingComponent implements OnInit {
     validateApiRoot() {
         const url = this.settingForm.get('apiRoot').value;
         if (url) {
-            this.http.get(url + '/api/general/connect', {responseType: 'text'}).subscribe(() => {
+            this.http.get(url + '/api/general/connect/public', {responseType: 'text'}).subscribe(() => {
                 this.isApiRootValid = true;
                 this.us.updateApiRoot(url);
             }, (err) => {
@@ -87,7 +87,7 @@ export class MandatorySettingComponent implements OnInit {
         const token = this.settingForm.get('apiToken').value;
         const key = this.settingForm.get('apiKey').value;
         if (url && token && key) {
-            this.http.get(url + '/api/general/connect-with-token', {
+            this.http.get(url + '/api/general/connect/token', {
                 responseType: 'text', headers: new HttpHeaders({
                     Authorization: btoa(token + ':' + key)
                 })
