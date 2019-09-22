@@ -61,7 +61,7 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
   monitorServerState() {
     const apiRoot = this.us.getApiRoot();
     if (apiRoot) {
-      this.url = apiRoot + '/api/general/connect';
+      this.url = apiRoot + '/api/general/connect/public';
     }
     if (this.url) {
     this.serverStateSubscription = timer(0, this.us.getServerMonitorInterval())
