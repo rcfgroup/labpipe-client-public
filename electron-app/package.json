@@ -1,7 +1,7 @@
 {
-  "name": "labpipe-assistant",
+  "name": "labpipe-client",
   "version": "0.0.0",
-  "description": "Labpipe migration work to electron based apps for cross-platform compatibility.",
+  "description": "LabPipe Client.",
   "main": "index.js",
   "scripts": {
     "pack": "electron-builder --dir",
@@ -9,26 +9,17 @@
     "electron": "electron ."
   },
   "author": "Bo Zhao",
-  "license": "ISC",
+  "license": "NPOSL-3.0",
   "devDependencies": {
-    "electron": "^5.0.6",
-    "electron-builder": "^20.44.4"
+    "electron": "^6.0.10",
+    "electron-builder": "^21.2.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/colin-bz/release-warehouse.git"
+    "url": "https://github.com/colin-bz/labpipe-client-public.git"
   },
   "build": {
-    "appId": "com.shallowsearch.labpipe.assistant",
-    "publish": {
-      "provider": "github",
-      "repo": "release-warehouse",
-      "owner": "colin-bz",
-      "vPrefixedTagName": true,
-      "protocol": "https",
-      "private": true,
-      "releaseType": "draft"
-    },
+    "appId": "org.labpipe.client",
     "mac": {
       "category": "productivity",
       "target": [
@@ -52,11 +43,10 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "electron-debug": "^3.0.1",
-    "electron-log": "^3.0.6",
+    "electron-log": "^3.0.8",
     "electron-settings": "^3.2.0",
-    "electron-updater": "^4.0.14",
     "nedb": "^1.8.0",
-    "nedb-promises": "^3.0.6",
-    "uuid": "^3.3.2"
+    "nedb-promises": "^4.0.0",
+    "uuid": "^3.3.3"
   }
 }

@@ -15,10 +15,10 @@ export class LoginPageComponent implements OnInit {
   instruments$: any[];
   operators$: any[];
 
-  currentOperator: object;
+  currentOperator: any;
   loginForm: FormGroup;
-  selectedLocation: object;
-  selectedInstrument: object;
+  selectedLocation: any;
+  selectedInstrument: any;
   appVersion: string;
 
   confirmLoginDialogOpened = false;
