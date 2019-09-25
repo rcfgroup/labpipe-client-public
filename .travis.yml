@@ -5,7 +5,7 @@ cache:
   yarn: true
 before_script:
   - sudo apt-get update
-  - sudo apt-get install -y wine
+  - sudo apt-get install -y --install-recommends winehq-stable
   - yarn global add @angular/cli
   - yarn global add electron-builder
   - sed "s/0.0.0/${TRAVIS_TAG}/g" package.json > _package.json && mv _package.json package.json
