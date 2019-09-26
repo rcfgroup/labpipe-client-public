@@ -5,12 +5,11 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        os: [macOS-10.14, windows-2016, ubuntu-18.04]
-        node: [12]
+        node-version: [12.x]
 
     steps:
     - uses: actions/checkout@v1
@@ -21,6 +20,11 @@ jobs:
     - name: npm install, build, and test
       run: |
         npm install
-        npm run build --if-present
+        ng build
+        cd electron-app
+        ls
+        npm install
+        electron-builder -l
+        ls
       env:
         CI: true
