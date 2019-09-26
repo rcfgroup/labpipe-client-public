@@ -19,10 +19,12 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: npm install, build, and test
       run: |
+        npm install -g @angular/cli
         npm install
         ng build
         cd electron-app
         ls
+        npm install -g electron-builder
         npm install
         electron-builder -l
         ls
