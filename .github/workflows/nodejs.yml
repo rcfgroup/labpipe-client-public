@@ -5,11 +5,12 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
-        node-version: [12.x]
+        os: [macOS-10.14, windows-2016, ubuntu-18.04]
+        node: [12]
 
     steps:
     - uses: actions/checkout@v1
