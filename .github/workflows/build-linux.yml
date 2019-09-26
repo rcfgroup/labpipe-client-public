@@ -3,21 +3,15 @@ name: Node CI
 on: [push]
 
 jobs:
-  build:
-
+  build_for_linux:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js 12.x
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+        node-version: 12.x
+    - name: Build
       run: |
         npm install -g @angular/cli
         npm install
@@ -27,5 +21,27 @@ jobs:
         npm install
         electron-builder -l --publish=never
         ls dist
+      env:
+        CI: true
+  build_for_win:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install @angular/cli
+      run: npm install -g @angular/cli
+    - name: Install electron-builder
+      run: npm install -g electron-builder
+    - name: Install node modules
+      run: npm install
+    - name: Build Angular app
+      run: ng build
+    - name: Install node modules for electron app
+      run: cd electron-app && npm install
+    - name: Build Electron
+      run: electron-builder -w --publish=never && ls dist
       env:
         CI: true
