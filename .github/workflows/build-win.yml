@@ -22,11 +22,11 @@ jobs:
         npm install -g @angular/cli
         npm install
         ng build
-        cd electron-app
+        cd \electron-app
         ls
         npm install -g electron-builder
         npm install
         electron-builder -l --publish=never
-        ls
+        dir \dist\*
       env:
         CI: true
