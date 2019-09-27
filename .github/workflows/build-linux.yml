@@ -37,8 +37,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: curl --data $'{"tag_name":"${{github.event.ref}}","target_commitish": "master","name": "${{github.event.ref}}","body": "Release ${{github.event.ref}}","draft": false,"prerelease": true}' https://api.github.com/repos/$GITHUB_REPOSITORY/releases?access_token=$GITHUB_TOKEN
-    - name: Upload asset [tag only]
+      run: curl --data $'{"tag_name":"${{github.event.ref}}","target_commitish": "master","name": "${{github.event.ref}}","body": "Release ${{github.event.ref}}","draft": false,"prerelease": true}' "https://api.github.com/repos/$GITHUB_REPOSITORY/releases?access_token=$GITHUB_TOKEN"    - name: Upload asset [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
