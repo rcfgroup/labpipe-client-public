@@ -20,6 +20,7 @@
   },
   "build": {
     "appId": "org.labpipe.client",
+    "files": ["**/*", "build/icon.*"],
     "mac": {
       "category": "productivity",
       "target": [
