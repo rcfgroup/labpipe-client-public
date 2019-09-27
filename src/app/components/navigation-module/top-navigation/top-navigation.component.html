@@ -1,8 +1,7 @@
 <header class="header header-6">
     <div class="branding">
         <a href="#" class="nav-link">
-            <clr-icon shape="cloud-traffic"></clr-icon>
-            <span class="title">LabPipe</span>
+          <img src="assets/images/labpipe-logo-white.png" height="50" alt="">
         </a>
     </div>
     <div class="header-actions">
@@ -23,7 +22,7 @@
 <nav class="subnav">
     <ul class="nav">
         <li class="nav-item">
-            <a class="nav-link" *ngIf="currentUser" (click)=toSettings()>Settings</a>
+            <a class="nav-link" (click)=toSettings()>Settings</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" *ngIf="currentUser" (click)=toTasks()>Portal</a>
