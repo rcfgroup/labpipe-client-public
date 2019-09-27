@@ -36,12 +36,13 @@ jobs:
     - name: Create release [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        TAG: ${{github.event.ref}}
       uses: softprops/action-gh-release@v1
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       with:
         files: |
-          *.zip
-          *.yml
+          electron-app/dist/labpipe-client-${TAG:1}-mac.zip
+          electron-app/dist/latest-mac.yml
 
       
   build_for_win_linux:
@@ -81,8 +82,9 @@ jobs:
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       with:
         files: |
-          *.exe
-          *.blockmap
-          *.AppImage
-          *.snap
-          *.yml
+          "electron-app\dist\labpipe-client Setup %TAG:~1%.exe"
+          "electron-app\dist\labpipe-client Setup %TAG:~1%.exe.blockmap"
+          electron-app\dist\labpipe-client-%TAG:~1%.AppImage
+          electron-app\dist\labpipe-client-%TAG:~1%_amd64.snap
+          electron-app\dist\latest-linux.yml
+          electron-app\dist\latest.yml
