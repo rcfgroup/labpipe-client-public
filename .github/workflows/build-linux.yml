@@ -25,6 +25,7 @@ jobs:
       run: cd electron-app && electron-builder -l --publish=never && ls dist/linux-packed
       env:
         CI: true
+        ELECTRON_BUILDER_CACHE: electron_cache
   build_for_win:
     runs-on: windows-latest
     steps:
