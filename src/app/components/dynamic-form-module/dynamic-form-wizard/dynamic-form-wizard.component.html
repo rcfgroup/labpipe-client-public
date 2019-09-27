@@ -1,7 +1,6 @@
 <div *ngIf="isFormReady; else spinner">
     <button class="btn btn-primary" (click)="showForm()">Open Form</button>
     <button class="btn btn-danger" (click)="saveResult()">Save</button>
-    {{remoteUrl}}
     <clr-wizard #wizard [(clrWizardOpen)]="isFormVisible" (clrWizardOnFinish)="onWizardFinish()">
         <clr-wizard-title>{{wizardTemplate.title}}</clr-wizard-title>
 
