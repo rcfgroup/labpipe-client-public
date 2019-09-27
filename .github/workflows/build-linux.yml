@@ -1,10 +1,10 @@
 name: Node CI
 
-on: [push]
+on: [push, create]
 
 jobs:
-  build_for_linux:
-    runs-on: ubuntu-latest
+  build_for_mac:
+    runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v1
     - name: Use Node.js 12.x
@@ -18,14 +18,12 @@ jobs:
     - name: Install node modules
       run: npm install
     - name: Build Angular app
-      run: ng build
+      run: - sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && ng build
     - name: Install node modules for electron app
       run: cd electron-app && npm install
     - name: Build Electron
-      run: cd electron-app && electron-builder -l --publish=never && ls dist/linux-packed
-      env:
-        CI: true
-        ELECTRON_BUILDER_CACHE: electron_cache
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: cd electron-app && - sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && ls dist
   build_for_win_linux:
     runs-on: windows-latest
     steps:
@@ -46,5 +44,3 @@ jobs:
       run: cd electron-app && npm install
     - name: Build Electron
       run: cd electron-app && electron-builder -wl --publish=never && ls dist
-      env:
-        CI: true
