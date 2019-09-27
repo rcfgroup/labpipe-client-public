@@ -36,12 +36,12 @@ jobs:
     - name: Create release [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      uses: softprops/action-gh-release@v1
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: curl --data $'{"tag_name":"${{github.event.ref}}","target_commitish": "master","name": "${{github.event.ref}}","body": "Release ${{github.event.ref}}","draft": false,"prerelease": true}' "https://api.github.com/repos/$GITHUB_REPOSITORY/releases?access_token=$GITHUB_TOKEN"    - name: Upload asset [tag only]
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-      if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: export RELEASE_ID=$(curl https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/${{github.event.ref}}?access_token=$GITHUB_TOKEN | jq '.id') && cd electron-app && for filename in dist/*.zip dist/*.yml; do curl --data-binary "@$filename" -H "Content-Type: application/java-archive" "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=$(basename $filename)&access_token=$GITHUB_TOKEN" ; done
+      with:
+        files: |
+          *.zip
+          *.yml
 
       
   build_for_win_linux:
@@ -77,11 +77,12 @@ jobs:
     - name: Create release [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        TAG: ${{github.event.ref}}
+      uses: softprops/action-gh-release@v1
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: curl --data $'{"tag_name":"%TAG%","target_commitish": "master","name": "%TAG%","body": "Release %TAG%","draft": false,"prerelease": true}' "https://api.github.com/repos/%GITHUB_REPOSITORY%/releases?access_token=%GITHUB_TOKEN%"    - name: Upload asset [tag only]
-      env:
-        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        TAG: ${{github.event.ref}}
-      if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: set RELEASE_ID $(curl https://api.github.com/repos/%GITHUB_REPOSITORY%/releases/tags/%TAG%?access_token=%GITHUB_TOKEN% | jq '.id') && cd electron-app && cd dist && for %%filename in (.exe .blockmap .AppImage .snap .yml) do (curl --data-binary "@%filename%" -H "Content-Type: application/java-archive" "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/%RELEASE_ID%/assets?name=%%~nfilename&access_token=%GITHUB_TOKEN%")
+      with:
+        files: |
+          *.exe
+          *.blockmap
+          *.AppImage
+          *.snap
+          *.yml
