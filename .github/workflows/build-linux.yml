@@ -26,7 +26,7 @@ jobs:
       env:
         CI: true
         ELECTRON_BUILDER_CACHE: electron_cache
-  build_for_win:
+  build_for_win_linux:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
@@ -45,6 +45,6 @@ jobs:
     - name: Install node modules for electron app
       run: cd electron-app && npm install
     - name: Build Electron
-      run: cd electron-app && electron-builder -w --publish=never && ls dist/win-packed
+      run: cd electron-app && electron-builder -wl --publish=never && ls dist
       env:
         CI: true
