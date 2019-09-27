@@ -18,11 +18,11 @@ jobs:
     - name: Install node modules
       run: npm install
     - name: Build Angular app
-      run: sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && ng build
+      run: sed "s/0.0.0/${{github.event.ref:1}}/g" package.json > _package.json && mv _package.json package.json && ng build
     - name: Install node modules for electron app
       run: cd electron-app && npm install
     - name: Build Electron
-      run: cd electron-app && sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && ls dist
+      run: cd electron-app && sed "s/0.0.0/${{github.event.ref:1}}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && ls dist
   build_for_win_linux:
     runs-on: windows-latest
     steps:
@@ -38,8 +38,8 @@ jobs:
     - name: Install node modules
       run: npm install
     - name: Build Angular app
-      run: sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && ng build
+      run: sed "s/0.0.0/${{github.event.ref:1}}/g" package.json > _package.json && mv _package.json package.json && ng build
     - name: Install node modules for electron app
       run: cd electron-app && npm install
     - name: Build Electron
-      run: cd electron-app && sed "s/0.0.0/${VERSION_ID}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && electron-builder -wl --publish=never && ls dist
+      run: cd electron-app && sed "s/0.0.0/${{github.event.ref:1}}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && electron-builder -wl --publish=never && ls dist
