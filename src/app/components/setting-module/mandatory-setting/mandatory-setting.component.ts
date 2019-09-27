@@ -89,7 +89,7 @@ export class MandatorySettingComponent implements OnInit {
         if (url && token && key) {
             this.http.get(url + '/api/general/connect/token', {
                 responseType: 'text', headers: new HttpHeaders({
-                    Authorization: btoa(token + ':' + key)
+                    Authorization: 'Basic ' + btoa(token + ':' + key)
                 })
             }).subscribe(() => {
                     this.isApiTokenKeyValid = true;

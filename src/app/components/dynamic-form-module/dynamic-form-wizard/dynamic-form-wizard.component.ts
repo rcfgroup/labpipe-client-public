@@ -23,6 +23,8 @@ import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
+  requestOptions: any = {};
+
   formCode: string;
   formTemplates: any[] = [];
   wizardTemplate: Wizard;
@@ -59,7 +61,12 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   getFormTemplate() {
     const apiRoot = this.us.getApiRoot();
     const url = apiRoot + '/api/form/template/study/' + this.us.getCurrentProject().code + '/instrument/' + this.us.getCurrentInstrument().code;
-    this.http.get(url).subscribe((data: any[]) => {
+    this.requestOptions = {
+      headers: new HttpHeaders({
+        Authorization: 'Basic ' + btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
+      })
+    };
+    this.http.get(url, this.requestOptions).subscribe((data: any[]) => {
       this.formTemplates = data;
       switch (this.formTemplates.length) {
         case 0:
@@ -81,7 +88,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       this.showMultipleFormCodeDialog = false;
       const apiRoot = this.us.getApiRoot();
       const url = apiRoot + '/api/form/template/code/' + this.formCode;
-      this.http.get(url).subscribe((data: any) => {
+      this.http.get(url, this.requestOptions).subscribe((data: any) => {
         this.prepareForm(data);
       });
     }
@@ -174,7 +181,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     if (this.us.getRunningMode() === 'server' && this.us.getApiRoot() && this.remoteUrl) {
       const requestOptions = {
         headers: new HttpHeaders({
-          Authorization: btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
+          Authorization: 'Basic ' + btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
         })
       };
       this.http.post(this.us.getApiRoot() + this.remoteUrl, this.result, requestOptions)

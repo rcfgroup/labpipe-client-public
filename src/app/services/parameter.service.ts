@@ -21,13 +21,13 @@ export class ParameterService {
     if (this.us.getCurrentOperator() && this.us.getCurrentOperatorPassword()) {
       this.requestOptions = {
         headers: new HttpHeaders({
-          Authorization: btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
+          Authorization: 'Basic ' + btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
         })
       };
     } else if (this.us.getApiToken() && this.us.getApiKey()) {
       this.requestOptions = {
         headers: new HttpHeaders({
-          Authorization: btoa(this.us.getApiToken() + ':' + this.us.getApiKey())
+          Authorization: 'Basic ' + btoa(this.us.getApiToken() + ':' + this.us.getApiKey())
         })
       };
     }
