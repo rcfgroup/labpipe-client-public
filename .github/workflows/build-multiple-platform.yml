@@ -41,7 +41,7 @@ jobs:
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
       with:
         files: |
-          electron-app/dist/labpipe-client-${TAG:1}-mac.zip
+          electron-app/dist/*.zip
           electron-app/dist/latest-mac.yml
 
       
