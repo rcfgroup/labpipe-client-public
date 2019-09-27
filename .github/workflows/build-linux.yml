@@ -11,16 +11,18 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: Build
-      run: |
-        npm install -g @angular/cli
-        npm install
-        ng build
-        cd electron-app
-        npm install -g electron-builder
-        npm install
-        electron-builder -l --publish=never
-        ls dist
+    - name: Install @angular/cli
+      run: npm install -g @angular/cli
+    - name: Install electron-builder
+      run: npm install -g electron-builder
+    - name: Install node modules
+      run: npm install
+    - name: Build Angular app
+      run: ng build
+    - name: Install node modules for electron app
+      run: cd electron-app && npm install
+    - name: Build Electron
+      run: cd electron-app && electron-builder -l --publish=never && ls dist/linux-packed
       env:
         CI: true
   build_for_win:
@@ -42,6 +44,6 @@ jobs:
     - name: Install node modules for electron app
       run: cd electron-app && npm install
     - name: Build Electron
-      run: cd electron-app && electron-builder -w --publish=never && ls dist
+      run: cd electron-app && electron-builder -w --publish=never && ls dist/win-packed
       env:
         CI: true
