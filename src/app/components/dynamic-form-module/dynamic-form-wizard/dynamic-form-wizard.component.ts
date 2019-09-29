@@ -1,5 +1,5 @@
 import {Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {DynamicFormResultPreviewComponent} from '../dynamic-form-result-preview/dynamic-form-result-preview.component';
 import {Wizard} from '../../../models/dynamic-form-models/wizard';
@@ -14,6 +14,8 @@ import {InputQuestion} from '../../../models/dynamic-form-models/question-input'
 import {SelectQuestion} from '../../../models/dynamic-form-models/question-select';
 import {TrueFalseQuestion} from '../../../models/dynamic-form-models/question-truefalse';
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
+import {LabPipeService} from '../../../services/lab-pipe.service';
+import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
 
 @Component({
   selector: 'app-dynamic-form-wizard',
@@ -23,10 +25,10 @@ import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
-  requestOptions: any = {};
+  messages: InAppMessage[] = [];
 
   formCode: string;
-  formTemplates: any[] = [];
+  formTemplates: any;
   wizardTemplate: Wizard;
   form: FormGroup;
   remoteUrl: string;
@@ -44,9 +46,12 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
               private dfs: DynamicFormService,
               private ds: DatabaseService,
               private es: ElectronService,
+              private lps: LabPipeService,
+              private iaas: InAppAlertService,
               private zone: NgZone,
               private http: HttpClient,
               private router: Router) {
+    this.formTemplates = [];
   }
 
   ngOnInit() {
@@ -59,38 +64,33 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   getFormTemplate() {
-    const apiRoot = this.us.getApiRoot();
-    const url = apiRoot + '/api/form/template/study/' + this.us.getCurrentProject().code + '/instrument/' + this.us.getCurrentInstrument().code;
-    this.requestOptions = {
-      headers: new HttpHeaders({
-        Authorization: 'Basic ' + btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
-      })
-    };
-    this.http.get(url, this.requestOptions).subscribe((data: any[]) => {
-      this.formTemplates = data;
-      switch (this.formTemplates.length) {
-        case 0:
-          this.showNoFormDialog = true;
-          break;
-        case 1:
-          this.prepareForm(this.formTemplates[0]);
-          break;
-        default:
-          this.showMultipleFormCodeDialog = true;
-          break;
-      }
-
-    });
+    this.lps.getForm(this.us.getCurrentProject().code, this.us.getCurrentInstrument().code).subscribe((data: any) => {
+        this.formTemplates = data;
+        switch (this.formTemplates.length) {
+          case 0:
+            this.showNoFormDialog = true;
+            break;
+          case 1:
+            this.prepareForm(this.formTemplates[0]);
+            break;
+          default:
+            this.showMultipleFormCodeDialog = true;
+            break;
+        }
+      },
+      (error: any) => this.iaas.error(error.error.message, this.messages)
+    );
   }
 
   getFormTemplateWithCode() {
     if (this.formCode) {
       this.showMultipleFormCodeDialog = false;
-      const apiRoot = this.us.getApiRoot();
-      const url = apiRoot + '/api/form/template/code/' + this.formCode;
-      this.http.get(url, this.requestOptions).subscribe((data: any) => {
+      this.lps.getFormWithCode(this.formCode).subscribe((data: any) => {
+        this.iaas.success('Form loaded. Preparation in progress.', this.messages);
         this.prepareForm(data);
-      });
+        },
+        error => this.iaas.error(error.error.message, this.messages)
+      );
     }
   }
 
@@ -129,10 +129,10 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     });
     this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
     if (this.wizardTemplate) {
-      for (let i = 0; i < this.wizardTemplate.pages.length; i++) {
-        this.wizardTemplate.pages[i].pageForm = this.dfs.toFormGroup(this.wizardTemplate.pages[i].questions);
-      }
+      this.wizardTemplate.pages.forEach((page, index) =>
+        this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
       this.isFormReady = true;
+      this.iaas.success('Form preparation completed.', this.messages);
     }
   }
 
@@ -150,18 +150,18 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   onFormValid(parentPage: WizardPage) {
     if (parentPage.pageForm.valid) {
       this.formData[parentPage.key] = parentPage.pageForm.value;
-      console.log(parentPage.key);
-      for (let i = 0; i < parentPage.formValidProcess.length; i++) {
-        console.log(parentPage.formValidProcess[i].processType);
-        switch (parentPage.formValidProcess[i].processType) {
+      parentPage.formValidProcess.forEach((process, index) => {
+        switch (process.processType) {
           case 'concat':
-            const df = parentPage.formValidProcess[i].dataField.split('::');
+            const df = process.dataField.split('::');
             const separator = df.shift();
-            const data = df.map(fieldName => fieldName.startsWith('--') ? fieldName.replace('--', '') : this.formData[parentPage.key][fieldName]);
-            parentPage.formValidProcess[i].result = data.join(separator);
+            const data = df.map(fieldName => fieldName.startsWith('--')
+              ? fieldName.replace('--', '')
+              : this.formData[parentPage.key][fieldName]);
+            parentPage.formValidProcess[index].result = data.join(separator);
             break;
         }
-      }
+      });
       parentPage.formValidProcess.forEach(page => {
         if (page.newField) {
           this.formData[parentPage.key][page.newField] = page.result;
@@ -178,14 +178,10 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   saveResult() {
     this.ds.saveData(this.result);
-    if (this.us.getRunningMode() === 'server' && this.us.getApiRoot() && this.remoteUrl) {
-      const requestOptions = {
-        headers: new HttpHeaders({
-          Authorization: 'Basic ' + btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
-        })
-      };
-      this.http.post(this.us.getApiRoot() + this.remoteUrl, this.result, requestOptions)
-        .subscribe(() => console.log('result sent to server'), error => console.warn(error));
+    if (this.us.getRunningMode() === 'server') {
+      this.lps.postRecord(this.remoteUrl, this.result)
+        .subscribe((data: any) => this.iaas.success(data.message, this.messages),
+          (error: any) => this.iaas.error(error.error.message, this.messages));
     }
     this.router.navigate(['tasks']);
   }

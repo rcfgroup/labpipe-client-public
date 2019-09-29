@@ -24,7 +24,6 @@ export class LoginPageComponent implements OnInit {
   confirmLoginDialogOpened = false;
   incorrectLoginDialogOpened = false;
 
-
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private us: UserSettingsService,
@@ -63,15 +62,11 @@ export class LoginPageComponent implements OnInit {
       const p = this.loginForm.get('password').value;
       const valid = this.tryLogin(u, p);
       if (valid) {
-        console.log('valid login');
         this.confirmLoginDialogOpened = true;
       } else {
-        console.log('invalid login');
         this.incorrectLoginDialogOpened = true;
       }
 
-    } else {
-      console.log('meow');
     }
   }
 
@@ -82,9 +77,7 @@ export class LoginPageComponent implements OnInit {
     const result = user.length === 1 && bcrypt.compareSync(password, user[0].passhash);
     if (result) {
       this.currentOperator = user[0];
-      console.log('valid login');
     }
-    console.log('invalid login');
     return result;
   }
 

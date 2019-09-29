@@ -1,5 +1,4 @@
 import {Component, NgZone, OnInit} from '@angular/core';
-import {ParameterService} from '../../../services/parameter.service';
 import {Router} from '@angular/router';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {ElectronService} from 'ngx-electron';
@@ -23,7 +22,6 @@ export class TaskPortalComponent implements OnInit {
   dialogVisitTypeOpened = false;
 
   constructor(private formBuilder: FormBuilder,
-              private ps: ParameterService,
               private es: ElectronService,
               private ss: UserSettingsService,
               private router: Router ) {

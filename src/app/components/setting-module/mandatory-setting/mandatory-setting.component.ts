@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
 import {UserSettingsService} from '../../../services/user-settings.service';
+import {LabPipeService} from '../../../services/lab-pipe.service';
 
 @Component({
     selector: 'app-mandatory-setting',
@@ -18,6 +19,7 @@ export class MandatorySettingComponent implements OnInit {
                 private es: ElectronService,
                 private zone: NgZone,
                 private http: HttpClient,
+                private lps: LabPipeService,
                 private formBuilder: FormBuilder) {
         this.settingForm = this.formBuilder.group({
             dirData: ['', Validators.required],
@@ -72,13 +74,13 @@ export class MandatorySettingComponent implements OnInit {
     validateApiRoot() {
         const url = this.settingForm.get('apiRoot').value;
         if (url) {
-            this.http.get(url + '/api/general/connect/public', {responseType: 'text'}).subscribe(() => {
-                this.isApiRootValid = true;
-                this.us.updateApiRoot(url);
-            }, (err) => {
-                console.log(err);
-                this.isApiRootValid = false;
-            });
+          this.lps.checkPublicAccess(url).subscribe(() => {
+            this.isApiRootValid = true;
+            this.us.updateApiRoot(url);
+          }, (err) => {
+            console.log(err);
+            this.isApiRootValid = false;
+          });
         }
     }
 
@@ -87,11 +89,7 @@ export class MandatorySettingComponent implements OnInit {
         const token = this.settingForm.get('apiToken').value;
         const key = this.settingForm.get('apiKey').value;
         if (url && token && key) {
-            this.http.get(url + '/api/general/connect/token', {
-                responseType: 'text', headers: new HttpHeaders({
-                    Authorization: 'Basic ' + btoa(token + ':' + key)
-                })
-            }).subscribe(() => {
+            this.lps.checkTokenAccess(token, key).subscribe(() => {
                     this.isApiTokenKeyValid = true;
                     this.us.updateApiToken(token);
                     this.us.updateApiKey(key);
