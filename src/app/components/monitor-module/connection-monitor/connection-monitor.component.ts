@@ -3,6 +3,7 @@ import {fromEvent, Observable, Subscription, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {delay, retryWhen, switchMap, tap} from 'rxjs/operators';
 import {UserSettingsService} from '../../../services/user-settings.service';
+import {LabPipeService} from '../../../services/lab-pipe.service';
 
 @Component({
   selector: 'app-connection-monitor',
@@ -20,7 +21,7 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
   serverConnected: boolean;
   url: string;
 
-  constructor(private us: UserSettingsService, private http: HttpClient) {
+  constructor(private us: UserSettingsService, private lps: LabPipeService) {
     this.networkConnected = window.navigator.onLine;
     this.onlineEvent = fromEvent(window, 'online');
     this.offlineEvent = fromEvent(window, 'offline');
@@ -59,14 +60,10 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
   }
 
   monitorServerState() {
-    const apiRoot = this.us.getApiRoot();
-    if (apiRoot) {
-      this.url = apiRoot + '/api/general/connect';
-    }
-    if (this.url) {
+    if (this.us.getApiRoot()) {
     this.serverStateSubscription = timer(0, this.us.getServerMonitorInterval())
         .pipe(
-            switchMap(() => this.http.head(this.url)),
+            switchMap(() => this.lps.heartbeat()),
             retryWhen(errors =>
                 errors.pipe(
                     tap(() => {

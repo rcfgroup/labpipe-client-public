@@ -1,5 +1,5 @@
 import {Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {DynamicFormResultPreviewComponent} from '../dynamic-form-result-preview/dynamic-form-result-preview.component';
 import {Wizard} from '../../../models/dynamic-form-models/wizard';
@@ -14,146 +14,186 @@ import {InputQuestion} from '../../../models/dynamic-form-models/question-input'
 import {SelectQuestion} from '../../../models/dynamic-form-models/question-select';
 import {TrueFalseQuestion} from '../../../models/dynamic-form-models/question-truefalse';
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
+import {LabPipeService} from '../../../services/lab-pipe.service';
+import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
 
 @Component({
-    selector: 'app-dynamic-form-wizard',
-    templateUrl: './dynamic-form-wizard.component.html',
-    styleUrls: ['./dynamic-form-wizard.component.css']
+  selector: 'app-dynamic-form-wizard',
+  templateUrl: './dynamic-form-wizard.component.html',
+  styleUrls: ['./dynamic-form-wizard.component.css']
 })
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
-    formCode: string;
-    wizardTemplate: Wizard;
-    form: FormGroup;
-    remoteUrl: string;
-    isFormReady: boolean;
-    isFormVisible: boolean;
-    result: any;
-    formData: any;
-    @ViewChild('formDataPreview', {static: false}) formDataPreview: DynamicFormResultPreviewComponent;
+  messages: InAppMessage[] = [];
 
-    showNotSavedWarning: boolean;
+  formCode: string;
+  formTemplates: any;
+  wizardTemplate: Wizard;
+  form: FormGroup;
+  remoteUrl: string;
+  isFormReady: boolean;
+  isFormVisible: boolean;
+  result: any;
+  formData: any;
+  @ViewChild('formDataPreview', {static: false}) formDataPreview: DynamicFormResultPreviewComponent;
 
-    constructor(private us: UserSettingsService,
-                private dfs: DynamicFormService,
-                private ds: DatabaseService,
-                private es: ElectronService,
-                private zone: NgZone,
-                private http: HttpClient,
-                private router: Router) {
-    }
+  showNotSavedWarning: boolean;
+  showMultipleFormCodeDialog: boolean;
+  showNoFormDialog: boolean;
 
-    ngOnInit() {
-      // TODO get formCode from current study
-        this.getFormTemplate();
-    }
+  constructor(private us: UserSettingsService,
+              private dfs: DynamicFormService,
+              private ds: DatabaseService,
+              private es: ElectronService,
+              private lps: LabPipeService,
+              private iaas: InAppAlertService,
+              private zone: NgZone,
+              private http: HttpClient,
+              private router: Router) {
+    this.formTemplates = [];
+  }
 
-    ngOnDestroy() {
-        this.us.clearForNewTask();
-    }
+  ngOnInit() {
+    // TODO get formCode from current study
+    this.getFormTemplate();
+  }
 
-    getFormTemplate() {
-        const apiRoot = this.us.getApiRoot();
-        const url = apiRoot + '/api/form/template/' + this.formCode;
-        this.http.get(url).subscribe((data: any) => {
-            this.formData = {form_code: data.code, study_code: data.study_code};
-            this.remoteUrl = data.url;
-            this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
-            data.template.pages.forEach(page => {
-                const p = new WizardPage({
-                    key: page.key,
-                    title: page.title,
-                    navTitle: page.navTitle,
-                    requireValidForm: page.requireValidForm,
-                    order: page.order
-                });
-                page.questions.forEach((q: QuestionBase<any>) => {
-                    switch (q.controlType) {
-                        case 'input':
-                            p.questions.push(new InputQuestion(q));
-                            break;
-                        case 'select':
-                            p.questions.push(new SelectQuestion(q));
-                            break;
-                        case 'truefalse':
-                            p.questions.push(new TrueFalseQuestion(q));
-                            break;
-                        case 'file':
-                            p.questions.push(new FileQuestion(q));
-                            break;
-                    }
-                });
-                page.formValidProcess.forEach(fvp => {
-                    p.formValidProcess.push(new FormValidProcess(fvp));
-                });
-                this.wizardTemplate.pages.push(p);
-            });
-            this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
-            if (this.wizardTemplate) {
-                for (let i = 0; i < this.wizardTemplate.pages.length; i++) {
-                    this.wizardTemplate.pages[i].pageForm = this.dfs.toFormGroup(this.wizardTemplate.pages[i].questions);
-                }
-                this.isFormReady = true;
-            }
-        });
-    }
+  ngOnDestroy() {
+    this.us.clearForNewTask();
+  }
 
-    showForm() {
-        this.isFormVisible = true;
-    }
-
-    onQuestionValue(parentPage: WizardPage, controlKey: string, questionValue: any) {
-        const updatedValue = {};
-        updatedValue[controlKey] = questionValue;
-        parentPage.pageForm.patchValue(updatedValue, {emitEvent: false});
-        this.onFormValid(parentPage);
-    }
-
-    onFormValid(parentPage: WizardPage) {
-        if (parentPage.pageForm.valid) {
-            console.log(parentPage.key);
-            for (let i = 0; i < parentPage.formValidProcess.length; i++) {
-                console.log(parentPage.formValidProcess[i].processType);
-                switch (parentPage.formValidProcess[i].processType) {
-                    case 'concat':
-                        let df = parentPage.formValidProcess[i].dataField.split('::');
-                        const separator = df.shift();
-                        let data = df.map(fieldName => parentPage.pageForm.get(fieldName).value);
-                        parentPage.formValidProcess[i].result = data.join(separator);
-                        break;
-                }
-            }
-            this.formData[parentPage.key] = parentPage.pageForm.value;
-            parentPage.formValidProcess.forEach(page => {
-                if (page.newField) {
-                    this.formData[parentPage.key][page.newField] = page.result;
-                }
-            });
+  getFormTemplate() {
+    this.lps.getForm(this.us.getCurrentProject().code, this.us.getCurrentInstrument().code).subscribe((data: any) => {
+        this.formTemplates = data;
+        switch (this.formTemplates.length) {
+          case 0:
+            this.showNoFormDialog = true;
+            break;
+          case 1:
+            this.prepareForm(this.formTemplates[0]);
+            break;
+          default:
+            this.showMultipleFormCodeDialog = true;
+            break;
         }
-    }
+      },
+      (error: any) => this.iaas.error(error.error.message, this.messages)
+    );
+  }
 
-    onWizardFinish() {
-        this.result = this.formData;
-        this.formDataPreview.updateResult();
-        this.showNotSavedWarning = true;
+  getFormTemplateWithCode() {
+    if (this.formCode) {
+      this.showMultipleFormCodeDialog = false;
+      this.lps.getFormWithCode(this.formCode).subscribe((data: any) => {
+        this.iaas.success('Form loaded. Preparation in progress.', this.messages);
+        this.prepareForm(data);
+        },
+        error => this.iaas.error(error.error.message, this.messages)
+      );
     }
+  }
 
-    saveResult() {
-        this.ds.saveData(this.result);
-        if (this.us.getRunningMode() === 'server' && this.us.getApiRoot() && this.remoteUrl) {
-            const requestOptions = {
-                headers: new HttpHeaders({
-                    Authorization: btoa(this.us.getCurrentOperator().username + ':' + this.us.getCurrentOperatorPassword())
-                })};
-            this.http.post(this.us.getApiRoot() + this.remoteUrl, this.result, requestOptions)
-                .subscribe(() => console.log('result sent to server'), error => console.warn(error));
+  prepareForm(data: any) {
+    this.formData = {form_code: data.code, study_code: data.study_code, instrument_code: data.instrument_code};
+    this.remoteUrl = data.url;
+    this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
+    data.template.pages.forEach(page => {
+      const p = new WizardPage({
+        key: page.key,
+        title: page.title,
+        navTitle: page.navTitle,
+        requireValidForm: page.requireValidForm,
+        order: page.order
+      });
+      page.questions.forEach((q: QuestionBase<any>) => {
+        switch (q.controlType) {
+          case 'input':
+            p.questions.push(new InputQuestion(q));
+            break;
+          case 'select':
+            p.questions.push(new SelectQuestion(q));
+            break;
+          case 'truefalse':
+            p.questions.push(new TrueFalseQuestion(q));
+            break;
+          case 'file':
+            p.questions.push(new FileQuestion(q));
+            break;
         }
-        this.router.navigate(['tasks']);
+      });
+      page.formValidProcess.forEach(fvp => {
+        p.formValidProcess.push(new FormValidProcess(fvp));
+      });
+      this.wizardTemplate.pages.push(p);
+    });
+    this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
+    if (this.wizardTemplate) {
+      this.wizardTemplate.pages.forEach((page, index) =>
+        this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
+      this.isFormReady = true;
+      this.iaas.success('Form preparation completed.', this.messages);
     }
+  }
 
-    clipboardCopy(value: any) {
-        this.es.clipboard.writeText(value);
+  showForm() {
+    this.isFormVisible = true;
+  }
+
+  onQuestionValue(parentPage: WizardPage, controlKey: string, questionValue: any) {
+    const updatedValue = {};
+    updatedValue[controlKey] = questionValue;
+    parentPage.pageForm.patchValue(updatedValue, {emitEvent: false});
+    this.onFormValid(parentPage);
+  }
+
+  onFormValid(parentPage: WizardPage) {
+    if (parentPage.pageForm.valid) {
+      this.formData[parentPage.key] = parentPage.pageForm.value;
+      parentPage.formValidProcess.forEach((process, index) => {
+        switch (process.processType) {
+          case 'concat':
+            const df = process.dataField.split('::');
+            const separator = df.shift();
+            const data = df.map(fieldName => fieldName.startsWith('--')
+              ? fieldName.replace('--', '')
+              : this.formData[parentPage.key][fieldName]);
+            parentPage.formValidProcess[index].result = data.join(separator);
+            break;
+        }
+      });
+      parentPage.formValidProcess.forEach(page => {
+        if (page.newField) {
+          this.formData[parentPage.key][page.newField] = page.result;
+        }
+      });
     }
+  }
+
+  onWizardFinish() {
+    this.result = this.formData;
+    this.formDataPreview.updateResult();
+    this.showNotSavedWarning = true;
+  }
+
+  saveResult() {
+    this.ds.saveData(this.result);
+    if (this.us.getRunningMode() === 'server') {
+      this.lps.postRecord(this.remoteUrl, this.result)
+        .subscribe((data: any) => this.iaas.success(data.message, this.messages),
+          (error: any) => this.iaas.error(error.error.message, this.messages));
+    }
+    this.router.navigate(['tasks']);
+  }
+
+  clipboardCopy(value: any) {
+    this.es.clipboard.writeText(value);
+  }
+
+  toPortal() {
+    this.showNoFormDialog = false;
+    this.us.clearForNewTask();
+    this.router.navigate(['tasks']);
+  }
 
 }

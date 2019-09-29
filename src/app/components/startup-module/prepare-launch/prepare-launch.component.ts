@@ -1,9 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ParameterService} from '../../../services/parameter.service';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {Router} from '@angular/router';
 import {DatabaseService} from '../../../services/database.service';
 import {forkJoin} from 'rxjs';
+import {LabPipeService} from '../../../services/lab-pipe.service';
 
 @Component({
     selector: 'app-prepare-launch',
@@ -14,7 +14,7 @@ export class PrepareLaunchComponent implements OnInit {
 
     parameterList: string[] = [];
 
-    constructor(private ps: ParameterService, private us: UserSettingsService,
+    constructor(private lps: LabPipeService, private us: UserSettingsService,
                 private ds: DatabaseService,
                 private router: Router) {
     }
@@ -22,16 +22,16 @@ export class PrepareLaunchComponent implements OnInit {
     ngOnInit() {
         const component = this;
         this.loadParameterList().subscribe(
-            data => {
+          (data: any) => {
                 console.log('init parameter list retrieved');
                 console.log(data);
-                this.parameterList = data.find(param => param.param_name === 'client_init').param_value;
+                this.parameterList = data.find(param => param.code === 'client_init').value;
             },
             error => {
                 console.warn('error loading init parameter list');
             },
             () => {
-                const observableList = this.parameterList.map(paramName => component.ps.getParameter(paramName));
+                const observableList = this.parameterList.map(paramName => component.lps.getParameter(paramName));
                 forkJoin(observableList).subscribe(
                     (data: any[]) => {
                         data.forEach((param, index) => {
@@ -51,88 +51,7 @@ export class PrepareLaunchComponent implements OnInit {
     }
 
     loadParameterList() {
-        return this.ps.getParameter('CLIENT_SETTING');
+        return this.lps.getParameter('CLIENT_SETTINGS');
     }
-
-    // startParameterChain() {
-    //   this.prepareFacility();
-    // }
-    //
-    // prepareFacility() {
-    //
-    //   this.ps.getFacility().subscribe(
-    //     data => {
-    //       console.log('facility parameter up-to-date');
-    //       this.ss.updateFacility(data);
-    //     },
-    //     () => {
-    //       console.log('error getting up-to-date facility');
-    //       this.prepareInstruments();
-    //     },
-    //     () => this.prepareInstruments()
-    //   );
-    // }
-    //
-    // prepareInstruments() {
-    //   this.ps.getInstruments().subscribe(
-    //     data => {
-    //       console.log('supported_instrument up-to-date');
-    //       this.ss.updateSupportedInstruments(data);
-    //     },
-    //     () => {
-    //       console.log('error getting up-to-date supported_instruments');
-    //       this.prepareAdminOpreators();
-    //     },
-    //     () => {
-    //       this.prepareAdminOpreators();
-    //     }
-    //   );
-    // }
-    //
-    // prepareAdminOpreators() {
-    //   this.ps.getAdminOperator().subscribe(
-    //     data => {
-    //       console.log('admin_operators parameter up-to-date');
-    //       this.ss.updateAdminOperators(data);
-    //     },
-    //     () => {
-    //       console.log('error getting up-to-date admin_operators');
-    //       this.prepareProjects();
-    //     },
-    //     () => this.prepareProjects()
-    //
-    //   );
-    // }
-    //
-    // prepareProjects() {
-    //   this.ps.getStudies().subscribe(
-    //     data => {
-    //       console.log('projects parameter up-to-date');
-    //       this.ss.updateSupportedProjects(data);
-    //       data.projects.forEach(project => {
-    //         if (project.tag !== undefined) {
-    //           this.prepareProjectConfig(project.tag);
-    //         }
-    //       });
-    //     },
-    //     () => {
-    //       console.log('error getting up-to-date projects');
-    //       this.router.navigate(['login']);
-    //     },
-    //     () => {
-    //       console.log('Preparation complete.');
-    //       this.router.navigate(['login']);
-    //     }
-    //   );
-    // }
-    //
-    // prepareProjectConfig(projectTag: string) {
-    //   this.ps.getProjectConfigs(projectTag).subscribe(
-    //     data => {
-    //       console.log(projectTag, ' parameter up-to-date');
-    //       this.ss.updateSetting(projectTag, data);
-    //     }
-    //   );
-    // }
 
 }

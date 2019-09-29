@@ -30,7 +30,7 @@ export class DynamicFormResultPreviewComponent implements OnInit {
     const keys = Object.keys(this._data);
     this.result = [];
     keys.forEach(k => {
-      if (k !== 'form_code') {
+      if (k !== 'form_code' && k !== 'study_code' && k !== 'instrument_code') {
         const childKeys = Object.keys(this._data[k]);
         childKeys.forEach(ck => {
           this.result.push({form: k, field: ck, value: this._data[k][ck], iterable: Array.isArray(this._data[k][ck])});

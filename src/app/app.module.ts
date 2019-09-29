@@ -22,6 +22,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ClarityModule, ClrIconModule} from '@clr/angular';
 import {StorageModule} from '@ngx-pwa/local-storage';
+import { ManagePortalComponent } from './components/portal-module/manage-portal/manage-portal.component';
+import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +40,9 @@ import {StorageModule} from '@ngx-pwa/local-storage';
     ConnectionMonitorComponent,
     TaskPortalComponent,
     TopNavigationComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    ManagePortalComponent,
+    InAppAlertComponent
   ],
   imports: [
     BrowserModule,

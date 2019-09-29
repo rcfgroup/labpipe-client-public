@@ -1,0 +1,89 @@
+name: Node CI
+
+on: [push, create]
+
+jobs:
+  build_for_mac:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install @angular/cli
+      run: npm install -g @angular/cli
+    - name: Install electron-builder
+      run: npm install -g electron-builder
+    - name: Install node modules
+      run: npm install
+    - name: Build Angular app
+      if: github.event_name == 'push'
+      run: ng build
+    - name: Build Angular app for release [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: sed "s/0.0.0/${TAG:1}/g" package.json > _package.json && mv _package.json package.json && ng build
+      env:
+        TAG: ${{github.event.ref}}
+    - name: Install node modules for electron app [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: cd electron-app && npm install
+    - name: Build Electron for release [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: cd electron-app && sed "s/0.0.0/${TAG:1}/g" package.json > _package.json && mv _package.json package.json && electron-builder -m --publish=never && ls dist
+      env:
+        TAG: ${{github.event.ref}}
+    - name: Create release [tag only]
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      with:
+        files: |
+          electron-app/dist/*.zip
+          electron-app/dist/latest-mac.yml
+
+      
+  build_for_win_linux:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Install @angular/cli
+      run: npm install -g @angular/cli
+    - name: Install electron-builder
+      run: npm install -g electron-builder
+    - name: Install node modules
+      run: npm install
+    - name: Build Angular app
+      if: github.event_name == 'push'
+      run: ng build
+    - name: Build Angular app for release [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: sed "s/0.0.0/%TAG:~1%/g" package.json > _package.json && mv _package.json package.json && ng build
+      env:
+        TAG: ${{github.event.ref}}
+    - name: Install node modules for electron app [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: cd electron-app && npm install
+    - name: Build Electron for release [tag only]
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      run: cd electron-app &&  sed "s/0.0.0/%TAG:~1%/g" package.json > _package.json && mv _package.json package.json && electron-builder -wl --publish=never && ls dist
+      env:
+        TAG: ${{github.event.ref}}
+    - name: Create release [tag only]
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'create' && github.event.ref_type == 'tag'
+      with:
+        files: |
+          electron-app\dist\*.exe
+          electron-app\dist\*.blockmap
+          electron-app\dist\*.AppImage
+          electron-app\dist\*.snap
+          electron-app\dist\latest-linux.yml
+          electron-app\dist\latest.yml

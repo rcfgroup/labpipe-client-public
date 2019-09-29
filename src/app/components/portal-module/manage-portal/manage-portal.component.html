@@ -1,0 +1,41 @@
+<app-in-app-alert [messages]="messages"></app-in-app-alert>
+<clr-tabs>
+  <clr-tab>
+    <button clrTabLink>Manage</button>
+    <clr-tab-content *clrIfActive>
+      <button class="btn btn-primary-outline btn-sm" (click)="newOperator()">New Operator</button>
+      <button class="btn btn-primary-outline btn-sm" (click)="newToken()">New Access Token</button>
+    </clr-tab-content>
+  </clr-tab>
+</clr-tabs>
+
+<clr-modal [(clrModalOpen)]="showNewOperatorModal">
+  <h3 class="modal-title">Add new operator</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="operatorForm">
+      <clr-input-container>
+        <label>Full name</label>
+        <input clrInput type="text" formControlName="name" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Email</label>
+        <input clrInput type="email" formControlName="email" required />
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirmNewOperator(false)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!operatorForm.valid" (click)="onConfirmNewOperator(true)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showNewTokenModal">
+  <h3 class="modal-title">Add new token</h3>
+  <div class="modal-body">
+    Please confirm you are going to create a new access token.
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirmNewToken(false)">Cancel</button>
+    <button class="btn btn-danger" type="button" (click)="onConfirmNewToken(true)">Continue</button>
+  </div>
+</clr-modal>

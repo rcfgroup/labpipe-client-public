@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/labpipe-client-public",
+            "outputPath": "electron-app/ng-app",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -26,7 +26,8 @@
             "styles": [
               "node_modules/@clr/icons/clr-icons.min.css",
               "src/styles.css",
-              "node_modules/@clr/ui/clr-ui.min.css"
+              "node_modules/@clr/ui/clr-ui.min.css",
+              "node_modules/bootstrap-css-only/css/bootstrap-grid.css"
             ],
             "scripts": [
               "node_modules/@webcomponents/custom-elements/custom-elements.min.js",

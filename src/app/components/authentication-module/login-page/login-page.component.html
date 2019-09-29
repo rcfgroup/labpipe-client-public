@@ -1,9 +1,10 @@
 <div class="main-container">
-  <section class="title">
-    <h3 class="welcome">Welcome to LabPipe</h3>
-    <h5 class="hint">Use your allocated ID and password to sign in</h5>
-  </section>
-  <form class="clr-form clr-form-vertical" [formGroup]="loginForm">
+  <img src="assets/images/labpipe-logo-light.png" alt="LabPipe Logo">
+  <form class="clr-form clr-form-vertical ml-4" [formGroup]="loginForm">
+    <section class="title">
+      <h3 class="welcome">Welcome to LabPipe</h3>
+      <h5 class="hint">Use your allocated ID and password to sign in</h5>
+    </section>
     <clr-select-container>
       <label>Location</label>
       <select clrSelect name="select-location" formControlName="location" required>
