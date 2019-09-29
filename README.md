@@ -10,8 +10,12 @@ Client to work with LabPipe Server to assist with data collection:
 
 <sup>*</sup> Server connection is still required if you wish to use functions provided on the server, e.g. notification, backup, and other post upload processes.
 
+## Installation
+
+Pre-compiled binary releases can be downloaded from the [releases](../../releases) page. Build from source code option is also available. Read more about installation [here](https://docs.labpipe.org).
+
 ## Documentation
-The documentation is available [here](http://docs.labpipe.org).
+The documentation is available [here](https://docs.labpipe.org).
 
 ## Roadmap
 
