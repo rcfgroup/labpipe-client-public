@@ -1,6 +1,6 @@
-# LabPipe Client
+![LabPipe Login](labpipe-logo-light.png)
 
-[![Build Status](https://travis-ci.com/colin-bz/labpipe-server-public.svg?branch=master)](https://travis-ci.com/colin-bz/labpipe-server-public)
+![](../../workflows/Node%20CI/badge.svg)
 
 Client to work with LabPipe Server to assist with data collection:
 
@@ -11,7 +11,7 @@ Client to work with LabPipe Server to assist with data collection:
 <sup>*</sup> Server connection is still required if you wish to use functions provided on the server, e.g. notification, backup, and other post upload processes.
 
 ## Documentation
-The documentation is available [here](https://github.com/colin-bz/labpipe-client-public/wiki).
+The documentation is available [here](http://docs.labpipe.org).
 
 ## Roadmap
 
