@@ -9,6 +9,10 @@ export class LabPipeService {
   apiRoot: string;
 
   constructor(private userSettingsService: UserSettingsService, private http: HttpClient) {
+    this.loadApiRoot();
+  }
+
+  loadApiRoot() {
     this.apiRoot = this.userSettingsService.getApiRoot();
   }
 

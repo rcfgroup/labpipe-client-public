@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {LabPipeService} from '../../../services/lab-pipe.service';
+import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
 
 @Component({
     selector: 'app-mandatory-setting',
@@ -15,11 +16,14 @@ export class MandatorySettingComponent implements OnInit {
     isApiRootValid: boolean;
     isApiTokenKeyValid: boolean;
 
+    messages: InAppMessage[] = [];
+
     constructor(private us: UserSettingsService,
                 private es: ElectronService,
                 private zone: NgZone,
                 private http: HttpClient,
                 private lps: LabPipeService,
+                private iaas: InAppAlertService,
                 private formBuilder: FormBuilder) {
         this.settingForm = this.formBuilder.group({
             dirData: ['', Validators.required],
@@ -76,9 +80,12 @@ export class MandatorySettingComponent implements OnInit {
         if (url) {
           this.lps.checkPublicAccess(url).subscribe(() => {
             this.isApiRootValid = true;
+            this.iaas.success('LabPipe server connected.', this.messages);
             this.us.updateApiRoot(url);
+            this.lps.loadApiRoot();
           }, (err) => {
             console.log(err);
+            this.iaas.error('Incorrect API root.', this.messages);
             this.isApiRootValid = false;
           });
         }
@@ -91,11 +98,13 @@ export class MandatorySettingComponent implements OnInit {
         if (url && token && key) {
             this.lps.checkTokenAccess(token, key).subscribe(() => {
                     this.isApiTokenKeyValid = true;
+                    this.iaas.success('Access token is valid.', this.messages);
                     this.us.updateApiToken(token);
                     this.us.updateApiKey(key);
                 },
                 (err) => {
                     console.log(err);
+                    this.iaas.error('Access token is not valid.', this.messages);
                     this.isApiTokenKeyValid = false;
                 });
         }
@@ -103,7 +112,10 @@ export class MandatorySettingComponent implements OnInit {
 
     updateServerMonitorConfig() {
         this.settingForm.controls.serverMonitorInterval.valueChanges
-          .subscribe(value => this.us.updateServerMonitorInterval(value));
+          .subscribe(value => {
+            this.us.updateServerMonitorInterval(value);
+
+          });
         this.settingForm.controls.serverMonitorRetryInterval.valueChanges
           .subscribe(value => this.us.updateServerMonitorRetryInterval(value));
     }
