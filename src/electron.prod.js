@@ -1,30 +1,30 @@
-const { app, BrowserWindow } = require('electron');
-require('electron-debug')();
-const path = require('path');
+const {app, BrowserWindow} = require('electron');
 const url = require('url');
 
 let win;
 
 const createWindow = () => {
-  console.log(__dirname);
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: path.join(__dirname, 'favicon.ico'),
-  });
+  setTimeout(() => {
+    win = new BrowserWindow({
+      width: 800,
+      height: 600,
+      webPreferences: {
+        webSecurity: false,
+        nodeIntegration: true
+      }
+    });
 
-  // and load the index.html of the app.
-  win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
-    protocol: 'file:',
-    slashes: true
-  }));
+    win.loadURL(url.format({
+      pathname: 'localhost:4200',
+      protocol: 'http',
+      slashes: true
+    }));
 
-  win.openDevTools();
+    win.on('closed', () => {
+      win = null
+    });
 
-  win.on('closed', () => {
-    win = null;
-  });
+  }, 10000);
 };
 
 app.on('ready', createWindow);
