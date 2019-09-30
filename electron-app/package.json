@@ -20,7 +20,10 @@
   },
   "build": {
     "appId": "org.labpipe.client",
-    "files": ["**/*", "build/icon.*"],
+    "files": [
+      "**/*",
+      "build/icon.*"
+    ],
     "mac": {
       "category": "productivity",
       "target": [
@@ -46,6 +49,7 @@
     "electron-debug": "^3.0.1",
     "electron-log": "^3.0.8",
     "electron-settings": "^3.2.0",
+    "fs-extra": "^8.1.0",
     "nedb": "^1.8.0",
     "nedb-promises": "^4.0.0",
     "uuid": "^3.3.3"
