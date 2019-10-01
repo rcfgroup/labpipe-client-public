@@ -21,11 +21,9 @@ const createWindow = () => {
 
   // and load the index.html of the app.
   win.loadFile('./ng-app/index.html');
-  win.webContents.openDevTools();
 
   settings.set('version', app.getVersion());
 
-  // win.openDevTools();
 
   win.on('closed', () => {
     win = null;
