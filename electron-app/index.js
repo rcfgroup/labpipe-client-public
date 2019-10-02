@@ -33,6 +33,8 @@ const createWindow = () => {
 app.on('ready', createWindow);
 
 app.on('window-all-closed', () => {
+  settings.delete('running_operator');
+  settings.delete('running_operator_password');
   if (process.platform !== 'darwin') {
     app.quit();
   }
