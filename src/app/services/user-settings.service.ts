@@ -191,19 +191,13 @@ export class UserSettingsService {
     return this.setting.get('running_project');
   }
 
-  updateCurrentVisitType(isNormalVisit: boolean): void {
-    this.setting.set('running_is_normal_visit', isNormalVisit);
-  }
-
   // =====================================================
 
   clearForNewTask() {
     this.setting.delete('running_project');
-    this.setting.delete('running_is_normal_visit');
   }
 
   clearForNewLogin() {
-    this.setting.delete('running_location');
     this.clearForNewTask();
     this.setting.delete('running_operator');
     this.setting.delete('running_privilege');

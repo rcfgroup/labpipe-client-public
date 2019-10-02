@@ -1,25 +1,3 @@
 <app-status-bar [location]="location" [instrument]="instrument"></app-status-bar>
 <h4>Select a study to continue</h4>
 <app-dynamic-sample-collection-wizard></app-dynamic-sample-collection-wizard>
-
-
-<clr-modal [(clrModalOpen)]="dialogVisitTypeOpened">
-    <h3 class="modal-title">Confirm visit type</h3>
-      <div class="modal-body">
-          <clr-radio-container clrInline>
-              <label>Visit type</label>
-              <clr-radio-wrapper>
-                <input type="radio" clrRadio name="visit-type-options" required value="true" [(ngModel)]="isNormalVisit" />
-                <label>Normal</label>
-              </clr-radio-wrapper>
-              <clr-radio-wrapper>
-                <input type="radio" clrRadio name="visit-type-options" required value="false" [(ngModel)]="isNormalVisit" />
-                <label>Exacerbation</label>
-              </clr-radio-wrapper>
-            </clr-radio-container>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" type="button" (click)="hideVisitTypeDialog()">Cancel</button>
-        <button class="btn btn-primary" type="button" (click)="goToSampleCollection()">Continue</button>
-      </div>
-</clr-modal>

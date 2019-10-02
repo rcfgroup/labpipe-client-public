@@ -35,17 +35,4 @@ export class TaskPortalComponent implements OnInit {
   ngOnInit() {
   }
 
-  hideVisitTypeDialog() {
-    this.dialogVisitTypeOpened = false;
-  }
-
-  goToSampleCollection() {
-    this.dialogVisitTypeOpened = false;
-    if (this.studyForm.valid) {
-      this.uss.updateCurrentStudy(this.studyForm.get('study').value);
-      this.uss.updateCurrentVisitType(this.isNormalVisit);
-      this.router.navigate(['sample-collection-portal']);
-    }
-  }
-
 }
