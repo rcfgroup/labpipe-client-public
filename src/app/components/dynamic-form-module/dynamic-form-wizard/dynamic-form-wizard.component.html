@@ -89,5 +89,19 @@
   </div>
 </clr-modal>
 
+<clr-modal [(clrModalOpen)]="showSavedDialog">
+  <h3 class="modal-title">Record saved</h3>
+  <div class="modal-body">
+    <p>Your record has been:</p>
+    <ul>
+      <li><clr-icon shape="check" class="is-success"></clr-icon> saved locally</li>
+      <li><clr-icon shape="info-circle" [attr.shape]="sentToServer? 'check' : 'times'" [ngClass]="{'is-success': sentToServer, 'is-error': !sentToServer}"></clr-icon> {{ sentToServer ? '' : 'NOT'}} sent to the server</li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" (click)="toPortal()">Continue</button>
+  </div>
+</clr-modal>
+
 
 

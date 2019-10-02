@@ -41,6 +41,9 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   showNotSavedWarning: boolean;
   showMultipleFormCodeDialog: boolean;
   showNoFormDialog: boolean;
+  showSavedDialog: boolean;
+
+  sentToServer: boolean;
 
   constructor(private us: UserSettingsService,
               private dfs: DynamicFormService,
@@ -179,11 +182,18 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   saveResult() {
     this.ds.saveData(this.result);
     if (this.us.getRunningMode() === 'server') {
+      this.sentToServer = true;
       this.lps.postRecord(this.remoteUrl, this.result)
-        .subscribe((data: any) => this.iaas.success(data.message, this.messages),
-          (error: any) => this.iaas.error(error.error.message, this.messages));
+        .subscribe((data: any) => {
+            this.iaas.success(data.message, this.messages);
+          },
+          (error: any) => {
+            this.iaas.error(error.error.message, this.messages);
+          });
+    } else {
+      this.sentToServer = false;
     }
-    this.router.navigate(['tasks']);
+    this.showSavedDialog = true;
   }
 
   clipboardCopy(value: any) {
@@ -192,6 +202,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   toPortal() {
     this.showNoFormDialog = false;
+    this.showSavedDialog = false;
     this.us.clearForNewTask();
     this.router.navigate(['tasks']);
   }
