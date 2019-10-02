@@ -60,7 +60,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     this.formTemplates = [];
     this.location = this.us.getCurrentLocation();
     this.instrument = this.us.getCurrentInstrument();
-    this.study = this.us.getCurrentProject();
+    this.study = this.us.getCurrentStudy();
   }
 
   ngOnInit() {

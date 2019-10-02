@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ElectronService} from 'ngx-electron';
 import {CodeName} from '../models/code-name.model';
-import {AdminOperator, RequiredParameterName, SupportedProjects} from '../models/parameter.model';
+import {RequiredParameterName} from '../models/parameter.model';
 
 @Injectable({
   providedIn: 'root'
@@ -175,19 +175,11 @@ export class UserSettingsService {
 
   // ================================================
 
-  updateAdminOperators(admins: AdminOperator): void {
-    this.setting.set('config_admins', admins);
-  }
-
-  getAdminOperators(): AdminOperator {
-    return this.setting.get('config_admins');
-  }
-
   updateCurrentStudy(project: CodeName): void {
     this.setting.set('running_project', project);
   }
 
-  getCurrentProject(): CodeName {
+  getCurrentStudy(): CodeName {
     return this.setting.get('running_project');
   }
 

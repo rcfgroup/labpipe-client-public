@@ -41,7 +41,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const sq = this.qBase as SelectQuestion;
         if (sq.options.startsWith('__') && sq.options.endsWith('__')) {
           const optionIndex = sq.options.replace(/__/g, '').split('::');
-          let optionValues = this.us.getCurrentProject();
+          let optionValues = this.us.getCurrentStudy();
           optionIndex.forEach((oi: string) => {
             optionValues = optionValues[oi];
           });
@@ -62,7 +62,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const iq = this.qBase as InputQuestion;
         if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
           const patternIndex = iq.pattern.replace(/__/g, '').split('::');
-          let patternValues = this.us.getCurrentProject();
+          let patternValues = this.us.getCurrentStudy();
           patternIndex.forEach((oi: string) => {
             patternValues = patternValues[oi];
           });
