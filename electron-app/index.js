@@ -23,6 +23,8 @@ const createWindow = () => {
   win.loadFile('./ng-app/index.html');
 
   settings.set('version', app.getVersion());
+  settings.delete('running_operator');
+  settings.delete('running_operator_password');
 
 
   win.on('closed', () => {
