@@ -162,18 +162,11 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       parentPage.formValidProcess.forEach((process, index) => {
         switch (process.processType) {
           case 'concat':
-            const df = process.dataField.split('::');
-            const separator = df.shift();
-            const data = df.map(fieldName => fieldName.startsWith('--')
-              ? fieldName.replace('--', '')
-              : this.formData[parentPage.key][fieldName]);
-            parentPage.formValidProcess[index].result = data.join(separator);
+            this.dfs.concat(process, index, parentPage, this.formData);
             break;
-        }
-      });
-      parentPage.formValidProcess.forEach(page => {
-        if (page.newField) {
-          this.formData[parentPage.key][page.newField] = page.result;
+          case 'file-rename':
+            let params = process.parameters;
+            break;
         }
       });
     }

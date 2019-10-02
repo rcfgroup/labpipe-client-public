@@ -4,18 +4,18 @@ import {FormGroup} from '@angular/forms';
 export class FormValidProcess {
     newField: string;
     processType: string;
-    dataField: string;
+    parameters: string[];
     result: any;
 
     constructor(options: {
         newField?: string,
         processType?: string,
-        dataField?: string,
+        parameters?: string[],
         result?: any;
     } = {}) {
         this.newField = options.newField;
         this.processType = options.processType;
-        this.dataField = options.dataField;
+        this.parameters = options.parameters === undefined ? [] : options.parameters;
         this.result = options.result;
     }
 }
