@@ -28,10 +28,12 @@ export class LoginPageComponent implements OnInit {
               private router: Router,
               private us: UserSettingsService,
               private es: ElectronService) {
+    this.selectedLocation = this.us.getCurrentLocation();
+    this.selectedInstrument = this.us.getCurrentInstrument();
     this.loginForm = this.formBuilder.group({
-      location: ['', Validators.required ],
-      instrument: ['', Validators.required ],
-      operator: ['', Validators.required ],
+      location: [this.selectedLocation ? this.selectedLocation : '', Validators.required],
+      instrument: [this.selectedInstrument ? this.selectedInstrument : '', Validators.required],
+      operator: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
@@ -41,11 +43,6 @@ export class LoginPageComponent implements OnInit {
     this.locations$ = this.us.getLocations();
     this.instruments$ = this.us.getInstruments();
     this.operators$ = this.us.getOperators();
-
-    this.selectedLocation = this.us.getCurrentLocation();
-    this.selectedInstrument = this.us.getCurrentInstrument();
-    this.loginForm.get('location').setValue(this.us.getCurrentLocation());
-    this.loginForm.get('instrument').setValue(this.us.getCurrentInstrument());
     this.formChangeListener();
   }
 
@@ -94,6 +91,10 @@ export class LoginPageComponent implements OnInit {
 
   onRetry() {
     this.incorrectLoginDialogOpened = false;
+  }
+
+  compareFn(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.code === c2.code : c1 === c2;
   }
 
 }

@@ -7,13 +7,13 @@
     </section>
     <clr-select-container>
       <label>Location</label>
-      <select clrSelect name="select-location" formControlName="location" required>
+      <select clrSelect name="select-location" formControlName="location" [compareWith]="compareFn" required>
         <option *ngFor="let l of locations$" [ngValue]="l">{{l.name}}</option>
       </select>
     </clr-select-container>
     <clr-select-container>
       <label>Instrument</label>
-      <select clrSelect name="select-instrument" formControlName="instrument" required>
+      <select clrSelect name="select-instrument" formControlName="instrument" [compareWith]="compareFn" required>
         <option *ngFor="let i of instruments$" [ngValue]="i">{{i.name}}</option>
       </select>
     </clr-select-container>
