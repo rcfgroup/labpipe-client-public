@@ -16,6 +16,8 @@ export class UserSettingsService {
   cipher: any;
   decipher: any;
   iv: any;
+  path: any;
+  fs: any;
 
   constructor(
     private es: ElectronService
@@ -26,6 +28,8 @@ export class UserSettingsService {
     this.key = this.crypto.scryptSync(this.password, 'pikapika', 32);
     this.cipher = this.crypto.createCipheriv(this.algorithm, this.key, this.iv);
     this.decipher = this.crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+    this.path = this.es.remote.require('path');
+    this.fs = this.es.remote.require('fs-extra');
   }
 
   updateSetting(paramName: string, paramValue: any): void {
@@ -62,10 +66,26 @@ export class UserSettingsService {
 
   setDataDirectory(path: string): void {
     this.setting.set('config_data_directory', path);
+    const fileDir = this.path.join(path, 'files');
+    this.setFileDirectory(fileDir);
   }
 
   getDataDirectory(): string {
     return this.setting.get('config_data_directory');
+  }
+
+  setFileDirectory(path: string): void {
+    this.fs.ensureDirSync(path).then(() => {
+      this.setting.set('config_file_directory', path);
+    })
+      .catch(err => {
+        console.log(err);
+        throw new Error('Cannot ensure files directory.');
+      });
+  }
+
+  getFileDirectory(): string {
+    return this.setting.get('config_file_directory');
   }
 
   updateApiRoot(apiRoot: string): void {
