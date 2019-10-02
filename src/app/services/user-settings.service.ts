@@ -192,7 +192,7 @@ export class UserSettingsService {
 
   clearForNewLogin() {
     this.setting.delete('running_location');
-    this.setting.delete('running_is_normal_visit');
+    this.clearForNewTask();
     this.setting.delete('running_operator');
     this.setting.delete('running_privilege');
   }

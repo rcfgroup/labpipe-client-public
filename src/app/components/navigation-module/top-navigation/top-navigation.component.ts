@@ -44,4 +44,26 @@ export class TopNavigationComponent implements OnInit {
     this.router.navigate(['settings']);
   }
 
+  toLogin() {
+    this.us.clearForNewLogin();
+    this.router.navigate(['login']);
+  }
+
+  toFreshStartUp() {
+    this.us.clearForNewLogin();
+    this.router.navigate(['fresh-startup']);
+  }
+
+  onBrandClick() {
+    if (this.currentUser) {
+      this.toTasks();
+    } else {
+      if (this.us.getRegularStartup()) {
+        this.toLogin();
+      } else {
+        this.toFreshStartUp();
+      }
+    }
+  }
+
 }
