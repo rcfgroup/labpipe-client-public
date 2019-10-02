@@ -10,11 +10,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
   styleUrls: ['./task-portal.component.css']
 })
 export class TaskPortalComponent implements OnInit {
-  currentOperator: object;
-  currentDataDirectory: string;
-  zscoremax: number;
-  zscoremin: number;
-  cmsQcRefValidPeriod: number;
+  location: any;
+  instrument: any;
+  operator: object;
+
   isNormalVisit: true;
 
   studyForm: FormGroup;
@@ -23,15 +22,17 @@ export class TaskPortalComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private es: ElectronService,
-              private ss: UserSettingsService,
-              private router: Router ) {
-                this.studyForm = this.formBuilder.group({
-                  study: ['', Validators.required]
-                });
-              }
+              private uss: UserSettingsService,
+              private router: Router) {
+    this.studyForm = this.formBuilder.group({
+      study: ['', Validators.required]
+    });
+    this.operator = this.uss.getCurrentOperator();
+    this.location = this.uss.getCurrentLocation();
+    this.instrument = this.uss.getCurrentInstrument();
+  }
 
   ngOnInit() {
-    this.currentOperator = this.ss.getCurrentOperator();
   }
 
   hideVisitTypeDialog() {
@@ -41,8 +42,8 @@ export class TaskPortalComponent implements OnInit {
   goToSampleCollection() {
     this.dialogVisitTypeOpened = false;
     if (this.studyForm.valid) {
-      this.ss.updateCurrentStudy(this.studyForm.get('study').value);
-      this.ss.updateCurrentVisitType(this.isNormalVisit);
+      this.uss.updateCurrentStudy(this.studyForm.get('study').value);
+      this.uss.updateCurrentVisitType(this.isNormalVisit);
       this.router.navigate(['sample-collection-portal']);
     }
   }

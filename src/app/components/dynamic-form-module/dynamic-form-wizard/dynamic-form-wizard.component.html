@@ -1,4 +1,5 @@
 <app-in-app-alert [messages]="messages"></app-in-app-alert>
+<app-status-bar [location]="location" [instrument]="instrument" [study]="study"></app-status-bar>
 <div *ngIf="isFormReady; else spinner">
     <button class="btn btn-primary" (click)="showForm()">Open Form</button>
     <button class="btn btn-danger" [disabled]="!this.result" (click)="saveResult()">Save</button>

@@ -24,6 +24,9 @@ import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.se
 })
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
+  location: any;
+  instrument: any;
+  study: any;
 
   messages: InAppMessage[] = [];
 
@@ -55,6 +58,9 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
               private http: HttpClient,
               private router: Router) {
     this.formTemplates = [];
+    this.location = this.us.getCurrentLocation();
+    this.instrument = this.us.getCurrentInstrument();
+    this.study = this.us.getCurrentProject();
   }
 
   ngOnInit() {
@@ -67,7 +73,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   getFormTemplate() {
-    this.lps.getForm(this.us.getCurrentProject().code, this.us.getCurrentInstrument().code).subscribe((data: any) => {
+    this.lps.getForm(this.study.code, this.instrument.code).subscribe((data: any) => {
         this.formTemplates = data;
         switch (this.formTemplates.length) {
           case 0:
