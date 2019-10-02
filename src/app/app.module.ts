@@ -24,6 +24,7 @@ import {ClarityModule, ClrIconModule} from '@clr/angular';
 import {StorageModule} from '@ngx-pwa/local-storage';
 import { ManagePortalComponent } from './components/portal-module/manage-portal/manage-portal.component';
 import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.component';
+import { StatusBarComponent } from './components/status-bar/status-bar.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.comp
     TopNavigationComponent,
     LoginPageComponent,
     ManagePortalComponent,
-    InAppAlertComponent
+    InAppAlertComponent,
+    StatusBarComponent
   ],
   imports: [
     BrowserModule,
