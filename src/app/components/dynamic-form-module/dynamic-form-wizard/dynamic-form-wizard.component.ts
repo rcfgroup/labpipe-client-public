@@ -49,6 +49,8 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   sentToServer: boolean;
 
+  actionIdentifier: string;
+
   constructor(private us: UserSettingsService,
               private dfs: DynamicFormService,
               private ds: DatabaseService,
@@ -143,6 +145,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       this.wizardTemplate.pages.forEach((page, index) =>
         this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
       this.isFormReady = true;
+      this.actionIdentifier = this.lps.getUid();
       this.iaas.success('Form preparation completed.', this.messages);
     }
   }

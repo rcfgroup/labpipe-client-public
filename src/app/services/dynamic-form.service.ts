@@ -50,6 +50,9 @@ export class DynamicFormService {
       case 'file-rename':
         this.fileRename(process, processIndex, parentPage, formData);
         break;
+      case 'file-upload':
+        this.fileUpload(process, processIndex, parentPage, formData);
+        break;
       case 'folder-watch':
         this.folderWatch(process, processIndex, parentPage, formData, messages);
         break;
@@ -76,9 +79,9 @@ export class DynamicFormService {
     if (fileDir) {
       const params = process.parameters;
       const fileFields = params.map(p => p.replace('::', ''));
+      const copiedFiles = [];
       fileFields.forEach(ff => {
         if (formData[parentPage.key] && formData[parentPage.key][ff]) {
-          const copiedFiles = [];
           formData[parentPage.key][ff].forEach(f => {
             try {
               const copiedFile = this.path.join(fileDir, this.path.basename(f));
@@ -121,6 +124,24 @@ export class DynamicFormService {
           formData[parentPage.key][fileField] = renamedFiles;
         }
       }
+    }
+  }
+
+  fileUpload(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any) {
+    const params = process.parameters;
+    if (params.length > 0) {
+      const fileFields = params.map(p => p.replace('::', ''));
+      const uploadedFiles = [];
+      fileFields.forEach(ff => {
+        if (formData[parentPage.key] && formData[parentPage.key][ff]) {
+          formData[parentPage.key][ff].forEach(f => {
+            // TODO add file upload api access
+            uploadedFiles.push(f);
+          });
+          process.result = uploadedFiles;
+          formData[parentPage.key][ff] = uploadedFiles;
+        }
+      });
     }
   }
 
