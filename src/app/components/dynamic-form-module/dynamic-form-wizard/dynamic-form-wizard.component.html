@@ -82,7 +82,7 @@
   </div>
 </clr-modal>
 
-<clr-modal [(clrModalOpen)]="showMultipleFormCodeDialog">
+<clr-modal [(clrModalOpen)]="showMultipleFormCodeDialog" [clrModalClosable]="false">
   <h3 class="modal-title">Multiple forms available</h3>
   <div class="modal-body">
     <clr-select-container>
@@ -99,7 +99,7 @@
   </div>
 </clr-modal>
 
-<clr-modal [(clrModalOpen)]="showNoFormDialog">
+<clr-modal [(clrModalOpen)]="showNoFormDialog" [clrModalClosable]="false">
   <h3 class="modal-title">No form available</h3>
   <div class="modal-body">
     <p>No form is not available yet for your current instrument in this study.</p>
@@ -109,7 +109,7 @@
   </div>
 </clr-modal>
 
-<clr-modal [(clrModalOpen)]="showSavedDialog">
+<clr-modal [(clrModalOpen)]="showSavedDialog" [clrModalClosable]="false">
   <h3 class="modal-title">Record saved</h3>
   <div class="modal-body">
     <p>Your record has been:</p>
