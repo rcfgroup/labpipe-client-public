@@ -75,7 +75,7 @@ export class UserSettingsService {
   }
 
   setFileDirectory(path: string): void {
-    this.fs.ensureDirSync(path).then(() => {
+    this.fs.ensureDir(path).then(() => {
       this.setting.set('config_file_directory', path);
     })
       .catch(err => {
