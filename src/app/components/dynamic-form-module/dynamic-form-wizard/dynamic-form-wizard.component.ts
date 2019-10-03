@@ -160,16 +160,15 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     if (parentPage.pageForm.valid) {
       this.formData[parentPage.key] = parentPage.pageForm.value;
       parentPage.formValidProcess.forEach((process, index) => {
-        switch (process.processType) {
-          case 'concat':
-            this.dfs.concat(process, index, parentPage, this.formData);
-            break;
-          case 'file-rename':
-            let params = process.parameters;
-            break;
+        if (process.auto) {
+          this.dfs.formValidProcessTriage(process, index, parentPage, this.formData);
         }
       });
     }
+  }
+
+  activateProcess(parentPage: WizardPage, process: FormValidProcess, processIndex: number) {
+    this.dfs.formValidProcessTriage(process, processIndex, parentPage, this.formData);
   }
 
   onWizardFinish() {

@@ -1,66 +1,85 @@
 <app-in-app-alert [messages]="messages"></app-in-app-alert>
 <app-status-bar [location]="location" [instrument]="instrument" [study]="study"></app-status-bar>
 <div *ngIf="isFormReady; else spinner">
-    <button class="btn btn-primary" (click)="showForm()">Open Form</button>
-    <button class="btn btn-danger" [disabled]="!this.result" (click)="saveResult()">Save</button>
-    <clr-wizard #wizard [(clrWizardOpen)]="isFormVisible" (clrWizardOnFinish)="onWizardFinish()">
-        <clr-wizard-title>{{wizardTemplate.title}}</clr-wizard-title>
+  <button class="btn btn-primary" (click)="showForm()">Open Form</button>
+  <button class="btn btn-danger" [disabled]="!this.result" (click)="saveResult()">Save</button>
+  <clr-wizard #wizard [(clrWizardOpen)]="isFormVisible" (clrWizardOnFinish)="onWizardFinish()">
+    <clr-wizard-title>{{wizardTemplate.title}}</clr-wizard-title>
 
-        <clr-wizard-button type="cancel">Cancel</clr-wizard-button>
-        <clr-wizard-button type="previous">Back</clr-wizard-button>
-        <clr-wizard-button type="next">Next</clr-wizard-button>
-        <clr-wizard-button type="finish">Finish</clr-wizard-button>
+    <clr-wizard-button type="cancel">Cancel</clr-wizard-button>
+    <clr-wizard-button type="previous">Back</clr-wizard-button>
+    <clr-wizard-button type="next">Next</clr-wizard-button>
+    <clr-wizard-button type="finish">Finish</clr-wizard-button>
 
-        <div *ngFor="let wizardPage of wizardTemplate.pages">
-            <clr-wizard-page
-                    [clrWizardPageNextDisabled]="wizardPage.requireValidForm ? !wizardPage.pageForm.valid : null">
-                <ng-template clrPageTitle>{{wizardPage.title}}</ng-template>
-                <ng-template clrPageNavTitle>{{wizardPage.navTitle}}</ng-template>
-                <form *ngIf="isFormVisible"
-                      [formGroup]="wizardPage.pageForm" class="clr-form clr-form-vertical">
-                    <div *ngFor="let question of wizardPage.questions" class="form-row">
-                        <app-dynamic-form-question [form]="wizardPage.pageForm" [qBase]="question"
-                                                   (qValue)="onQuestionValue(wizardPage, question.key, $event)"></app-dynamic-form-question>
-                    </div>
-                </form>
-                <clr-datagrid *ngIf="wizardPage.formValidProcess.length > 0">
-                    <clr-dg-column>New field</clr-dg-column>
-                    <clr-dg-column>Result</clr-dg-column>
-                    <clr-dg-column></clr-dg-column>
+    <div *ngFor="let wizardPage of wizardTemplate.pages">
+      <clr-wizard-page
+        [clrWizardPageNextDisabled]="wizardPage.requireValidForm ? !wizardPage.pageForm.valid : null">
+        <ng-template clrPageTitle>{{wizardPage.title}}</ng-template>
+        <ng-template clrPageNavTitle>{{wizardPage.navTitle}}</ng-template>
+        <form *ngIf="isFormVisible"
+              [formGroup]="wizardPage.pageForm" class="clr-form clr-form-vertical">
+          <div *ngFor="let question of wizardPage.questions" class="form-row">
+            <app-dynamic-form-question [form]="wizardPage.pageForm" [qBase]="question"
+                                       (qValue)="onQuestionValue(wizardPage, question.key, $event)"></app-dynamic-form-question>
+          </div>
+        </form>
+        <clr-datagrid *ngIf="wizardPage.formValidProcess.length > 0">
+          <clr-dg-column>Process</clr-dg-column>
+          <clr-dg-column>New field</clr-dg-column>
+          <clr-dg-column>Result</clr-dg-column>
+          <clr-dg-column></clr-dg-column>
 
-                    <clr-dg-row *ngFor="let process of wizardPage.formValidProcess">
-                        <clr-dg-cell>{{process.newField}}</clr-dg-cell>
-                        <clr-dg-cell>{{process.result}}</clr-dg-cell>
-                        <clr-dg-cell>
-                            <button class="btn btn-sm btn-primary" *ngIf="process.result" (click)="clipboardCopy(process.result)">Copy</button>
-                        </clr-dg-cell>
-                    </clr-dg-row>
-                    <clr-dg-footer>{{wizardPage.formValidProcess.length}} processes</clr-dg-footer>
-                </clr-datagrid>
-            </clr-wizard-page>
-        </div>
-    </clr-wizard>
+          <clr-dg-row *ngFor="let process of wizardPage.formValidProcess; let i = index">
+            <clr-dg-cell>{{process.processType}}</clr-dg-cell>
+            <clr-dg-cell>{{process.newField}}</clr-dg-cell>
+            <clr-dg-cell>
+              <div [ngSwitch]="process.processType">
+                <div *ngSwitchDefault>
+                  {{process.result}}
+                </div>
+                <div *ngSwitchCase="'file-copy'">
+                  <span *ngIf="process.result">
+                  {{process.result.length}} file{{process.result.length > 1 ? 's' : ''}} copied
+                  </span>
+                </div>
+              </div>
+            </clr-dg-cell>
+            <clr-dg-cell>
+              <button class="btn btn-sm btn-primary" *ngIf="!process.auto"
+                      (click)="activateProcess(wizardPage, process, i)">Activate
+              </button>
+              <button class="btn btn-sm btn-primary" *ngIf="process.allowCopy && process.result"
+                      (click)="clipboardCopy(process.result)">Copy
+              </button>
+            </clr-dg-cell>
+          </clr-dg-row>
+          <clr-dg-footer>{{wizardPage.formValidProcess.length}} processes</clr-dg-footer>
+        </clr-datagrid>
+      </clr-wizard-page>
+    </div>
+  </clr-wizard>
 </div>
 
 <div *ngIf="result" class="form-row">
-    <h5 class="text-primary">Preview your data</h5>
-    <app-dynamic-form-result-preview #formDataPreview [data]="result"></app-dynamic-form-result-preview>
+  <h5 class="text-primary">Preview your data</h5>
+  <app-dynamic-form-result-preview #formDataPreview [data]="result"></app-dynamic-form-result-preview>
 </div>
 
 
 <ng-template #spinner>
-    <span class="spinner">Loading...</span>
-    <h5>Preparing form template</h5>
+  <span class="spinner">Loading...</span>
+  <h5>Preparing form template</h5>
 </ng-template>
 
 <clr-modal [(clrModalOpen)]="showNotSavedWarning">
-    <h3 class="modal-title">Record not yet saved!</h3>
-    <div class="modal-body">
-        <p class="text-danger">Please note that your record has not been saved yet. If you need to make any change, you can reopen the form and make necessary changes.</p>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-primary" (click)="showNotSavedWarning = false">OK</button>
-    </div>
+  <h3 class="modal-title">Record not yet saved!</h3>
+  <div class="modal-body">
+    <p class="text-danger">Please note that your record has not been saved yet. If you need to make any change, you can
+      reopen the form and make necessary changes.</p>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-primary" (click)="showNotSavedWarning = false">OK</button>
+  </div>
 </clr-modal>
 
 <clr-modal [(clrModalOpen)]="showMultipleFormCodeDialog">
@@ -68,9 +87,9 @@
   <div class="modal-body">
     <clr-select-container>
       <label>Select a form</label>
-    <select clrSelect [(ngModel)]="formCode" required>
-      <option *ngFor="let f of formTemplates" [ngValue]="f.code">[{{f.code}}] {{f.name}}</option>
-    </select>
+      <select clrSelect [(ngModel)]="formCode" required>
+        <option *ngFor="let f of formTemplates" [ngValue]="f.code">[{{f.code}}] {{f.name}}</option>
+      </select>
       <clr-control-helper>Select a form to continue</clr-control-helper>
     </clr-select-container>
     <br>
@@ -95,8 +114,15 @@
   <div class="modal-body">
     <p>Your record has been:</p>
     <ul>
-      <li><clr-icon shape="check" class="is-success"></clr-icon> saved locally</li>
-      <li><clr-icon shape="info-circle" [attr.shape]="sentToServer? 'check' : 'times'" [ngClass]="{'is-success': sentToServer, 'is-error': !sentToServer}"></clr-icon> {{ sentToServer ? '' : 'NOT'}} sent to the server</li>
+      <li>
+        <clr-icon shape="check" class="is-success"></clr-icon>
+        saved locally
+      </li>
+      <li>
+        <clr-icon shape="info-circle" [attr.shape]="sentToServer? 'check' : 'times'"
+                  [ngClass]="{'is-success': sentToServer, 'is-error': !sentToServer}"></clr-icon>
+        {{ sentToServer ? '' : 'NOT'}} sent to the server
+      </li>
     </ul>
   </div>
   <div class="modal-footer">

@@ -6,17 +6,23 @@ export class FormValidProcess {
     processType: string;
     parameters: string[];
     result: any;
+    allowCopy: boolean;
+    auto: boolean;
 
     constructor(options: {
         newField?: string,
         processType?: string,
         parameters?: string[],
         result?: any;
+        allowCopy?: boolean;
+        auto?: boolean;
     } = {}) {
         this.newField = options.newField;
         this.processType = options.processType;
         this.parameters = options.parameters === undefined ? [] : options.parameters;
         this.result = options.result;
+        this.allowCopy = options.allowCopy;
+        this.auto = options.auto;
     }
 }
 

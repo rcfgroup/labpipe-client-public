@@ -26,7 +26,7 @@ export class DynamicFormQuestionComponent implements OnInit {
   // tslint:disable-next-line:max-line-length
   fileInputProperties: ('openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory')[] = ['openFile'];
 
-  constructor(private us: UserSettingsService, private es: ElectronService, private zone: NgZone) {}
+  constructor(private uss: UserSettingsService, private es: ElectronService, private zone: NgZone) {}
 
   ngOnInit() {
     this.prepareAttributes();
@@ -41,7 +41,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const sq = this.qBase as SelectQuestion;
         if (sq.options.startsWith('__') && sq.options.endsWith('__')) {
           const optionIndex = sq.options.replace(/__/g, '').split('::');
-          let optionValues = this.us.getCurrentStudy();
+          let optionValues = this.uss.getCurrentStudy();
           optionIndex.forEach((oi: string) => {
             optionValues = optionValues[oi];
           });
@@ -62,7 +62,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const iq = this.qBase as InputQuestion;
         if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
           const patternIndex = iq.pattern.replace(/__/g, '').split('::');
-          let patternValues = this.us.getCurrentStudy();
+          let patternValues = this.uss.getCurrentStudy();
           patternIndex.forEach((oi: string) => {
             patternValues = patternValues[oi];
           });
