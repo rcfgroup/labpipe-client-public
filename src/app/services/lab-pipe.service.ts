@@ -1,25 +1,28 @@
 import {Injectable} from '@angular/core';
 import {UserSettingsService} from './user-settings.service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
+import {ElectronService} from 'ngx-electron';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LabPipeService {
   apiRoot: string;
+  uuid4: any;
 
-  constructor(private userSettingsService: UserSettingsService, private http: HttpClient) {
+  constructor(private uss: UserSettingsService, private es: ElectronService, private http: HttpClient) {
     this.loadApiRoot();
+    this.uuid4 = this.es.remote.require('uuid/v4');
   }
 
   loadApiRoot() {
-    this.apiRoot = this.userSettingsService.getApiRoot();
+    this.apiRoot = this.uss.getApiRoot();
   }
 
   userAuthRequestOptions() {
-    return this.userSettingsService.getCurrentOperator() && this.userSettingsService.getCurrentOperatorPassword() ? {
+    return this.uss.getCurrentOperator() && this.uss.getCurrentOperatorPassword() ? {
       headers: new HttpHeaders({
-        Authorization: `Basic ${btoa(`${this.userSettingsService.getCurrentOperator().username}:${this.userSettingsService.getCurrentOperatorPassword()}`)}`
+        Authorization: `Basic ${btoa(`${this.uss.getCurrentOperator().username}:${this.uss.getCurrentOperatorPassword()}`)}`
       })
     } : {};
   }
@@ -29,9 +32,9 @@ export class LabPipeService {
       headers: new HttpHeaders({
         Authorization: `Basic ${btoa(`${token}:${key}`)}`
       })
-    } : this.userSettingsService.getApiToken() && this.userSettingsService.getApiKey() ? {
+    } : this.uss.getApiToken() && this.uss.getApiKey() ? {
       headers: new HttpHeaders({
-        Authorization: `Basic ${btoa(`${this.userSettingsService.getApiToken()}:${this.userSettingsService.getApiKey()}`)}`
+        Authorization: `Basic ${btoa(`${this.uss.getApiToken()}:${this.uss.getApiKey()}`)}`
       })
     } : {};
   }
@@ -83,5 +86,9 @@ export class LabPipeService {
   addToken() {
     const url = `${this.apiRoot}/api/manage/create/token`;
     return this.http.get(url, this.userAuthRequestOptions());
+  }
+
+  getUid() {
+    return this.uuid4();
   }
 }
