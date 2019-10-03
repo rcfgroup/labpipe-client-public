@@ -29,6 +29,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   study: any;
 
   messages: InAppMessage[] = [];
+  formMessages: InAppMessage[] = [];
 
   formCode: string;
   formTemplates: any;
@@ -134,6 +135,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       page.formValidProcess.forEach(fvp => {
         p.formValidProcess.push(new FormValidProcess(fvp));
       });
+      p.formValidProcess = p.formValidProcess.sort((a, b) => a.order - b.order);
       this.wizardTemplate.pages.push(p);
     });
     this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
@@ -164,11 +166,12 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
           this.dfs.formValidProcessTriage(process, index, parentPage, this.formData);
         }
       });
+      console.log(parentPage.formValidProcess);
     }
   }
 
   activateProcess(parentPage: WizardPage, process: FormValidProcess, processIndex: number) {
-    this.dfs.formValidProcessTriage(process, processIndex, parentPage, this.formData);
+    this.dfs.formValidProcessTriage(process, processIndex, parentPage, this.formData, this.formMessages);
   }
 
   onWizardFinish() {

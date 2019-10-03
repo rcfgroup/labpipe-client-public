@@ -16,6 +16,7 @@
         [clrWizardPageNextDisabled]="wizardPage.requireValidForm ? !wizardPage.pageForm.valid : null">
         <ng-template clrPageTitle>{{wizardPage.title}}</ng-template>
         <ng-template clrPageNavTitle>{{wizardPage.navTitle}}</ng-template>
+        <app-in-app-alert [messages]="formMessages"></app-in-app-alert>
         <form *ngIf="isFormVisible"
               [formGroup]="wizardPage.pageForm" class="clr-form clr-form-vertical">
           <div *ngFor="let question of wizardPage.questions" class="form-row">
@@ -40,6 +41,16 @@
                 <div *ngSwitchCase="'file-copy'">
                   <span *ngIf="process.result">
                   {{process.result.length}} file{{process.result.length > 1 ? 's' : ''}} copied
+                  </span>
+                </div>
+                <div *ngSwitchCase="'file-rename'">
+                  <span *ngIf="process.result">
+                  {{process.result.length}} file{{process.result.length > 1 ? 's' : ''}} renamed
+                  </span>
+                </div>
+                <div *ngSwitchCase="'folder-watch'">
+                  <span *ngIf="process.result">
+                  {{process.result.length}} file{{process.result.length > 1 ? 's' : ''}} detected
                   </span>
                 </div>
               </div>
