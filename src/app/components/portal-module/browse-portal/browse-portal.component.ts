@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
+import {LabPipeService} from '../../../services/lab-pipe.service';
+import {DatabaseService} from '../../../services/database.service';
 
 @Component({
   selector: 'app-browse-portal',
@@ -6,10 +8,56 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./browse-portal.component.css']
 })
 export class BrowsePortalComponent implements OnInit {
+  remoteRecords: any[] = [];
+  localRecords: any[] = [];
 
-  constructor() { }
+  remoteReport = {};
+
+  showRemoteRecordReport: boolean;
+  constructor(private lps: LabPipeService, private dbs: DatabaseService, private zone: NgZone) { }
 
   ngOnInit() {
+    this.loadRemoteRecords();
+    this.loadLocalRecords();
+  }
+
+  loadRemoteRecords() {
+    this.lps.getAllRecord().subscribe(
+      (data: any) => {
+        this.remoteRecords = data;
+      },
+      (error: any) => console.log(error)
+    );
+  }
+
+  loadLocalRecords() {
+    this.dbs.readData().then((data: any[]) => {
+      this.localRecords = data;
+    });
+  }
+
+  report(record: any) {
+    this.remoteReport = {record: record};
+    this.showRemoteRecordReport = true;
+    this.lps.getStudy(record.study_code).subscribe(
+      (data: any) => {
+        this.remoteReport.study = data;
+      }
+    );
+    this.lps.getInstrument(record.instrument_code).subscribe(
+      (data: any) => {
+        this.remoteReport.instrument = data;
+      }
+    );
+  }
+
+  closeReport() {
+    this.remoteReport = {};
+    this.showRemoteRecordReport = false;
+  }
+
+  downloadPdf() {
+    // TODO generate pdf report
   }
 
 }

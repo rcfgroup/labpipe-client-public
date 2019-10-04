@@ -107,7 +107,8 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   prepareForm(data: any) {
-    this.formData = {form_code: data.code, study_code: data.study_code, instrument_code: data.instrument_code};
+    this.actionIdentifier = this.lps.getUid();
+    this.formData = {actionIdentifier: this.actionIdentifier, form_code: data.code, study_code: data.study_code, instrument_code: data.instrument_code, record: {}};
     this.remoteUrl = data.url;
     this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
     data.template.pages.forEach(page => {
@@ -145,7 +146,6 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       this.wizardTemplate.pages.forEach((page, index) =>
         this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
       this.isFormReady = true;
-      this.actionIdentifier = this.lps.getUid();
       this.iaas.success('Form preparation completed.', this.messages);
     }
   }
@@ -163,10 +163,10 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   onFormValid(parentPage: WizardPage) {
     if (parentPage.pageForm.valid) {
-      this.formData[parentPage.key] = parentPage.pageForm.value;
+      this.formData.record[parentPage.key] = parentPage.pageForm.value;
       parentPage.formValidProcess.forEach((process, index) => {
         if (process.auto) {
-          this.dfs.formValidProcessTriage(this.actionIdentifier, process, index, parentPage, this.formData);
+          this.dfs.formValidProcessTriage(this.actionIdentifier, process, index, parentPage, this.formData.record);
         }
       });
       console.log(parentPage.formValidProcess);
@@ -174,7 +174,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   activateProcess(parentPage: WizardPage, process: FormValidProcess, processIndex: number) {
-    this.dfs.formValidProcessTriage(this.actionIdentifier, process, processIndex, parentPage, this.formData, this.formMessages);
+    this.dfs.formValidProcessTriage(this.actionIdentifier, process, processIndex, parentPage, this.formData.record, this.formMessages);
   }
 
   onWizardFinish() {
@@ -184,7 +184,11 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   saveResult() {
-    this.ds.saveData(this.result);
+    this.ds.saveData(this.actionIdentifier, {
+      created: new Date(),
+      saved_by: this.us.getCurrentOperator().username,
+      ...this.result
+    });
     if (this.us.getRunningMode() === 'server') {
       this.sentToServer = true;
       this.lps.postRecord(this.remoteUrl, this.result)

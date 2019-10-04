@@ -1,1 +1,162 @@
-<p>browse-portal works!</p>
+
+<h2>Remote records <button class="btn btn-primary btn-sm" type="button" (click)="loadRemoteRecords()">reload</button>
+</h2>
+<clr-datagrid *ngIf="remoteRecords && remoteRecords.length > 0; else noRecordRemote">
+  <clr-dg-column [clrDgField]="'study_code'">Study
+  </clr-dg-column>
+  <clr-dg-column [clrDgField]="'instrument_code'" >Instrument</clr-dg-column>
+  <clr-dg-column [clrDgField]="'form_code'" >Form</clr-dg-column>
+  <clr-dg-column [clrDgField]="'created'">Created</clr-dg-column>
+  <clr-dg-column [clrDgField]="'uploaded_by'" >Operator</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let record of remoteRecords" [clrDgItem]="record">
+    <clr-dg-cell>{{record.study_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.instrument_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.form_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
+    <clr-dg-cell>{{record.uploaded_by}}</clr-dg-cell>
+    <clr-dg-action-overflow>
+      <button class="action-item" (click)="report(record)">View Report</button>
+    </clr-dg-action-overflow>
+    <clr-dg-row-detail *clrIfExpanded>
+      More details will viewable here in next release.
+    </clr-dg-row-detail>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="remoteRecords.length">
+      <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+      of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+<ng-template #noRecordRemote>
+  <div class="alert alert-info" role="alert">
+    <div class="alert-items">
+      <div class="alert-item static">
+        <span class="alert-text">
+                    No record retrieved from server.
+          <button class="btn btn-primary-outline btn-sm" type="button" (click)="loadRemoteRecords()">retry</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<h2>Local records <button class="btn btn-primary btn-sm" type="button" (click)="loadLocalRecords()">reload</button></h2>
+<clr-datagrid *ngIf="localRecords && localRecords.length > 0; else noRecordLocal">
+  <clr-dg-column [clrDgField]="'data.study_code'">Study</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.instrument_code'" >Instrument</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.form_code'" >Form</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.created'">Created</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.uploaded_by'" >Operator</clr-dg-column>
+
+  <clr-dg-row *clrDgItems="let record of localRecords">
+    <clr-dg-cell>{{record.data.study_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.instrument_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.form_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.saved_by}}</clr-dg-cell>
+    <clr-dg-row-detail *clrIfExpanded>
+      More details will viewable here in next release.
+    </clr-dg-row-detail>
+  </clr-dg-row>
+
+  <clr-dg-footer>
+    <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="localRecords.length">
+      <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
+      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+      of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
+    </clr-dg-pagination>
+  </clr-dg-footer>
+</clr-datagrid>
+<ng-template #noRecordLocal>
+  <div class="alert alert-info" role="alert">
+    <div class="alert-items">
+      <div class="alert-item static">
+        <span class="alert-text">
+                    No locally saved record.
+          <button class="btn btn-primary-outline btn-sm" type="button" (click)="loadLocalRecords()">retry</button>
+        </span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<clr-modal [(clrModalOpen)]="showRemoteRecordReport" [clrModalSize]="'xl'" [clrModalClosable]="false">
+  <h3 class="modal-title">LabPipe Record Report</h3>
+  <div class="alert alert-info" role="alert">
+    <div class="alert-items">
+      <div class="alert-item static">
+        <span class="alert-text">
+          This report will be imporved on next release.
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body">
+    <h1>Study</h1>
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="left">Code name</th>
+        <th class="left">Full name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="left">{{remoteReport?.study?.code}}</td>
+        <td class="left">{{remoteReport?.study?.name}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <h1>Instrument</h1>
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="left">Code name</th>
+        <th class="left">Full name</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="left">{{remoteReport?.instrument?.code}}</td>
+        <td class="left">{{remoteReport?.instrument?.name}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <h1>Sample</h1>
+    <table class="table">
+      <thead>
+      <tr>
+        <th class="left">Operator</th>
+        <th class="left">Record Created</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="left">{{remoteReport?.record?.uploaded_by}}</td>
+        <td class="left">{{remoteReport?.record?.created | date:'yyyy-MM-dd HH:mm:ss'}}</td>
+      </tr>
+      </tbody>
+    </table>
+    <table class="table" *ngFor="let page of remoteReport?.record?.record | keyvalue">
+      <thead>
+      <tr>
+        <th class="left" colspan="2">{{page.key}}</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let field of page.value | keyvalue">
+        <td class="left">{{field.key}}</td>
+        <td class="left">{{field.value}}</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" type="button" [disabled]="true" (click)="downloadPdf()"><clr-icon shape="download"></clr-icon> Download</button>
+    <button class="btn btn-primary" type="button" (click)="closeReport()">OK</button>
+  </div>
+</clr-modal>

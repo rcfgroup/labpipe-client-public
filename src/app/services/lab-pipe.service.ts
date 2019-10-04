@@ -89,9 +89,37 @@ export class LabPipeService {
     return this.http.post(url, formData, options );
   }
 
-  getAllRecord(studyCode: string) {
-    const url = studyCode ? `${this.apiRoot}/api/query/list/all/${studyCode}` : `${this.apiRoot}/api/query/list/all`;
+  getAllRecord(studyCode?: string) {
+    const url = studyCode ? `${this.apiRoot}/api/query/record/all/${studyCode}` : `${this.apiRoot}/api/query/record/all`;
     return this.http.get(url, this.userAuthRequestOptions());
+  }
+
+  getAllStudies() {
+    const url = `${this.apiRoot}/api/query/study/all`;
+    return this.http.get(url, this.userAuthRequestOptions());
+  }
+
+  getStudy(code: string) {
+    const url = `${this.apiRoot}/api/query/study/one`;
+    const options = {
+      params: new HttpParams().set('code', code),
+      ...this.userAuthRequestOptions()
+    };
+    return this.http.get(url, options);
+  }
+
+  getAllInstruments() {
+    const url = `${this.apiRoot}/api/query/instrument/all`;
+    return this.http.get(url, this.userAuthRequestOptions());
+  }
+
+  getInstrument(code: string) {
+    const url = `${this.apiRoot}/api/query/instrument/one`;
+    const options = {
+      params: new HttpParams().set('code', code),
+      ...this.userAuthRequestOptions()
+    };
+    return this.http.get(url, options);
   }
 
   addOperator(name: string, email: string) {
