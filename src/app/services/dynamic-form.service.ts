@@ -63,7 +63,7 @@ export class DynamicFormService {
   }
 
   concat(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any) {
-    const params = process.parameters;
+    const params = _.cloneDeep(process.parameters);
     if (params.length > 0) {
       const separator = params.shift();
       const data = params.map(p => p.startsWith('::')
@@ -103,7 +103,7 @@ export class DynamicFormService {
   }
 
   fileRename(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any) {
-    const params = process.parameters;
+    const params = _.cloneDeep(process.parameters);
     if (params.length === 2) {
       if (params[0].startsWith('::')) {
         const fileField = params[0].replace('::', '');
@@ -131,7 +131,7 @@ export class DynamicFormService {
   }
 
   fileUpload(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any, identifier: string) {
-    const params = process.parameters;
+    const params = _.cloneDeep(process.parameters);
     if (params.length > 0) {
       const fileFields = params.map(p => p.replace('::', ''));
       const uploadedFiles = [];
@@ -159,7 +159,7 @@ export class DynamicFormService {
 
 
   folderWatch(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any, messages?: InAppMessage[]) {
-    const params = process.parameters;
+    const params = _.cloneDeep(process.parameters);
     if (params.length === 4) {
       if (params[0].startsWith('::')) {
         const folderToWatch = formData[parentPage.key][params[0].replace('::', '')][0];
