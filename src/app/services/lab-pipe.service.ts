@@ -58,18 +58,18 @@ export class LabPipeService {
     return this.http.get(`${this.apiRoot}/api/general/connect/token`, options);
   }
 
-  getParameter(paramName: string) {
-    const url = `${this.apiRoot}/api/parameter/name/${paramName}`;
+  getParameter(identifier: string) {
+    const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
   }
 
-  getForm(studyCode: string, instrumentCode: string) {
-    const url = `${this.apiRoot}/api/form/template/study/${studyCode}/instrument/${instrumentCode}`;
+  getForm(studyIdentifier: string, instrumentIdentifier: string) {
+    const url = `${this.apiRoot}/api/form/template/study/${studyIdentifier}/instrument/${instrumentIdentifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
   }
 
-  getFormWithCode(formCode: string) {
-    const url = `${this.apiRoot}/api/form/template/code/${formCode}`;
+  getFormWithIdentifier(identifier: string) {
+    const url = `${this.apiRoot}/api/form/template/identifier/${identifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
   }
 
@@ -89,8 +89,8 @@ export class LabPipeService {
     return this.http.post(url, formData, options );
   }
 
-  getAllRecord(studyCode?: string) {
-    const url = studyCode ? `${this.apiRoot}/api/query/record/all/${studyCode}` : `${this.apiRoot}/api/query/record/all`;
+  getAllRecord(studyIdentifier?: string) {
+    const url = studyIdentifier ? `${this.apiRoot}/api/query/record/all/${studyIdentifier}` : `${this.apiRoot}/api/query/record/all`;
     return this.http.get(url, this.userAuthRequestOptions());
   }
 
@@ -99,10 +99,10 @@ export class LabPipeService {
     return this.http.get(url, this.userAuthRequestOptions());
   }
 
-  getStudy(code: string) {
+  getStudy(identifier: string) {
     const url = `${this.apiRoot}/api/query/study/one`;
     const options = {
-      params: new HttpParams().set('code', code),
+      params: new HttpParams().set('identifier', identifier),
       ...this.userAuthRequestOptions()
     };
     return this.http.get(url, options);
@@ -113,10 +113,10 @@ export class LabPipeService {
     return this.http.get(url, this.userAuthRequestOptions());
   }
 
-  getInstrument(code: string) {
+  getInstrument(identifier: string) {
     const url = `${this.apiRoot}/api/query/instrument/one`;
     const options = {
-      params: new HttpParams().set('code', code),
+      params: new HttpParams().set('identifier', identifier),
       ...this.userAuthRequestOptions()
     };
     return this.http.get(url, options);
