@@ -166,7 +166,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       this.formData[parentPage.key] = parentPage.pageForm.value;
       parentPage.formValidProcess.forEach((process, index) => {
         if (process.auto) {
-          this.dfs.formValidProcessTriage(process, index, parentPage, this.formData);
+          this.dfs.formValidProcessTriage(this.actionIdentifier, process, index, parentPage, this.formData);
         }
       });
       console.log(parentPage.formValidProcess);
@@ -174,7 +174,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   activateProcess(parentPage: WizardPage, process: FormValidProcess, processIndex: number) {
-    this.dfs.formValidProcessTriage(process, processIndex, parentPage, this.formData, this.formMessages);
+    this.dfs.formValidProcessTriage(this.actionIdentifier, process, processIndex, parentPage, this.formData, this.formMessages);
   }
 
   onWizardFinish() {

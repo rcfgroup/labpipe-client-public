@@ -9,8 +9,12 @@ import {ElectronService} from 'ngx-electron';
 export class LabPipeService {
   apiRoot: string;
   uuid4: any;
+  path: any;
+  fs: any;
 
   constructor(private uss: UserSettingsService, private es: ElectronService, private http: HttpClient) {
+    this.path = this.es.remote.require('path');
+    this.fs = this.es.remote.require('fs-extra');
     this.loadApiRoot();
     this.uuid4 = this.es.remote.require('uuid/v4');
   }
@@ -72,6 +76,17 @@ export class LabPipeService {
   postRecord(remoteUrl: string, record: any) {
     const url = `${this.apiRoot}${remoteUrl}`;
     return this.http.post(url, record, this.userAuthRequestOptions());
+  }
+
+  uploadFormFiles(identifier: string, paths: string[]) {
+    const url = `${this.apiRoot}/api/upload/file/form`;
+    const options = {
+      params: new HttpParams().set('identifier', identifier),
+      ...this.userAuthRequestOptions()
+    };
+    const formData = new FormData();
+    paths.forEach(p => formData.append('files', new File(this.fs.readFileSync(p), this.path.basename(p))));
+    return this.http.post(url, formData, options );
   }
 
   addOperator(name: string, email: string) {

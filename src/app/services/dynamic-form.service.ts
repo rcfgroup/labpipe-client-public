@@ -6,6 +6,7 @@ import {ElectronService} from 'ngx-electron';
 import {UserSettingsService} from './user-settings.service';
 import * as _ from 'lodash';
 import {InAppAlertService, InAppMessage} from './in-app-alert.service';
+import {LabPipeService} from './lab-pipe.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +19,7 @@ export class DynamicFormService {
   constructor(private formBuilder: FormBuilder,
               private es: ElectronService,
               private uss: UserSettingsService,
+              private lps: LabPipeService,
               private iaas: InAppAlertService) {
     this.path = this.es.remote.require('path');
     this.fs = this.es.remote.require('fs-extra');
@@ -35,7 +37,8 @@ export class DynamicFormService {
     return group;
   }
 
-  formValidProcessTriage(process: FormValidProcess,
+  formValidProcessTriage(identifier: string,
+                         process: FormValidProcess,
                          processIndex: number,
                          parentPage: WizardPage,
                          formData: any,
@@ -51,7 +54,7 @@ export class DynamicFormService {
         this.fileRename(process, processIndex, parentPage, formData);
         break;
       case 'file-upload':
-        this.fileUpload(process, processIndex, parentPage, formData);
+        this.fileUpload(process, processIndex, parentPage, formData, identifier);
         break;
       case 'folder-watch':
         this.folderWatch(process, processIndex, parentPage, formData, messages);
@@ -127,7 +130,7 @@ export class DynamicFormService {
     }
   }
 
-  fileUpload(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any) {
+  fileUpload(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any, identifier: string) {
     const params = process.parameters;
     if (params.length > 0) {
       const fileFields = params.map(p => p.replace('::', ''));
@@ -138,6 +141,15 @@ export class DynamicFormService {
             // TODO add file upload api access
             uploadedFiles.push(f);
           });
+          this.lps.uploadFormFiles(identifier, uploadedFiles).subscribe(
+            (data: any) => {
+              process.result = true;
+            },
+            (error: any) => {
+              process.result = false;
+              console.log(error);
+            }
+          );
           process.result = uploadedFiles;
           formData[parentPage.key][ff] = uploadedFiles;
         }
