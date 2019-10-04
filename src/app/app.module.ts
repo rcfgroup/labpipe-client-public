@@ -25,6 +25,7 @@ import {StorageModule} from '@ngx-pwa/local-storage';
 import { ManagePortalComponent } from './components/portal-module/manage-portal/manage-portal.component';
 import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.component';
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
+import { BrowsePortalComponent } from './components/portal-module/browse-portal/browse-portal.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { StatusBarComponent } from './components/status-bar/status-bar.component
     LoginPageComponent,
     ManagePortalComponent,
     InAppAlertComponent,
-    StatusBarComponent
+    StatusBarComponent,
+    BrowsePortalComponent
   ],
   imports: [
     BrowserModule,

@@ -35,6 +35,11 @@ export class TopNavigationComponent implements OnInit {
     this.router.navigate(['tasks']);
   }
 
+  toBrowse() {
+    this.us.clearForNewTask();
+    this.router.navigate(['browse']);
+  }
+
   toManage() {
     this.us.clearForNewTask();
     this.router.navigate(['manage']);

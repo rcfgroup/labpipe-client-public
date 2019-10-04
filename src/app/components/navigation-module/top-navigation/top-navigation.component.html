@@ -29,6 +29,9 @@
             <a class="nav-link" *ngIf="currentUser" (click)=toTasks()>Studies</a>
         </li>
       <li class="nav-item">
+        <a class="nav-link" *ngIf="currentUser" (click)=toBrowse()>Browse</a>
+      </li>
+      <li class="nav-item">
         <a class="nav-link" *ngIf="currentUser" (click)=toManage()>Manage</a>
       </li>
     </ul>
