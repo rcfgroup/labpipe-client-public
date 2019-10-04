@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {UserSettingsService} from 'src/app/services/user-settings.service';
-import {CodeName} from 'src/app/models/code-name.model';
 
 @Component({
   selector: 'app-top-navigation',
@@ -10,7 +9,7 @@ import {CodeName} from 'src/app/models/code-name.model';
 })
 export class TopNavigationComponent implements OnInit {
 
-  currentUser: CodeName;
+  currentUser: any;
 
   constructor(private router: Router, private us: UserSettingsService) {
     this.router.events.subscribe(() => {this.currentUser = this.us.getCurrentOperator(); });
