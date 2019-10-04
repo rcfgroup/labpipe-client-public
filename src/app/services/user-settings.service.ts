@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {ElectronService} from 'ngx-electron';
-import {CodeName} from '../models/code-name.model';
 import {RequiredParameterName} from '../models/parameter.model';
 
 @Injectable({
@@ -195,11 +194,11 @@ export class UserSettingsService {
 
   // ================================================
 
-  updateCurrentStudy(project: CodeName): void {
+  updateCurrentStudy(project: any): void {
     this.setting.set('running_project', project);
   }
 
-  getCurrentStudy(): CodeName {
+  getCurrentStudy() {
     return this.setting.get('running_project');
   }
 
