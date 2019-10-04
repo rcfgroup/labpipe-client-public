@@ -11,7 +11,7 @@ export class BrowsePortalComponent implements OnInit {
   remoteRecords: any[] = [];
   localRecords: any[] = [];
 
-  remoteReport = {};
+  remoteReport: any = {};
 
   showRemoteRecordReport: boolean;
   constructor(private lps: LabPipeService, private dbs: DatabaseService, private zone: NgZone) { }
@@ -37,7 +37,7 @@ export class BrowsePortalComponent implements OnInit {
   }
 
   report(record: any) {
-    this.remoteReport = {record: record};
+    this.remoteReport = {record};
     this.showRemoteRecordReport = true;
     this.lps.getStudy(record.study_code).subscribe(
       (data: any) => {
