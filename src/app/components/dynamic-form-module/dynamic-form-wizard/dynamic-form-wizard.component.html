@@ -99,7 +99,7 @@
     <clr-select-container>
       <label>Select a form</label>
       <select clrSelect [(ngModel)]="formCode" required>
-        <option *ngFor="let f of formTemplates" [ngValue]="f.code">[{{f.code}}] {{f.name}}</option>
+        <option *ngFor="let f of formTemplates" [ngValue]="f.identifier">[{{f.identifier}}] {{f.name}}</option>
       </select>
       <clr-control-helper>Select a form to continue</clr-control-helper>
     </clr-select-container>

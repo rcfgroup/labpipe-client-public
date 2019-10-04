@@ -26,7 +26,7 @@ export class DynamicSampleCollectionWizardComponent implements OnInit {
         this.currentInstrument = this.us.getCurrentInstrument();
         this.projects$ = this.us.getStudies()
         .filter(p => p.config.location
-            .includes(this.currentLocation.code) && p.config.instrument.includes(this.currentInstrument.code));
+            .includes(this.currentLocation.identifier) && p.config.instrument.includes(this.currentInstrument.identifier));
     }
 
     showDataCollectionForm() {

@@ -2,17 +2,17 @@
 <h2>Remote records <button class="btn btn-primary btn-sm" type="button" (click)="loadRemoteRecords()">reload</button>
 </h2>
 <clr-datagrid *ngIf="remoteRecords && remoteRecords.length > 0; else noRecordRemote">
-  <clr-dg-column [clrDgField]="'study_code'">Study
+  <clr-dg-column [clrDgField]="'studyIdentifier'">Study
   </clr-dg-column>
-  <clr-dg-column [clrDgField]="'instrument_code'" >Instrument</clr-dg-column>
-  <clr-dg-column [clrDgField]="'form_code'" >Form</clr-dg-column>
+  <clr-dg-column [clrDgField]="'instrumentIdentifier'" >Instrument</clr-dg-column>
+  <clr-dg-column [clrDgField]="'formIdentifier'" >Form</clr-dg-column>
   <clr-dg-column [clrDgField]="'created'">Created</clr-dg-column>
   <clr-dg-column [clrDgField]="'uploaded_by'" >Operator</clr-dg-column>
 
   <clr-dg-row *clrDgItems="let record of remoteRecords" [clrDgItem]="record">
-    <clr-dg-cell>{{record.study_code}}</clr-dg-cell>
-    <clr-dg-cell>{{record.instrument_code}}</clr-dg-cell>
-    <clr-dg-cell>{{record.form_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.studyIdentifier}}</clr-dg-cell>
+    <clr-dg-cell>{{record.instrumentIdentifier}}</clr-dg-cell>
+    <clr-dg-cell>{{record.formIdentifier}}</clr-dg-cell>
     <clr-dg-cell>{{record.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
     <clr-dg-cell>{{record.uploaded_by}}</clr-dg-cell>
     <clr-dg-action-overflow>
@@ -46,16 +46,16 @@
 
 <h2>Local records <button class="btn btn-primary btn-sm" type="button" (click)="loadLocalRecords()">reload</button></h2>
 <clr-datagrid *ngIf="localRecords && localRecords.length > 0; else noRecordLocal">
-  <clr-dg-column [clrDgField]="'data.study_code'">Study</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.instrument_code'" >Instrument</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.form_code'" >Form</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.studyIdentifier'">Study</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.instrumentIdentifier'" >Instrument</clr-dg-column>
+  <clr-dg-column [clrDgField]="'data.formIdentifier'" >Form</clr-dg-column>
   <clr-dg-column [clrDgField]="'data.created'">Created</clr-dg-column>
   <clr-dg-column [clrDgField]="'data.uploaded_by'" >Operator</clr-dg-column>
 
   <clr-dg-row *clrDgItems="let record of localRecords">
-    <clr-dg-cell>{{record.data.study_code}}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.instrument_code}}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.form_code}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.studyIdentifier}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.instrumentIdentifier}}</clr-dg-cell>
+    <clr-dg-cell>{{record.data.formIdentifier}}</clr-dg-cell>
     <clr-dg-cell>{{record.data.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
     <clr-dg-cell>{{record.data.saved_by}}</clr-dg-cell>
     <clr-dg-row-detail *clrIfExpanded>
@@ -106,7 +106,7 @@
       </thead>
       <tbody>
       <tr>
-        <td class="left">{{remoteReport?.study?.code}}</td>
+        <td class="left">{{remoteReport?.study?.identifier}}</td>
         <td class="left">{{remoteReport?.study?.name}}</td>
       </tr>
       </tbody>
@@ -121,7 +121,7 @@
       </thead>
       <tbody>
       <tr>
-        <td class="left">{{remoteReport?.instrument?.code}}</td>
+        <td class="left">{{remoteReport?.instrument?.identifier}}</td>
         <td class="left">{{remoteReport?.instrument?.name}}</td>
       </tr>
       </tbody>

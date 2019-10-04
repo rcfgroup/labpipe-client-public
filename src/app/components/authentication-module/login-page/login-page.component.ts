@@ -71,7 +71,7 @@ export class LoginPageComponent implements OnInit {
     username = username.toLowerCase();
     const user = this.operators$.filter(o => o.username.toLowerCase() === username);
     const bcrypt = this.es.remote.require('bcryptjs');
-    const result = user.length === 1 && bcrypt.compareSync(password, user[0].passhash);
+    const result = user.length === 1 && bcrypt.compareSync(password, user[0].passwordHash);
     if (result) {
       this.currentOperator = user[0];
     }
@@ -94,7 +94,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   compareFn(c1: any, c2: any): boolean {
-    return c1 && c2 ? c1.code === c2.code : c1 === c2;
+    return c1 && c2 ? c1.identifier === c2.identifier : c1 === c2;
   }
 
 }

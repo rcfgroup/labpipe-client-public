@@ -39,12 +39,12 @@ export class BrowsePortalComponent implements OnInit {
   report(record: any) {
     this.remoteReport = {record};
     this.showRemoteRecordReport = true;
-    this.lps.getStudy(record.study_code).subscribe(
+    this.lps.getStudy(record.studyIdentifier).subscribe(
       (data: any) => {
         this.remoteReport.study = data;
       }
     );
-    this.lps.getInstrument(record.instrument_code).subscribe(
+    this.lps.getInstrument(record.instrumentIdentifier).subscribe(
       (data: any) => {
         this.remoteReport.instrument = data;
       }

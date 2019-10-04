@@ -76,7 +76,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   getFormTemplate() {
-    this.lps.getForm(this.study.code, this.instrument.code).subscribe((data: any) => {
+    this.lps.getForm(this.study.identifier, this.instrument.identifier).subscribe((data: any) => {
         this.formTemplates = data;
         switch (this.formTemplates.length) {
           case 0:
@@ -97,7 +97,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   getFormTemplateWithCode() {
     if (this.formCode) {
       this.showMultipleFormCodeDialog = false;
-      this.lps.getFormWithCode(this.formCode).subscribe((data: any) => {
+      this.lps.getFormWithIdentifier(this.formCode).subscribe((data: any) => {
         this.iaas.success('Form loaded. Preparation in progress.', this.messages);
         this.prepareForm(data);
         },
@@ -108,7 +108,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   prepareForm(data: any) {
     this.actionIdentifier = this.lps.getUid();
-    this.formData = {actionIdentifier: this.actionIdentifier, form_code: data.code, study_code: data.study_code, instrument_code: data.instrument_code, record: {}};
+    this.formData = {actionIdentifier: this.actionIdentifier, formIdentifier: data.identifier, studyIdentifier: data.studyIdentifier, instrumentIdentifier: data.instrumentIdentifier, record: {}};
     this.remoteUrl = data.url;
     this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
     data.template.pages.forEach(page => {

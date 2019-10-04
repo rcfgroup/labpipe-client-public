@@ -25,7 +25,7 @@ export class PrepareLaunchComponent implements OnInit {
           (data: any) => {
                 console.log('init parameter list retrieved');
                 console.log(data);
-                this.parameterList = data.find(param => param.code === 'client_init').value;
+                this.parameterList = data.find(param => param.identifier === 'client_init').value;
             },
             error => {
                 console.warn('error loading init parameter list');

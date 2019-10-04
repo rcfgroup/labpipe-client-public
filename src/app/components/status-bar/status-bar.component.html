@@ -9,18 +9,18 @@
     <clr-stack-label>
       <clr-icon shape="building"></clr-icon>
     </clr-stack-label>
-    <clr-stack-content>{{location.code}}</clr-stack-content>
+    <clr-stack-content>{{location.identifier}}</clr-stack-content>
   </clr-stack-block>
   <clr-stack-block *ngIf="instrument">
     <clr-stack-label>
       <clr-icon shape="display"></clr-icon>
     </clr-stack-label>
-    <clr-stack-content>{{instrument.code}}</clr-stack-content>
+    <clr-stack-content>{{instrument.identifier}}</clr-stack-content>
   </clr-stack-block>
   <clr-stack-block *ngIf="study">
     <clr-stack-label>
       <clr-icon shape="book"></clr-icon>
     </clr-stack-label>
-    <clr-stack-content>{{study.code}}</clr-stack-content>
+    <clr-stack-content>{{study.identifier}}</clr-stack-content>
   </clr-stack-block>
 </clr-stack-view>
