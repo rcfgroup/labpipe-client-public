@@ -89,6 +89,11 @@ export class LabPipeService {
     return this.http.post(url, formData, options );
   }
 
+  getAllRecord(studyCode: string) {
+    const url = studyCode ? `${this.apiRoot}/api/query/list/all/${studyCode}` : `${this.apiRoot}/api/query/list/all`;
+    return this.http.get(url, this.userAuthRequestOptions());
+  }
+
   addOperator(name: string, email: string) {
     const url = `${this.apiRoot}/api/manage/create/operator`;
     const options = {
