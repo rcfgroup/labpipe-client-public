@@ -1,15 +1,75 @@
 <app-in-app-alert [messages]="messages"></app-in-app-alert>
 <clr-tabs>
   <clr-tab>
-    <button clrTabLink>Manage</button>
+    <button clrTabLink>Access Control</button>
     <clr-tab-content *clrIfActive>
-      <button class="btn btn-primary-outline btn-sm" (click)="newOperator()">New Operator</button>
-      <button class="btn btn-primary-outline btn-sm" (click)="newToken()">New Access Token</button>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="newOperator()">Operator</button>
+            <button class="btn btn-primary-outline" (click)="newToken()">Access Token</button>
+            <button class="btn btn-primary-outline" (click)="newRole()">Role</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Parameter</button>
+    <clr-tab-content *clrIfActive>
+
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="newStudy()">Study</button>
+            <button class="btn btn-primary-outline" (click)="newLocation()">Location</button>
+            <button class="btn btn-primary-outline" (click)="newInstrument()">Instrument</button>
+            <button class="btn btn-primary-outline" (click)="newCollector()">Collector</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Notification</button>
+    <clr-tab-content *clrIfActive>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="newEmailGroup()">Email Group</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Form & Report</button>
+    <clr-tab-content *clrIfActive>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="newFormTemplate()">Form Template</button>
+            <button class="btn btn-primary-outline" (click)="newReportTemplate()">Report Template</button>
+          </div>
+        </div>
+      </div>
     </clr-tab-content>
   </clr-tab>
 </clr-tabs>
 
-<clr-modal [(clrModalOpen)]="showNewOperatorModal">
+<clr-modal [(clrModalOpen)]="showModal.newOperator">
   <h3 class="modal-title">Add new operator</h3>
   <div class="modal-body">
     <form class="clr-form clr-form-vertical" [formGroup]="operatorForm">
@@ -29,7 +89,18 @@
   </div>
 </clr-modal>
 
-<clr-modal [(clrModalOpen)]="showNewTokenModal">
+<clr-modal [(clrModalOpen)]="showModal.newToken">
+  <h3 class="modal-title">Add new token</h3>
+  <div class="modal-body">
+    Please confirm you are going to create a new access token.
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirmNewToken(false)">Cancel</button>
+    <button class="btn btn-danger" type="button" (click)="onConfirmNewToken(true)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showModal.newStudy">
   <h3 class="modal-title">Add new token</h3>
   <div class="modal-body">
     Please confirm you are going to create a new access token.

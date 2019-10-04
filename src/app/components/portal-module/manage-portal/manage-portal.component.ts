@@ -11,15 +11,23 @@ import {InAppAlertService} from '../../../services/in-app-alert.service';
 export class ManagePortalComponent implements OnInit {
   messages: { type: string, message: string, closed?: boolean }[] = [];
 
-  showNewOperatorModal: boolean;
+  showModal = {
+    newOperator: false,
+    newToken: false,
+    newStudy: false
+  };
   operatorForm: FormGroup;
-
-  showNewTokenModal: boolean;
+  studyForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private lps: LabPipeService, private iaas: InAppAlertService) {
     this.operatorForm = this.formBuilder.group({
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]]
+    });
+    this.studyForm = this.formBuilder.group({
+      identifier: ['', Validators.required],
+      name: ['', Validators.required],
+      config: ['', Validators.required]
     });
   }
 
@@ -27,11 +35,11 @@ export class ManagePortalComponent implements OnInit {
   }
 
   newOperator() {
-    this.showNewOperatorModal = true;
+    this.showModal.newOperator = true;
   }
 
   newToken() {
-    this.showNewTokenModal = true;
+    this.showModal.newToken = true;
   }
 
   onConfirmNewOperator(confirm: boolean) {
@@ -42,7 +50,7 @@ export class ManagePortalComponent implements OnInit {
             (error: any) => this.iaas.error(error.error.message, this.messages));
       }
     }
-    this.showNewOperatorModal = false;
+    this.showModal.newOperator = false;
     this.operatorForm.reset();
   }
 
@@ -51,7 +59,7 @@ export class ManagePortalComponent implements OnInit {
       this.lps.addToken().subscribe((data: any) => this.iaas.success(data.message, this.messages),
         (error: any) => this.iaas.error(error.error.message, this.messages));
     }
-    this.showNewTokenModal = false;
+    this.showModal.newToken = false;
   }
 
 
