@@ -1,6 +1,6 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {LabPipeService} from '../../../services/lab-pipe.service';

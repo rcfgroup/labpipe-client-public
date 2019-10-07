@@ -4,7 +4,7 @@ import {FreshStartupComponent} from './components/startup-module/fresh-startup/f
 import {SettingPortalComponent} from './components/setting-module/setting-portal/setting-portal.component';
 import {PrepareLaunchComponent} from './components/startup-module/prepare-launch/prepare-launch.component';
 import {TaskPortalComponent} from './components/portal-module/task-portal/task-portal.component';
-import {LoginPageComponent} from './components/authentication-module/login-page/login-page.component';
+import {LoginPageComponent} from './components/authentication-module/login/login-page.component';
 import {DynamicFormWizardComponent} from './components/dynamic-form-module/dynamic-form-wizard/dynamic-form-wizard.component';
 import {ManagePortalComponent} from './components/portal-module/manage-portal/manage-portal.component';
 import {BrowsePortalComponent} from './components/portal-module/browse-portal/browse-portal.component';

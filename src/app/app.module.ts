@@ -15,7 +15,7 @@ import {ConnectionMonitorComponent} from './components/monitor-module/connection
 import {TaskPortalComponent} from './components/portal-module/task-portal/task-portal.component';
 import {TopNavigationComponent} from './components/navigation-module/top-navigation/top-navigation.component';
 import {ElectronService} from 'ngx-electron';
-import {LoginPageComponent} from './components/authentication-module/login-page/login-page.component';
+import {LoginPageComponent} from './components/authentication-module/login/login-page.component';
 import {AppRoutingModule} from './app-routing.module';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -26,6 +26,7 @@ import { ManagePortalComponent } from './components/portal-module/manage-portal/
 import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.component';
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
 import { BrowsePortalComponent } from './components/portal-module/browse-portal/browse-portal.component';
+import { TourComponent } from './components/tour/tour.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { BrowsePortalComponent } from './components/portal-module/browse-portal/
     ManagePortalComponent,
     InAppAlertComponent,
     StatusBarComponent,
-    BrowsePortalComponent
+    BrowsePortalComponent,
+    TourComponent
   ],
   imports: [
     BrowserModule,

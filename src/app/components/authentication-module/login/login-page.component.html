@@ -4,28 +4,29 @@
     <section class="title">
       <h3 class="welcome">Welcome to LabPipe</h3>
       <h5 class="hint">Use your allocated ID and password to sign in</h5>
+      <app-tour tour="login"></app-tour>
     </section>
-    <clr-select-container>
+    <clr-select-container id="tour-select-location">
       <label>Location</label>
       <select clrSelect name="select-location" formControlName="location" [compareWith]="compareFn" required>
         <option *ngFor="let l of locations$" [ngValue]="l">{{l.name}}</option>
       </select>
     </clr-select-container>
-    <clr-select-container>
+    <clr-select-container id="tour-select-instrument">
       <label>Instrument</label>
       <select clrSelect name="select-instrument" formControlName="instrument" [compareWith]="compareFn" required>
         <option *ngFor="let i of instruments$" [ngValue]="i">{{i.name}}</option>
       </select>
     </clr-select-container>
-    <clr-input-container>
+    <clr-input-container id="tour-user-id">
       <label>User ID</label>
       <input clrInput type="text" formControlName="operator" required />
     </clr-input-container>
-    <clr-password-container>
+    <clr-password-container id="tour-user-password">
       <label>Password</label>
       <input clrPassword name="password" formControlName="password" required />
     </clr-password-container>
-    <button class="btn btn-primary mt-2" *ngIf="loginForm.valid" (click)="onSubmit()">Sign in</button>
+    <button  id="tour-confirm-login" class="btn btn-primary mt-2" *ngIf="loginForm.valid" (click)="onSubmit()">Sign in</button>
   </form>
 </div>
 <clr-modal [(clrModalOpen)]="confirmLoginDialogOpened">
