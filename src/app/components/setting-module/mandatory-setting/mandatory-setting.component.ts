@@ -78,7 +78,7 @@ export class MandatorySettingComponent implements OnInit {
     validateApiRoot() {
         const url = this.settingForm.get('apiRoot').value;
         if (url) {
-          this.lps.checkPublicAccess(url).subscribe(() => {
+          this.lps.publicAccess(url).subscribe(() => {
             this.isApiRootValid = true;
             this.iaas.success('LabPipe server connected.', this.messages);
             this.us.updateApiRoot(url);
@@ -96,7 +96,7 @@ export class MandatorySettingComponent implements OnInit {
         const token = this.settingForm.get('apiToken').value;
         const key = this.settingForm.get('apiKey').value;
         if (url && token && key) {
-            this.lps.checkTokenAccess(token, key).subscribe(() => {
+            this.lps.tokenAccess(token, key).subscribe(() => {
                     this.isApiTokenKeyValid = true;
                     this.iaas.success('Access token is valid.', this.messages);
                     this.us.updateApiToken(token);
