@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {DatabaseService} from '../../../services/database.service';
 import {forkJoin} from 'rxjs';
 import {LabPipeService} from '../../../services/lab-pipe.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-prepare-launch',
@@ -15,13 +16,14 @@ export class PrepareLaunchComponent implements OnInit {
   parameterList: string[] = [];
 
   constructor(private lps: LabPipeService, private us: UserSettingsService,
+              private tds: TemporaryDataService,
               private ds: DatabaseService,
               private router: Router) {
   }
 
   ngOnInit() {
     const component = this;
-    if (this.us.getRunningMode() === 'server') {
+    if (this.tds.connected) {
       this.loadParameterList().subscribe(
         (data: any) => {
           console.log('init parameter list retrieved');
@@ -38,7 +40,7 @@ export class PrepareLaunchComponent implements OnInit {
               data.forEach((param, index) => {
                 console.log(param);
                 console.log('loading parameter ' + component.parameterList[index]);
-                component.us.updateSetting(String(component.parameterList[index]), param);
+                component.us.setParameter(String(component.parameterList[index]), param);
               });
             },
             error => {

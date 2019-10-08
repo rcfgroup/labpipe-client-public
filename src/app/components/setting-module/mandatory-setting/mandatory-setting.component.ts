@@ -81,7 +81,7 @@ export class MandatorySettingComponent implements OnInit {
           this.lps.publicAccess(url).subscribe(() => {
             this.isApiRootValid = true;
             this.iaas.success('LabPipe server connected.', this.messages);
-            this.us.updateApiRoot(url);
+            this.us.setApiRoot(url);
             this.lps.loadApiRoot();
           }, (err) => {
             console.log(err);
@@ -99,8 +99,8 @@ export class MandatorySettingComponent implements OnInit {
             this.lps.tokenAccess(token, key).subscribe(() => {
                     this.isApiTokenKeyValid = true;
                     this.iaas.success('Access token is valid.', this.messages);
-                    this.us.updateApiToken(token);
-                    this.us.updateApiKey(key);
+                    this.us.setApiToken(token);
+                    this.us.setApiKey(key);
                 },
                 (err) => {
                     console.log(err);
@@ -113,7 +113,7 @@ export class MandatorySettingComponent implements OnInit {
     updateServerMonitorConfig() {
         this.settingForm.controls.serverMonitorInterval.valueChanges
           .subscribe(value => {
-            this.us.updateServerMonitorInterval(value);
+            this.us.setServerMonitorInterval(value);
 
           });
         this.settingForm.controls.serverMonitorRetryInterval.valueChanges

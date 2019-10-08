@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {UserSettingsService} from 'src/app/services/user-settings.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-top-navigation',
@@ -11,50 +12,51 @@ export class TopNavigationComponent implements OnInit {
 
   currentUser: any;
 
-  constructor(private router: Router, private us: UserSettingsService) {
-    this.router.events.subscribe(() => {this.currentUser = this.us.getCurrentOperator(); });
+  constructor(private router: Router, private us: UserSettingsService, private tds: TemporaryDataService) {
+    this.router.events.subscribe(() => {this.currentUser = this.tds.operator; });
   }
 
   ngOnInit() {
-    this.currentUser = this.us.getCurrentOperator();
+    this.currentUser = this.tds.operator;
   }
 
   reload() {
-    this.us.clearForNewLogin();
+    this.tds.resetLogin();
     this.router.navigate(['']);
   }
 
   logout() {
-    this.us.clearForNewLogin();
+    this.tds.resetLogin();
     this.router.navigate(['login']);
   }
 
   toTasks() {
-    this.us.clearForNewTask();
+    this.tds.resetTask();
     this.router.navigate(['tasks']);
   }
 
   toBrowse() {
-    this.us.clearForNewTask();
+    this.tds.resetTask();
     this.router.navigate(['browse']);
   }
 
   toManage() {
-    this.us.clearForNewTask();
+    this.tds.resetTask();
     this.router.navigate(['manage']);
   }
 
   toSettings() {
+    this.tds.resetTask();
     this.router.navigate(['settings']);
   }
 
   toLogin() {
-    this.us.clearForNewLogin();
+    this.tds.resetLogin();
     this.router.navigate(['login']);
   }
 
   toFreshStartUp() {
-    this.us.clearForNewLogin();
+    this.tds.resetLogin();
     this.router.navigate(['fresh-startup']);
   }
 
@@ -62,7 +64,7 @@ export class TopNavigationComponent implements OnInit {
     if (this.currentUser) {
       this.toTasks();
     } else {
-      if (this.us.getRegularStartup()) {
+      if (this.us.getStartupMode()) {
         this.toLogin();
       } else {
         this.toFreshStartUp();

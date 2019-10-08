@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {delay, retryWhen, switchMap, tap} from 'rxjs/operators';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {LabPipeService} from '../../../services/lab-pipe.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-connection-monitor',
@@ -21,7 +22,9 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
   serverConnected: boolean;
   url: string;
 
-  constructor(private us: UserSettingsService, private lps: LabPipeService) {
+  constructor(private us: UserSettingsService,
+              private tds: TemporaryDataService,
+              private lps: LabPipeService) {
     this.networkConnected = window.navigator.onLine;
     this.onlineEvent = fromEvent(window, 'online');
     this.offlineEvent = fromEvent(window, 'offline');
@@ -54,7 +57,7 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
     this.networkDisconnectedStateSubscription = this.offlineEvent.subscribe(() => {
       this.networkConnected = false;
       console.log('No internet connection');
-      this.us.updateRunningMode('local');
+      this.tds.connected = false;
       this.monitorServerState();
     });
   }
@@ -68,7 +71,7 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
                 errors.pipe(
                     tap(() => {
                       this.serverConnected = false;
-                      this.us.updateRunningMode('local');
+                      this.tds.connected = false;
                       console.log('No server connection');
                     }),
                     delay(this.us.getServerMonitorRetryInterval())
@@ -78,7 +81,7 @@ export class ConnectionMonitorComponent implements OnInit, OnDestroy {
         .subscribe(() => {
           this.serverConnected = true;
           console.log('Connected to server');
-          this.us.updateRunningMode('server');
+          this.tds.connected = true;
         });
     }
   }

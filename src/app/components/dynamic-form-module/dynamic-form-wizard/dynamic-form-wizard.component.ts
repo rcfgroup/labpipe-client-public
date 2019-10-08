@@ -16,6 +16,7 @@ import {TrueFalseQuestion} from '../../../models/dynamic-form-models/question-tr
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-dynamic-form-wizard',
@@ -56,23 +57,24 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
               private ds: DatabaseService,
               private es: ElectronService,
               private lps: LabPipeService,
+              private tds: TemporaryDataService,
               private iaas: InAppAlertService,
               private zone: NgZone,
               private http: HttpClient,
               private router: Router) {
     this.formTemplates = [];
-    this.location = this.us.getCurrentLocation();
-    this.instrument = this.us.getCurrentInstrument();
-    this.study = this.us.getCurrentStudy();
+    this.location = this.tds.location;
+    this.instrument = this.tds.instrument;
+    this.study = this.tds.study;
   }
 
   ngOnInit() {
-    // TODO get formCode from current study
+    // TODO getParameter formCode from current study
     this.getFormTemplate();
   }
 
   ngOnDestroy() {
-    this.us.clearForNewTask();
+    this.tds.resetTask();
   }
 
   getFormTemplate() {
@@ -90,7 +92,22 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
             break;
         }
       },
-      (error: any) => this.iaas.error(error.error.message, this.messages)
+      (error: any) => {
+        console.log(error);
+        this.iaas.warn('Unable to getParameter form from server. Trying local forms.', this.messages);
+        this.formTemplates = this.us.getForm(this.study.identifier, this.instrument.identifier);
+        switch (this.formTemplates.length) {
+          case 0:
+            this.showNoFormDialog = true;
+            break;
+          case 1:
+            this.prepareForm(this.formTemplates[0]);
+            break;
+          default:
+            this.showMultipleFormCodeDialog = true;
+            break;
+        }
+      }
     );
   }
 
@@ -99,16 +116,31 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       this.showMultipleFormCodeDialog = false;
       this.lps.getFormWithIdentifier(this.formCode).subscribe((data: any) => {
         this.iaas.success('Form loaded. Preparation in progress.', this.messages);
+        this.us.setForm(data);
         this.prepareForm(data);
         },
-        error => this.iaas.error(error.error.message, this.messages)
+        error => {
+          this.iaas.warn('Unable to getParameter form from server. Trying local forms.', this.messages);
+          const data = this.us.getFormWithIdentifier(this.formCode);
+          if (data) {
+            this.prepareForm(data);
+          } else {
+            this.showNoFormDialog = true;
+          }
+        }
       );
     }
   }
 
   prepareForm(data: any) {
+    this.us.setForm(data);
     this.actionIdentifier = this.lps.getUid();
-    this.formData = {actionIdentifier: this.actionIdentifier, formIdentifier: data.identifier, studyIdentifier: data.studyIdentifier, instrumentIdentifier: data.instrumentIdentifier, record: {}};
+    this.formData = {
+      actionIdentifier: this.actionIdentifier,
+      formIdentifier: data.identifier,
+      studyIdentifier: data.studyIdentifier,
+      instrumentIdentifier: data.instrumentIdentifier,
+      record: {}};
     this.remoteUrl = data.url;
     this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
     data.template.pages.forEach(page => {
@@ -187,11 +219,11 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   saveResult() {
     this.ds.saveData(this.actionIdentifier, {
       created: new Date(),
-      saved_by: this.us.getCurrentOperator().username,
+      saved_by: this.tds.operator.username,
       url: this.remoteUrl,
       ...this.result
     });
-    if (this.us.getRunningMode() === 'server') {
+    if (this.tds.connected) {
       this.sentToServer = true;
       this.lps.postRecord(this.remoteUrl, this.result)
         .subscribe((data: any) => {
@@ -213,7 +245,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   toPortal() {
     this.showNoFormDialog = false;
     this.showSavedDialog = false;
-    this.us.clearForNewTask();
+    this.tds.resetTask();
     this.router.navigate(['tasks']);
   }
 

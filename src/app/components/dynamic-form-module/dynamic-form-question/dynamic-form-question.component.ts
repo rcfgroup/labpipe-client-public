@@ -8,6 +8,7 @@ import {UserSettingsService} from '../../../services/user-settings.service';
 import {SelectQuestion} from '../../../models/dynamic-form-models/question-select';
 import {InputQuestion} from '../../../models/dynamic-form-models/question-input';
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-dynamic-form-question',
@@ -26,7 +27,10 @@ export class DynamicFormQuestionComponent implements OnInit {
   // tslint:disable-next-line:max-line-length
   fileInputProperties: ('openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles' | 'createDirectory' | 'promptToCreate' | 'noResolveAliases' | 'treatPackageAsDirectory')[] = ['openFile'];
 
-  constructor(private uss: UserSettingsService, private es: ElectronService, private zone: NgZone) {}
+  constructor(private uss: UserSettingsService,
+              private tds: TemporaryDataService,
+              private es: ElectronService,
+              private zone: NgZone) {}
 
   ngOnInit() {
     this.prepareAttributes();
@@ -41,7 +45,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const sq = this.qBase as SelectQuestion;
         if (sq.options.startsWith('__') && sq.options.endsWith('__')) {
           const optionIndex = sq.options.replace(/__/g, '').split('::');
-          let optionValues = this.uss.getCurrentStudy();
+          let optionValues = this.tds.study;
           optionIndex.forEach((oi: string) => {
             optionValues = optionValues[oi];
           });
@@ -62,7 +66,7 @@ export class DynamicFormQuestionComponent implements OnInit {
         const iq = this.qBase as InputQuestion;
         if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
           const patternIndex = iq.pattern.replace(/__/g, '').split('::');
-          let patternValues = this.uss.getCurrentStudy();
+          let patternValues = this.tds.study;
           patternIndex.forEach((oi: string) => {
             patternValues = patternValues[oi];
           });

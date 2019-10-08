@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {UserSettingsService} from './user-settings.service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
+import {TemporaryDataService} from './temporary-data.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,10 @@ export class LabPipeService {
   path: any;
   fs: any;
 
-  constructor(private uss: UserSettingsService, private es: ElectronService, private http: HttpClient) {
+  constructor(private uss: UserSettingsService,
+              private tds: TemporaryDataService,
+              private es: ElectronService,
+              private http: HttpClient) {
     this.path = this.es.remote.require('path');
     this.fs = this.es.remote.require('fs-extra');
     this.loadApiRoot();
@@ -24,9 +28,9 @@ export class LabPipeService {
   }
 
   userAuthRequestOptions() {
-    return this.uss.getCurrentOperator() && this.uss.getCurrentOperatorPassword() ? {
+    return this.tds.operator && this.tds.password ? {
       headers: new HttpHeaders({
-        Authorization: `Basic ${btoa(`${this.uss.getCurrentOperator().username}:${this.uss.getCurrentOperatorPassword()}`)}`
+        Authorization: `Basic ${btoa(`${this.tds.operator.username}:${this.tds.password}`)}`
       })
     } : {};
   }
@@ -61,16 +65,6 @@ export class LabPipeService {
   getParameter(identifier: string) {
     const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
-  }
-
-  async getParameterAsync(identifier: string) {
-    return new Promise((resolve, reject) => {
-      const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
-      this.http.get(url, this.tokenAuthRequestOptions()).subscribe(
-        data => resolve(data),
-        error => reject(error)
-      )
-    });
   }
 
   getForm(studyIdentifier: string, instrumentIdentifier: string) {

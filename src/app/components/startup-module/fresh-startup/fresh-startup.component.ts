@@ -15,19 +15,19 @@ export class FreshStartupComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.isRegularStartup = this.us.getRegularStartup();
+    this.isRegularStartup = this.us.getStartupMode();
     if (this.isRegularStartup && this.us.getDataDirectory() && this.us.getApiToken() && this.us.getApiKey()) {
       this.router.navigate(['prepare-launch']);
     } else {
       this.isRegularStartup = false;
-      this.us.updateRegularStartup(this.isRegularStartup);
+      this.us.setStartupMode(this.isRegularStartup);
     }
   }
 
   continueLaunch() {
     if (this.us.getDataDirectory() && this.us.getApiToken() && this.us.getApiKey()) {
       this.isRegularStartup = true;
-      this.us.updateRegularStartup(this.isRegularStartup);
+      this.us.setStartupMode(this.isRegularStartup);
       this.router.navigate(['prepare-launch']);
     }
   }

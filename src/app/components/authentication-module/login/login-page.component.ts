@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {ElectronService} from 'ngx-electron';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 
 @Component({
@@ -28,9 +29,12 @@ export class LoginPageComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private us: UserSettingsService,
-              private es: ElectronService) {
-    this.selectedLocation = this.us.getCurrentLocation();
-    this.selectedInstrument = this.us.getCurrentInstrument();
+              private es: ElectronService,
+              private tds: TemporaryDataService) {
+    this.selectedLocation = this.us.getLocation();
+    console.log(this.selectedLocation);
+    this.selectedInstrument = this.us.getInstrument();
+    console.log(this.selectedInstrument);
     this.loginForm = this.formBuilder.group({
       location: [this.selectedLocation ? this.selectedLocation : '', Validators.required],
       instrument: [this.selectedInstrument ? this.selectedInstrument : '', Validators.required],
@@ -40,7 +44,7 @@ export class LoginPageComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.appVersion = this.us.getSetting('version');
+    this.appVersion = this.us.getParameter('version');
     this.locations$ = this.us.getLocations();
     this.instruments$ = this.us.getInstruments();
     this.operators$ = this.us.getOperators();
@@ -82,10 +86,12 @@ export class LoginPageComponent implements OnInit {
   onConfirm(status: boolean) {
     this.confirmLoginDialogOpened = false;
     if (status) {
-      this.us.updateCurrentLocation(this.loginForm.get('location').value);
-      this.us.updateCurrentInstrument(this.loginForm.get('instrument').value);
-      this.us.updateCurrentOperator(this.currentOperator);
-      this.us.updateCurrentOperatorPassword(this.loginForm.get('password').value);
+      this.tds.location = this.loginForm.get('location').value;
+      this.us.setLocation(this.loginForm.get('location').value);
+      this.tds.instrument = this.loginForm.get('instrument').value;
+      this.us.setInstrument(this.loginForm.get('instrument').value);
+      this.tds.operator = this.currentOperator;
+      this.tds.password = this.loginForm.get('password').value;
       this.router.navigate(['tasks']);
     }
   }
