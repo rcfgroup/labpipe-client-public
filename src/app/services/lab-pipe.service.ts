@@ -47,11 +47,11 @@ export class LabPipeService {
     return this.http.head(`${this.apiRoot}/api/general/connect/public`);
   }
 
-  checkPublicAccess(apiRoot: string) {
+  publicAccess(apiRoot: string) {
     return this.http.get(`${apiRoot}/api/general/connect/public`);
   }
 
-  checkTokenAccess(token?: string, key?: string) {
+  tokenAccess(token?: string, key?: string) {
     const options = {
       ...this.tokenAuthRequestOptions(token, key)
     };
@@ -61,6 +61,16 @@ export class LabPipeService {
   getParameter(identifier: string) {
     const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
+  }
+
+  async getParameterAsync(identifier: string) {
+    return new Promise((resolve, reject) => {
+      const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
+      this.http.get(url, this.tokenAuthRequestOptions()).subscribe(
+        data => resolve(data),
+        error => reject(error)
+      )
+    });
   }
 
   getForm(studyIdentifier: string, instrumentIdentifier: string) {
