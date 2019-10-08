@@ -1,6 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as introJs from 'intro.js/intro.js';
-import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-tour',
@@ -8,14 +7,14 @@ import {Router} from '@angular/router';
   styleUrls: ['./tour.component.css']
 })
 export class TourComponent implements OnInit {
-  introJS = introJs();
+  introJS: any;
 
   @Input() tour: string;
+  @Output() signal = new EventEmitter<boolean>();
 
-  constructor(private router: Router) { }
+  constructor() { }
 
   ngOnInit() {
-    console.log(this.router.url);
   }
 
   getIntroOptions() {
@@ -85,7 +84,34 @@ export class TourComponent implements OnInit {
             },
             {
               element: '#tour-select-study',
-              intro: 'Please select a study, then click start to continue.'
+              intro: 'Please select a study, then click start to continue. ' +
+                'It will then redirect you to proceed with linked form, ' +
+                'or prompt you for choice if multiple forms are available, ' +
+                'or redirect you back to the portal if no form is available.'
+            }
+          ]
+        };
+      case 'browse':
+        return {
+          steps: [
+            {
+              intro: 'You are now at the record browsing portal.'
+            },
+            {
+              element: '#tour-remote-records',
+              intro: 'Here shows records that can be retrieved from remote server.'
+            },
+            {
+              element: '#tour-remote-retry',
+              intro: 'Click here to re-attempt loading data from remote server.'
+            },
+            {
+              element: '#tour-local-records',
+              intro: 'Here shows records that can are saved locally.'
+            },
+            {
+              element: '#tour-local-retry',
+              intro: 'Click here to re-attempt loading data from local database.'
             }
           ]
         };
@@ -94,8 +120,11 @@ export class TourComponent implements OnInit {
 
   startTour() {
     const option = this.getIntroOptions();
+    this.introJS = introJs().oncomplete(() => this.signal.emit(false))
+      .onexit(() => this.signal.emit(false));
     this.introJS.setOptions(option);
     this.introJS.start();
+    this.signal.emit(true);
   }
 
 }

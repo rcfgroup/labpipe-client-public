@@ -26,7 +26,7 @@
       <label>Password</label>
       <input clrPassword name="password" formControlName="password" required />
     </clr-password-container>
-    <button  id="tour-confirm-login" class="btn btn-primary mt-2" *ngIf="loginForm.valid" (click)="onSubmit()">Sign in</button>
+    <button class="btn btn-primary mt-2" *ngIf="loginForm.valid" (click)="onSubmit()">Sign in</button>
   </form>
 </div>
 <clr-modal [(clrModalOpen)]="confirmLoginDialogOpened">

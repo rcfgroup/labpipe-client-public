@@ -147,6 +147,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
         this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
       this.isFormReady = true;
       this.iaas.success('Form preparation completed.', this.messages);
+      this.isFormVisible = true;
     }
   }
 

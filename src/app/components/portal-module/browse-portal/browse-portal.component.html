@@ -1,88 +1,92 @@
-
-<h2>Remote records <button class="btn btn-primary btn-sm" type="button" (click)="loadRemoteRecords()">reload</button>
+<app-tour tour="browse"></app-tour>
+<div id="tour-remote-records">
+<h2>Remote records <button id="tour-remote-retry" class="btn btn-primary btn-sm" type="button" (click)="loadRemoteRecords()">reload</button>
 </h2>
-<clr-datagrid *ngIf="remoteRecords && remoteRecords.length > 0; else noRecordRemote">
-  <clr-dg-column [clrDgField]="'studyIdentifier'">Study
-  </clr-dg-column>
-  <clr-dg-column [clrDgField]="'instrumentIdentifier'" >Instrument</clr-dg-column>
-  <clr-dg-column [clrDgField]="'formIdentifier'" >Form</clr-dg-column>
-  <clr-dg-column [clrDgField]="'created'">Created</clr-dg-column>
-  <clr-dg-column [clrDgField]="'uploaded_by'" >Operator</clr-dg-column>
+  <clr-datagrid *ngIf="remoteRecords && remoteRecords.length > 0; else noRecordRemote">
+    <clr-dg-column [clrDgField]="'studyIdentifier'">Study
+    </clr-dg-column>
+    <clr-dg-column [clrDgField]="'instrumentIdentifier'" >Instrument</clr-dg-column>
+    <clr-dg-column [clrDgField]="'formIdentifier'" >Form</clr-dg-column>
+    <clr-dg-column [clrDgField]="'created'">Created</clr-dg-column>
+    <clr-dg-column [clrDgField]="'uploaded_by'" >Operator</clr-dg-column>
 
-  <clr-dg-row *clrDgItems="let record of remoteRecords" [clrDgItem]="record">
-    <clr-dg-cell>{{record.studyIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.instrumentIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.formIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
-    <clr-dg-cell>{{record.uploaded_by}}</clr-dg-cell>
-    <clr-dg-action-overflow>
-      <button class="action-item" (click)="report(record)">View Report</button>
-    </clr-dg-action-overflow>
-    <clr-dg-row-detail *clrIfExpanded>
-      More details will viewable here in next release.
-    </clr-dg-row-detail>
-  </clr-dg-row>
+    <clr-dg-row *clrDgItems="let record of remoteRecords" [clrDgItem]="record">
+      <clr-dg-cell>{{record.studyIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.instrumentIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.formIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
+      <clr-dg-cell>{{record.uploaded_by}}</clr-dg-cell>
+      <clr-dg-action-overflow>
+        <button class="action-item" (click)="report(record)">View Report</button>
+      </clr-dg-action-overflow>
+      <clr-dg-row-detail *clrIfExpanded>
+        More details will viewable here in next release.
+      </clr-dg-row-detail>
+    </clr-dg-row>
 
-  <clr-dg-footer>
-    <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="remoteRecords.length">
-      <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
-      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
-      of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
-    </clr-dg-pagination>
-  </clr-dg-footer>
-</clr-datagrid>
-<ng-template #noRecordRemote>
-  <div class="alert alert-info" role="alert">
-    <div class="alert-items">
-      <div class="alert-item static">
+    <clr-dg-footer>
+      <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="remoteRecords.length">
+        <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
+        {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+        of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
+      </clr-dg-pagination>
+    </clr-dg-footer>
+  </clr-datagrid>
+  <ng-template #noRecordRemote>
+    <div class="alert alert-info" role="alert">
+      <div class="alert-items">
+        <div class="alert-item static">
         <span class="alert-text">
                     No record retrieved from server.
           <button class="btn btn-primary-outline btn-sm" type="button" (click)="loadRemoteRecords()">retry</button>
         </span>
+        </div>
       </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
+</div>
 
-<h2>Local records <button class="btn btn-primary btn-sm" type="button" (click)="loadLocalRecords()">reload</button></h2>
-<clr-datagrid *ngIf="localRecords && localRecords.length > 0; else noRecordLocal">
-  <clr-dg-column [clrDgField]="'data.studyIdentifier'">Study</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.instrumentIdentifier'" >Instrument</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.formIdentifier'" >Form</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.created'">Created</clr-dg-column>
-  <clr-dg-column [clrDgField]="'data.uploaded_by'" >Operator</clr-dg-column>
+<div id="tour-local-records">
+  <h2>Local records <button id="tour-local-retry" class="btn btn-primary btn-sm" type="button" (click)="loadLocalRecords()">reload</button></h2>
+  <clr-datagrid *ngIf="localRecords && localRecords.length > 0; else noRecordLocal">
+    <clr-dg-column [clrDgField]="'data.studyIdentifier'">Study</clr-dg-column>
+    <clr-dg-column [clrDgField]="'data.instrumentIdentifier'" >Instrument</clr-dg-column>
+    <clr-dg-column [clrDgField]="'data.formIdentifier'" >Form</clr-dg-column>
+    <clr-dg-column [clrDgField]="'data.created'">Created</clr-dg-column>
+    <clr-dg-column [clrDgField]="'data.uploaded_by'" >Operator</clr-dg-column>
 
-  <clr-dg-row *clrDgItems="let record of localRecords">
-    <clr-dg-cell>{{record.data.studyIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.instrumentIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.formIdentifier}}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
-    <clr-dg-cell>{{record.data.saved_by}}</clr-dg-cell>
-    <clr-dg-row-detail *clrIfExpanded>
-      More details will viewable here in next release.
-    </clr-dg-row-detail>
-  </clr-dg-row>
+    <clr-dg-row *clrDgItems="let record of localRecords">
+      <clr-dg-cell>{{record.data.studyIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.data.instrumentIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.data.formIdentifier}}</clr-dg-cell>
+      <clr-dg-cell>{{record.data.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
+      <clr-dg-cell>{{record.data.saved_by}}</clr-dg-cell>
+      <clr-dg-row-detail *clrIfExpanded>
+        More details will viewable here in next release.
+      </clr-dg-row-detail>
+    </clr-dg-row>
 
-  <clr-dg-footer>
-    <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="localRecords.length">
-      <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
-      {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
-      of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
-    </clr-dg-pagination>
-  </clr-dg-footer>
-</clr-datagrid>
-<ng-template #noRecordLocal>
-  <div class="alert alert-info" role="alert">
-    <div class="alert-items">
-      <div class="alert-item static">
+    <clr-dg-footer>
+      <clr-dg-pagination #pagination [clrDgPageSize]="5" [clrDgTotalItems]="localRecords.length">
+        <clr-dg-page-size [clrPageSizeOptions]="[5, 10, 20]">records per page</clr-dg-page-size>
+        {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+        of {{pagination.totalItems}} {{pagination.totalItems > 1 ? 'records' : 'record'}}
+      </clr-dg-pagination>
+    </clr-dg-footer>
+  </clr-datagrid>
+  <ng-template #noRecordLocal>
+    <div class="alert alert-info" role="alert">
+      <div class="alert-items">
+        <div class="alert-item static">
         <span class="alert-text">
                     No locally saved record.
           <button class="btn btn-primary-outline btn-sm" type="button" (click)="loadLocalRecords()">retry</button>
         </span>
+        </div>
       </div>
     </div>
-  </div>
-</ng-template>
+  </ng-template>
+</div>
 
 <clr-modal [(clrModalOpen)]="showRemoteRecordReport" [clrModalSize]="'xl'" [clrModalClosable]="false">
   <h3 class="modal-title">LabPipe Record Report</h3>
