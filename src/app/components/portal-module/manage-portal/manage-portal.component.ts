@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {InAppAlertService} from '../../../services/in-app-alert.service';
 
@@ -14,10 +14,12 @@ export class ManagePortalComponent implements OnInit {
   showModal = {
     newOperator: false,
     newToken: false,
-    newStudy: false
+    newRole: false,
+    newStudy: false,
   };
   operatorForm: FormGroup;
   studyForm: FormGroup;
+  roleForm: FormGroup;
 
   constructor(private formBuilder: FormBuilder, private lps: LabPipeService, private iaas: InAppAlertService) {
     this.operatorForm = this.formBuilder.group({
@@ -29,6 +31,10 @@ export class ManagePortalComponent implements OnInit {
       name: ['', Validators.required],
       config: ['', Validators.required]
     });
+    this.roleForm = this.formBuilder.group({
+      identifier: ['', Validators.required],
+      name: ['', Validators.required]
+    });
   }
 
   ngOnInit() {
@@ -39,6 +45,10 @@ export class ManagePortalComponent implements OnInit {
   }
 
   newToken() {
+    this.showModal.newToken = true;
+  }
+
+  newRole() {
     this.showModal.newToken = true;
   }
 
@@ -55,6 +65,14 @@ export class ManagePortalComponent implements OnInit {
   }
 
   onConfirmNewToken(confirm: boolean) {
+    if (confirm) {
+      this.lps.addToken().subscribe((data: any) => this.iaas.success(data.message, this.messages),
+        (error: any) => this.iaas.error(error.error.message, this.messages));
+    }
+    this.showModal.newToken = false;
+  }
+
+  onConfirmNewRole(confirm: boolean) {
     if (confirm) {
       this.lps.addToken().subscribe((data: any) => this.iaas.success(data.message, this.messages),
         (error: any) => this.iaas.error(error.error.message, this.messages));

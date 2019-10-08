@@ -100,6 +100,26 @@
   </div>
 </clr-modal>
 
+<clr-modal [(clrModalOpen)]="showModal.newRole">
+  <h3 class="modal-title">Add new role</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="roleForm">
+      <clr-input-container>
+        <label>Identifier</label>
+        <input clrInput type="text" formControlName="identifier" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Description</label>
+        <input clrInput type="email" formControlName="name" required />
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirmNewOperator(false)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!operatorForm.valid" (click)="onConfirmNewOperator(true)">Continue</button>
+  </div>
+</clr-modal>
+
 <clr-modal [(clrModalOpen)]="showModal.newStudy">
   <h3 class="modal-title">Add new token</h3>
   <div class="modal-body">
