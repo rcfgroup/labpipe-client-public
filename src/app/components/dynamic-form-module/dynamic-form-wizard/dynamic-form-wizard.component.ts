@@ -188,6 +188,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
     this.ds.saveData(this.actionIdentifier, {
       created: new Date(),
       saved_by: this.us.getCurrentOperator().username,
+      url: this.remoteUrl,
       ...this.result
     });
     if (this.us.getRunningMode() === 'server') {
