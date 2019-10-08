@@ -16,7 +16,7 @@
       <clr-dg-cell>{{record.formIdentifier}}</clr-dg-cell>
       <clr-dg-cell>{{record.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
       <clr-dg-cell>{{record.uploaded_by}}</clr-dg-cell>
-      <clr-dg-action-overflow>
+      <clr-dg-action-overflow id="tour-remote-action">
         <button class="action-item" (click)="report(record)">View Report</button>
       </clr-dg-action-overflow>
       <clr-dg-row-detail *clrIfExpanded>
@@ -61,6 +61,9 @@
       <clr-dg-cell>{{record.data.formIdentifier}}</clr-dg-cell>
       <clr-dg-cell>{{record.data.created | date: 'yyyy-MM-dd' }}</clr-dg-cell>
       <clr-dg-cell>{{record.data.saved_by}}</clr-dg-cell>
+      <clr-dg-action-overflow id="tour-local-action">
+        <button class="action-item" (click)="upload(record)">Upload</button>
+      </clr-dg-action-overflow>
       <clr-dg-row-detail *clrIfExpanded>
         More details will viewable here in next release.
       </clr-dg-row-detail>

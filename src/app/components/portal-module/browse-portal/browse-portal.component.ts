@@ -36,6 +36,10 @@ export class BrowsePortalComponent implements OnInit {
     });
   }
 
+  upload(record: any) {
+
+  }
+
   report(record: any) {
     this.remoteReport = {record};
     this.showRemoteRecordReport = true;
