@@ -106,12 +106,20 @@ export class TourComponent implements OnInit {
               intro: 'Click here to re-attempt loading data from remote server.'
             },
             {
+              element: '#tour-remote-action',
+              intro: 'Click here to perform different actions on selected record.'
+            },
+            {
               element: '#tour-local-records',
               intro: 'Here shows records that can are saved locally.'
             },
             {
               element: '#tour-local-retry',
               intro: 'Click here to re-attempt loading data from local database.'
+            },
+            {
+              element: '#tour-local-action',
+              intro: 'Click here to perform different actions on selected record.'
             }
           ]
         };
