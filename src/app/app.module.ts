@@ -27,6 +27,7 @@ import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.comp
 import { StatusBarComponent } from './components/status-bar/status-bar.component';
 import { BrowsePortalComponent } from './components/portal-module/browse-portal/browse-portal.component';
 import { TourComponent } from './components/tour/tour.component';
+import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { TourComponent } from './components/tour/tour.component';
     InAppAlertComponent,
     StatusBarComponent,
     BrowsePortalComponent,
-    TourComponent
+    TourComponent,
+    MultipleSelectComponent
   ],
   imports: [
     BrowserModule,
