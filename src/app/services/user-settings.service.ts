@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ElectronService} from 'ngx-electron';
-import {RequiredParameterName} from '../models/parameter.model';
+import {CollectionName} from '../models/parameter.model';
 import * as _ from 'lodash';
 
 @Injectable({
@@ -113,11 +113,11 @@ export class UserSettingsService {
   }
 
   getOperators(): any[] {
-    return this.getParameter(RequiredParameterName.OPERATORS);
+    return this.getParameter(CollectionName.OPERATORS);
   }
 
   getCollectors(): any[] {
-    return this.getParameter(RequiredParameterName.COLLECTORS);
+    return this.getParameter(CollectionName.COLLECTORS);
   }
 
   setLocation(v: any): void {
@@ -137,23 +137,23 @@ export class UserSettingsService {
   }
 
   getInstruments(): any[] {
-    return this.getParameter(RequiredParameterName.INSTRUMENTS);
+    return this.getParameter(CollectionName.INSTRUMENTS);
   }
 
   getStudies(): any[] {
-    return this.getParameter(RequiredParameterName.STUDIES);
+    return this.getParameter(CollectionName.STUDIES);
   }
 
   getLocations(): any[] {
-    return this.getParameter(RequiredParameterName.LOCATIONS);
+    return this.getParameter(CollectionName.LOCATIONS);
   }
 
   getForms(): any {
-    return this.getParameter(RequiredParameterName.FORMS, {});
+    return this.getParameter(CollectionName.FORMS, {});
   }
 
   setForm(v: any) {
-    this.setParameter(`${RequiredParameterName.FORMS}.${v.identifier}`, v);
+    this.setParameter(`${CollectionName.FORMS}.${v.identifier}`, v);
   }
 
   getForm(studyIdentifier: string, instrumentIdentifier: string) {
@@ -161,8 +161,8 @@ export class UserSettingsService {
   }
 
   getFormWithIdentifier(identifier: string) {
-    if (this.setting.has(`${RequiredParameterName.FORMS}.${identifier}`)) {
-      return this.getParameter(`${RequiredParameterName.FORMS}.${identifier}`);
+    if (this.setting.has(`${CollectionName.FORMS}.${identifier}`)) {
+      return this.getParameter(`${CollectionName.FORMS}.${identifier}`);
     }
   }
 }

@@ -3,6 +3,7 @@ import {UserSettingsService} from './user-settings.service';
 import {HttpClient, HttpHeaders, HttpParams} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
 import {TemporaryDataService} from './temporary-data.service';
+import {EmailGroup, Instrument, Location, Operator, Role, Study} from '../models/parameter.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,9 +63,10 @@ export class LabPipeService {
     return this.http.get(`${this.apiRoot}/api/general/connect/token`, options);
   }
 
-  getParameter(identifier: string) {
+  getParameter(identifier: string, useAuth?: boolean) {
     const url = `${this.apiRoot}/api/parameter/identifier/${identifier}`;
-    return this.http.get(url, this.tokenAuthRequestOptions());
+    const options = useAuth ? this.userAuthRequestOptions() : this.tokenAuthRequestOptions();
+    return this.http.get(url, options);
   }
 
   getForm(studyIdentifier: string, instrumentIdentifier: string) {
@@ -126,21 +128,42 @@ export class LabPipeService {
     return this.http.get(url, options);
   }
 
-  addOperator(name: string, email: string) {
+  getUid() {
+    return this.uuid4();
+  }
+
+  addOperator(operator: Operator) {
     const url = `${this.apiRoot}/api/manage/create/operator`;
-    const options = {
-      params: new HttpParams().set('name', name).set('email', email),
-      ...this.userAuthRequestOptions()
-    };
-    return this.http.get(url, options);
+    return this.http.post(url, operator, this.userAuthRequestOptions());
   }
 
   addToken() {
     const url = `${this.apiRoot}/api/manage/create/token`;
-    return this.http.get(url, this.userAuthRequestOptions());
+    return this.http.post(url, null, this.userAuthRequestOptions());
   }
 
-  getUid() {
-    return this.uuid4();
+  addRole(role: Role) {
+    const url = `${this.apiRoot}/api/manage/create/role`;
+    return this.http.post(url, role, this.userAuthRequestOptions());
+  }
+
+  addEmailGroup(group: EmailGroup) {
+    const url = `${this.apiRoot}/api/manage/create/emailgroup`;
+    return this.http.post(url, group, this.userAuthRequestOptions());
+  }
+
+  addInstrument(instrument: Instrument) {
+    const url = `${this.apiRoot}/api/manage/create/instrument`;
+    return this.http.post(url, instrument, this.userAuthRequestOptions());
+  }
+
+  addLocation(location: Location) {
+    const url = `${this.apiRoot}/api/manage/create/location`;
+    return this.http.post(url, location, this.userAuthRequestOptions());
+  }
+
+  addStudy(study: Study) {
+    const url = `${this.apiRoot}/api/manage/create/study`;
+    return this.http.post(url, study, this.userAuthRequestOptions());
   }
 }
