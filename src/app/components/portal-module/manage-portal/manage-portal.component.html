@@ -81,6 +81,9 @@
         <label>Email</label>
         <input clrInput type="email" formControlName="email" required />
       </clr-input-container>
+      <app-multiple-select title="Study" [options]="studies" [displayField]="'name'" (valueChanged)="operatorForm.get('projects').setValue($event)"></app-multiple-select>
+      <app-multiple-select title="Role" [options]="roles" [displayField]="'name'" (valueChanged)="operatorForm.get('roles').setValue($event)"></app-multiple-select>
+      <app-multiple-select title="Email Group" [options]="notificationGroups" [displayField]="'name'" (valueChanged)="operatorForm.get('notificationGroup').setValue($event)"></app-multiple-select>
     </form>
   </div>
   <div class="modal-footer">
