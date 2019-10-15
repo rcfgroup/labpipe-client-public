@@ -1,7 +1,7 @@
 <div class="clr-form-control">
   <label class="clr-control-label">{{title}}</label>
   <div class="clr-control-container">
-    <a *ngFor="let s of selected" class="label clickable cursor-hand" (click)="unselect(s)">{{displayField ? s[displayField] : s}} <clr-icon shape="times"></clr-icon></a>
+    <a *ngFor="let s of selected" class="label clickable cursor-hand" (click)="unselect(s)">{{s}} <clr-icon shape="times"></clr-icon></a>
     <select clrSelect [(ngModel)]="select" (ngModelChange)="onSelect()">
       <option *ngFor="let o of options"
               [ngValue]="valueField ? o[valueField] : o">

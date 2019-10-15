@@ -28,6 +28,7 @@ import { StatusBarComponent } from './components/status-bar/status-bar.component
 import { BrowsePortalComponent } from './components/portal-module/browse-portal/browse-portal.component';
 import { TourComponent } from './components/tour/tour.component';
 import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
+import { MultipleInputComponent } from './components/multiple-input/multiple-input.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +51,8 @@ import { MultipleSelectComponent } from './components/multiple-select/multiple-s
     StatusBarComponent,
     BrowsePortalComponent,
     TourComponent,
-    MultipleSelectComponent
+    MultipleSelectComponent,
+    MultipleInputComponent
   ],
   imports: [
     BrowserModule,

@@ -7,8 +7,8 @@ import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges
 })
 export class MultipleSelectComponent implements OnInit, OnChanges {
 
-  @Input() title: string;
-  @Input() options: any[];
+  @Input() title = '';
+  @Input() options: any[] = [];
   @Input() valueField: string = undefined;
   @Input() displayField: string = undefined;
   @Output() valueChanged = new EventEmitter();
@@ -22,17 +22,16 @@ export class MultipleSelectComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes) {
       this.title = changes.title.currentValue;
       this.options = changes.options.currentValue;
       this.valueField = changes.valueField.currentValue;
       this.displayField = changes.displayField.currentValue;
-    }
   }
 
   onSelect() {
     if (this.select) {
       this.selected.add(this.select);
+      console.log(this.selected);
     }
     this.valueChanged.emit(this.selected);
     this.select = undefined;

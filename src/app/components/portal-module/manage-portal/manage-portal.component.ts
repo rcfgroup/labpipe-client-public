@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {InAppAlertService} from '../../../services/in-app-alert.service';
-import {CollectionName, EmailGroup, Role, Study} from '../../../models/parameter.model';
+import {CollectionName, EmailGroup, FormTemplate, Operator, Role, Study} from '../../../models/parameter.model';
 
 @Component({
   selector: 'app-manage-portal',
@@ -17,14 +17,26 @@ export class ManagePortalComponent implements OnInit {
     newToken: false,
     newRole: false,
     newStudy: false,
+    newLocation: false,
+    newInstrument: false,
+    newEmailGroup: false,
+    newFormTemplate: false,
+    newReportTemplate: false
   };
   operatorForm: FormGroup;
   studyForm: FormGroup;
   roleForm: FormGroup;
+  locationForm: FormGroup;
+  instrumentForm: FormGroup;
+  emailGroupForm: FormGroup;
+  formTemplateForm: FormGroup;
+  reportTemplateForm: FormGroup;
 
-  studies: Study[];
-  roles: Role[];
-  notificationGroups: EmailGroup[];
+  studies: Study[] = [];
+  roles: Role[] = [];
+  notificationGroups: EmailGroup[] = [];
+  operators: Operator[] = [];
+  formTemplates: FormTemplate[] = [];
 
   constructor(private formBuilder: FormBuilder, private lps: LabPipeService, private iaas: InAppAlertService) {
     this.operatorForm = this.formBuilder.group({
@@ -43,59 +55,137 @@ export class ManagePortalComponent implements OnInit {
       name: ['', Validators.required],
       config: ['', Validators.required]
     });
+    this.locationForm = this.formBuilder.group({
+      identifier: ['', Validators.required],
+      name: ['', Validators.required],
+      type: [[]]
+    });
+    this.instrumentForm = this.formBuilder.group({
+      identifier: ['', Validators.required],
+      name: ['', Validators.required],
+      realtime: [false, Validators.required],
+      fileType: [[]]
+    });
+    this.emailGroupForm = this.formBuilder.group({
+      identifier: ['', Validators.required],
+      name: ['', Validators.required],
+      formIdentifier: ['', Validators.required],
+      studyIdentifier: [''],
+      admin: [[]],
+      member: [[]]
+    });
   }
 
   ngOnInit() {
   }
 
-  newOperator() {
-    this.showModal.newOperator = true;
-    this.lps.getParameter(CollectionName.STUDIES, true).subscribe(
-      (data: Study[]) => this.studies = data
-    );
-    this.lps.getParameter(CollectionName.ROLES, true).subscribe(
-      (data: Role[]) => this.roles = data
-    );
-    this.lps.getParameter(CollectionName.EMAIL_GROUPS, true).subscribe(
-      (data: EmailGroup[]) => this.notificationGroups = data
-    );
+  addNewRecord(target: string) {
+    switch (target) {
+      case 'operator':
+        this.showModal.newOperator = true;
+        this.lps.getParameter(CollectionName.STUDIES, true).subscribe(
+          (data: Study[]) => this.studies = data
+        );
+        this.lps.getParameter(CollectionName.ROLES, true).subscribe(
+          (data: Role[]) => this.roles = data
+        );
+        this.lps.getParameter(CollectionName.EMAIL_GROUPS, true).subscribe(
+          (data: EmailGroup[]) => this.notificationGroups = data
+        );
+        break;
+      case 'token':
+        this.showModal.newToken = true;
+        break;
+      case 'role':
+        this.showModal.newRole = true;
+        break;
+      case 'location':
+        this.showModal.newLocation = true;
+        break;
+      case 'instrument':
+        this.showModal.newInstrument = true;
+        break;
+      case 'email-group':
+        this.showModal.newEmailGroup = true;
+        this.lps.getParameter(CollectionName.FORMS, true).subscribe(
+          (data: FormTemplate[]) => this.formTemplates = data
+        );
+        this.lps.getParameter(CollectionName.OPERATORS, true).subscribe(
+          (data: Operator[]) => this.operators = data
+        );
+        break;
+      case 'study':
+        this.showModal.newStudy = true;
+        break;
+      case 'form-template':
+        this.showModal.newFormTemplate = true;
+        break;
+      case 'report-template':
+        this.showModal.newReportTemplate = true;
+        break;
+    }
   }
 
-  newToken() {
-    this.showModal.newToken = true;
-  }
-
-  newRole() {
-    this.showModal.newToken = true;
-  }
-
-  onConfirmNewOperator(confirm: boolean) {
-    if (confirm) {
-      if (this.operatorForm.valid) {
-        this.lps.addOperator(this.operatorForm.value)
-          .subscribe((data: any) => this.iaas.success(data.message, this.messages),
+  onConfirm(target: string, confirm: boolean, form?: FormGroup) {
+    switch (target) {
+      case 'operator':
+        if (confirm && form.valid) {
+            this.lps.addOperator(form.value)
+              .subscribe((data: any) => this.iaas.success(data.message, this.messages),
+                (error: any) => this.iaas.error(error.error.message, this.messages));
+        }
+        this.showModal.newOperator = false;
+        form.reset();
+        break;
+      case 'token':
+        if (confirm) {
+          this.lps.addToken().subscribe((data: any) => this.iaas.success(data.message, this.messages),
             (error: any) => this.iaas.error(error.error.message, this.messages));
-      }
+        }
+        this.showModal.newToken = false;
+        break;
+      case 'role':
+        if (confirm) {
+          this.lps.addRole(form.value).subscribe((data: any) => this.iaas.success(data.message, this.messages),
+            (error: any) => this.iaas.error(error.error.message, this.messages));
+        }
+        this.showModal.newRole = false;
+        break;
+      case 'location':
+        if (confirm) {
+          this.lps.addLocation(form.value).subscribe((data: any) => this.iaas.success(data.message, this.messages),
+            (error: any) => this.iaas.error(error.error.message, this.messages));
+        }
+        this.showModal.newLocation = false;
+        break;
+      case 'instrument':
+        if (confirm) {
+          this.lps.addInstrument(form.value).subscribe((data: any) => this.iaas.success(data.message, this.messages),
+            (error: any) => this.iaas.error(error.error.message, this.messages));
+        }
+        this.showModal.newInstrument = false;
+        break;
+      case 'email-group':
+        if (confirm) {
+          this.lps.addEmailGroup(form.value).subscribe((data: any) => this.iaas.success(data.message, this.messages),
+            (error: any) => this.iaas.error(error.error.message, this.messages));
+        }
+        this.showModal.newEmailGroup = false;
+        break;
     }
-    this.showModal.newOperator = false;
-    this.operatorForm.reset();
   }
 
-  onConfirmNewToken(confirm: boolean) {
-    if (confirm) {
-      this.lps.addToken().subscribe((data: any) => this.iaas.success(data.message, this.messages),
-        (error: any) => this.iaas.error(error.error.message, this.messages));
+  updateForm(form: FormGroup, field: string, event: any) {
+    switch (form) {
+      case this.operatorForm:
+        switch (field) {
+          case 'projects':
+          case 'roles':
+          case 'notificationGroup':
+            form.get(field).setValue(event);
+            break;
+        }
+        break;
     }
-    this.showModal.newToken = false;
   }
-
-  onConfirmNewRole(confirm: boolean) {
-    if (confirm) {
-      this.lps.addRole(this.roleForm.value).subscribe((data: any) => this.iaas.success(data.message, this.messages),
-        (error: any) => this.iaas.error(error.error.message, this.messages));
-    }
-    this.showModal.newToken = false;
-  }
-
-
 }

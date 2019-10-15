@@ -32,9 +32,7 @@ export class LoginPageComponent implements OnInit {
               private es: ElectronService,
               private tds: TemporaryDataService) {
     this.selectedLocation = this.us.getLocation();
-    console.log(this.selectedLocation);
     this.selectedInstrument = this.us.getInstrument();
-    console.log(this.selectedInstrument);
     this.loginForm = this.formBuilder.group({
       location: [this.selectedLocation ? this.selectedLocation : '', Validators.required],
       instrument: [this.selectedInstrument ? this.selectedInstrument : '', Validators.required],

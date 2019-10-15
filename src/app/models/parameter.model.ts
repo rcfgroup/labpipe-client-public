@@ -1,3 +1,5 @@
+import {WizardPage} from './dynamic-form-models/wizard-page';
+
 export enum CollectionName {
   ACCESS_TOKENS = 'ACCESS_TOKENS',
   ROLES = 'ROLES',
@@ -57,4 +59,14 @@ export class Study {
   identifier: string;
   name: string;
   config: any;
+}
+
+export class FormTemplate {
+  identifier: string;
+  name: string;
+  studyIdentifier: string;
+  instrumentIdentifier: string;
+  notificationStyle: string;
+  url: string;
+  template: {title: string; pages: WizardPage[]};
 }

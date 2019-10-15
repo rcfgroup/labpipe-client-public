@@ -69,6 +69,11 @@ export class LabPipeService {
     return this.http.get(url, options);
   }
 
+  listForms() {
+    const url = `${this.apiRoot}/api/form/template/all`;
+    return this.http.get(url, this.tokenAuthRequestOptions());
+  }
+
   getForm(studyIdentifier: string, instrumentIdentifier: string) {
     const url = `${this.apiRoot}/api/form/template/study/${studyIdentifier}/instrument/${instrumentIdentifier}`;
     return this.http.get(url, this.tokenAuthRequestOptions());
