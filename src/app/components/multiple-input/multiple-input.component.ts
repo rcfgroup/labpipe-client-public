@@ -30,7 +30,7 @@ export class MultipleInputComponent implements OnInit {
   }
 
   update() {
-    this.valueChanged.emit(this.results);
+    this.valueChanged.emit(Array.from(this.results));
   }
 
 }

@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {LabPipeService} from '../../services/lab-pipe.service';
 
 @Component({
   selector: 'app-multiple-select',
@@ -13,33 +14,38 @@ export class MultipleSelectComponent implements OnInit, OnChanges {
   @Input() displayField: string = undefined;
   @Output() valueChanged = new EventEmitter();
 
-  selected: Set<any> = new Set();
+  id: string;
+
+  selected = {};
   select: any;
 
-  constructor() { }
+  constructor(private lps: LabPipeService) {
+    this.id = this.lps.getUid();
+    this.selected[this.id] = new Set();
+  }
 
   ngOnInit() {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-      this.title = changes.title.currentValue;
       this.options = changes.options.currentValue;
-      this.valueField = changes.valueField.currentValue;
-      this.displayField = changes.displayField.currentValue;
   }
 
   onSelect() {
     if (this.select) {
-      this.selected.add(this.select);
-      console.log(this.selected);
+      this.selected[this.id].add(this.select);
     }
-    this.valueChanged.emit(this.selected);
-    this.select = undefined;
+    this.update();
+    console.log(this.selected);
   }
 
   unselect(element: any) {
-    this.selected.delete(element);
-    this.valueChanged.emit(this.selected);
+    this.selected[this.id].delete(element);
+    this.update();
+  }
+
+  update() {
+    this.valueChanged.emit(Array.from(this.selected[this.id]));
   }
 
 }

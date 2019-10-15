@@ -153,7 +153,7 @@ export class LabPipeService {
   }
 
   addEmailGroup(group: EmailGroup) {
-    const url = `${this.apiRoot}/api/manage/create/emailgroup`;
+    const url = `${this.apiRoot}/api/manage/create/email-group`;
     return this.http.post(url, group, this.userAuthRequestOptions());
   }
 

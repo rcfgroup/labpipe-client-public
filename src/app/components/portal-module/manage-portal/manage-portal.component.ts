@@ -129,7 +129,7 @@ export class ManagePortalComponent implements OnInit {
   onConfirm(target: string, confirm: boolean, form?: FormGroup) {
     switch (target) {
       case 'operator':
-        if (confirm && form.valid) {
+        if (confirm) {
             this.lps.addOperator(form.value)
               .subscribe((data: any) => this.iaas.success(data.message, this.messages),
                 (error: any) => this.iaas.error(error.error.message, this.messages));
@@ -176,16 +176,24 @@ export class ManagePortalComponent implements OnInit {
   }
 
   updateForm(form: FormGroup, field: string, event: any) {
-    switch (form) {
-      case this.operatorForm:
-        switch (field) {
-          case 'projects':
-          case 'roles':
-          case 'notificationGroup':
-            form.get(field).setValue(event);
-            break;
-        }
-        break;
-    }
+    // switch (form) {
+    //   case this.operatorForm:
+    //     switch (field) {
+    //       case 'projects':
+    //       case 'roles':
+    //       case 'notificationGroup':
+    //         form.get(field).setValue(event);
+    //         break;
+    //     }
+    //     break;
+    //   case this.instrumentForm:
+    //     switch (field) {
+    //       case 'fileType':
+    //         form.get(field).setValue(event);
+    //         break;
+    //     }
+    //     break;
+    // }
+    form.get(field).setValue(event);
   }
 }

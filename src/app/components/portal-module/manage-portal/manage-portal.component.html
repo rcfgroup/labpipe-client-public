@@ -27,7 +27,7 @@
         </div>
         <div class="card-block">
           <div class="card-text">
-            <button class="btn btn-primary-outline" (click)="addNewRecord('study')">Study</button>
+            <button class="btn btn-primary-outline" (click)="addNewRecord('study')" disabled>Study</button>
             <button class="btn btn-primary-outline" (click)="addNewRecord('location')">Location</button>
             <button class="btn btn-primary-outline" (click)="addNewRecord('instrument')">Instrument</button>
           </div>
@@ -59,8 +59,8 @@
         </div>
         <div class="card-block">
           <div class="card-text">
-            <button class="btn btn-primary-outline" (click)="newFormTemplate()">Form Template</button>
-            <button class="btn btn-primary-outline" (click)="newReportTemplate()">Report Template</button>
+            <button class="btn btn-primary-outline" disabled>Form Template</button>
+            <button class="btn btn-primary-outline" disabled>Report Template</button>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-outline" type="button" (click)="onConfirm('location', false, locationForm)">Cancel</button>
-    <button class="btn btn-danger" type="button" [disabled]="!locationForm.valid" (click)="onConfirm('location', false, locationForm)">Continue</button>
+    <button class="btn btn-danger" type="button" [disabled]="!locationForm.valid" (click)="onConfirm('location', true, locationForm)">Continue</button>
   </div>
 </clr-modal>
 
@@ -188,23 +188,12 @@
           <option *ngFor="let f of formTemplates" [ngValue]="f.identifier">{{f.name}}</option>
         </select>
       </clr-select-container>
-      <app-multiple-select #groupadmin title="Group administrator" [options]="operators" displayField="name" valueField="identifier" (valueChanged)="updateForm(emailGroupForm, 'admin', $event)"></app-multiple-select>
-      <app-multiple-select #groupmember title="Group member" [options]="operators" displayField="name" valueField="identifier" (valueChanged)="updateForm(emailGroupForm, 'member', $event)"></app-multiple-select>
+      <app-multiple-select id="groupadmin" title="Group administrator" [options]="operators" displayField="name" valueField="username" (valueChanged)="updateForm(emailGroupForm, 'admin', $event)"></app-multiple-select>
+      <app-multiple-select id="groupmember" title="Group member" [options]="operators" displayField="name" valueField="username" (valueChanged)="updateForm(emailGroupForm, 'member', $event)"></app-multiple-select>
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline" type="button" (click)="onConfirm('instrument', false, instrumentForm)">Cancel</button>
-    <button class="btn btn-danger" type="button" [disabled]="!instrumentForm.valid" (click)="onConfirm('instrument', true, instrumentForm)">Continue</button>
-  </div>
-</clr-modal>
-
-<clr-modal [(clrModalOpen)]="showModal.newStudy">
-  <h3 class="modal-title">Add new token</h3>
-  <div class="modal-body">
-    Please confirm you are going to create a new access token.
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-outline" type="button" (click)="onConfirmNewToken(false)">Cancel</button>
-    <button class="btn btn-danger" type="button" (click)="onConfirmNewToken(true)">Continue</button>
+    <button class="btn btn-outline" type="button" (click)="onConfirm('email-group', false, emailGroupForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!emailGroupForm.valid" (click)="onConfirm('email-group', true, emailGroupForm)">Continue</button>
   </div>
 </clr-modal>
