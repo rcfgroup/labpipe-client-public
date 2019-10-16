@@ -64,14 +64,17 @@ export class DynamicFormQuestionComponent implements OnInit {
         break;
       case 'input':
         const iq = this.qBase as InputQuestion;
-        if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
-          const patternIndex = iq.pattern.replace(/__/g, '').split('::');
-          let patternValues = this.tds.study;
-          patternIndex.forEach((oi: string) => {
-            patternValues = patternValues[oi];
-          });
-          this.inputPattern = '[0-9]{' + patternValues + '}';
+        if (iq.pattern) {
+          this.inputPattern = `[0-9]{${iq.pattern}}`;
         }
+        // if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
+        //   const patternIndex = iq.pattern.replace(/__/g, '').split('::');
+        //   let patternValues = this.tds.study;
+        //   patternIndex.forEach((oi: string) => {
+        //     patternValues = patternValues[oi];
+        //   });
+        //   this.inputPattern = '[0-9]{' + patternValues + '}';
+        // }
         break;
       case 'file':
         const fq = this.qBase as FileQuestion;
