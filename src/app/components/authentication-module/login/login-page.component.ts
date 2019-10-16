@@ -3,6 +3,8 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {ElectronService} from 'ngx-electron';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
+
 
 @Component({
   selector: 'app-login-page',
@@ -27,25 +29,23 @@ export class LoginPageComponent implements OnInit {
   constructor(private formBuilder: FormBuilder,
               private router: Router,
               private us: UserSettingsService,
-              private es: ElectronService) {
+              private es: ElectronService,
+              private tds: TemporaryDataService) {
+    this.selectedLocation = this.us.getLocation();
+    this.selectedInstrument = this.us.getInstrument();
     this.loginForm = this.formBuilder.group({
-      location: ['', Validators.required ],
-      instrument: ['', Validators.required ],
-      operator: ['', Validators.required ],
+      location: [this.selectedLocation ? this.selectedLocation : '', Validators.required],
+      instrument: [this.selectedInstrument ? this.selectedInstrument : '', Validators.required],
+      operator: ['', Validators.required],
       password: ['', Validators.required]
     });
   }
 
   ngOnInit() {
-    this.appVersion = this.us.getSetting('version');
+    this.appVersion = this.us.getParameter('version');
     this.locations$ = this.us.getLocations();
     this.instruments$ = this.us.getInstruments();
     this.operators$ = this.us.getOperators();
-
-    this.selectedLocation = this.us.getCurrentLocation();
-    this.selectedInstrument = this.us.getCurrentInstrument();
-    this.loginForm.get('location').setValue(this.us.getCurrentLocation());
-    this.loginForm.get('instrument').setValue(this.us.getCurrentInstrument());
     this.formChangeListener();
   }
 
@@ -74,7 +74,7 @@ export class LoginPageComponent implements OnInit {
     username = username.toLowerCase();
     const user = this.operators$.filter(o => o.username.toLowerCase() === username);
     const bcrypt = this.es.remote.require('bcryptjs');
-    const result = user.length === 1 && bcrypt.compareSync(password, user[0].passhash);
+    const result = user.length === 1 && bcrypt.compareSync(password, user[0].passwordHash);
     if (result) {
       this.currentOperator = user[0];
     }
@@ -84,16 +84,22 @@ export class LoginPageComponent implements OnInit {
   onConfirm(status: boolean) {
     this.confirmLoginDialogOpened = false;
     if (status) {
-      this.us.updateCurrentLocation(this.loginForm.get('location').value);
-      this.us.updateCurrentInstrument(this.loginForm.get('instrument').value);
-      this.us.updateCurrentOperator(this.currentOperator);
-      this.us.updateCurrentOperatorPassword(this.loginForm.get('password').value);
+      this.tds.location = this.loginForm.get('location').value;
+      this.us.setLocation(this.loginForm.get('location').value);
+      this.tds.instrument = this.loginForm.get('instrument').value;
+      this.us.setInstrument(this.loginForm.get('instrument').value);
+      this.tds.operator = this.currentOperator;
+      this.tds.password = this.loginForm.get('password').value;
       this.router.navigate(['tasks']);
     }
   }
 
   onRetry() {
     this.incorrectLoginDialogOpened = false;
+  }
+
+  compareFn(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1.identifier === c2.identifier : c1 === c2;
   }
 
 }

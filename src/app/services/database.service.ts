@@ -16,8 +16,6 @@ export class DatabaseService {
   fs: any;
   uuid4: any;
 
-  dir: string;
-
   constructor(private es: ElectronService, private us: UserSettingsService) {
     this.nedb = this.es.remote.require('nedb');
     this.datastore = this.es.remote.require('nedb-promises');
@@ -26,23 +24,41 @@ export class DatabaseService {
     this.uuid4 = this.es.remote.require('uuid/v4');
   }
 
-  saveData(data: any) {
+  saveData(identifier: string, data: any) {
     const root = this.us.getDataDirectory();
     if (!root) {
       throw new Error('Invalid root directory.');
     }
-    this.dir = this.path.join(root, 'nedb');
-    this.fs.ensureDir(this.dir).then(() => {
+    const dbDir = this.path.join(root, 'nedb');
+    this.fs.ensureDir(dbDir).then(() => {
       const doc = {
-        _id: this.uuid4(),
+        _id: identifier,
         data: data
       };
-      const db = new this.nedb({filename: this.path.join(this.dir, this.DefaultDatabase), autoload: true});
+      const db = new this.nedb({filename: this.path.join(dbDir, this.DefaultDatabase), autoload: true});
       db.insert(doc);
     })
       .catch(err => {
         console.log(err);
         throw new Error('Cannot ensure nedb directory.');
       });
+  }
+
+  async readData() {
+    return new Promise((resolve, reject) => {
+      const root = this.us.getDataDirectory();
+      if (root) {
+        const dbDir = this.path.join(root, 'nedb');
+        const db = new this.nedb({filename: this.path.join(dbDir, this.DefaultDatabase), autoload: true});
+        return db.find({}, (err, docs) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          resolve(docs);
+        });
+      }
+      reject('Data directory does not exist.');
+    });
   }
 }

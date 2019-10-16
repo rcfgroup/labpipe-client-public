@@ -1,6 +1,6 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {ElectronService} from 'ngx-electron';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {LabPipeService} from '../../../services/lab-pipe.service';
@@ -78,10 +78,10 @@ export class MandatorySettingComponent implements OnInit {
     validateApiRoot() {
         const url = this.settingForm.get('apiRoot').value;
         if (url) {
-          this.lps.checkPublicAccess(url).subscribe(() => {
+          this.lps.publicAccess(url).subscribe(() => {
             this.isApiRootValid = true;
             this.iaas.success('LabPipe server connected.', this.messages);
-            this.us.updateApiRoot(url);
+            this.us.setApiRoot(url);
             this.lps.loadApiRoot();
           }, (err) => {
             console.log(err);
@@ -96,11 +96,11 @@ export class MandatorySettingComponent implements OnInit {
         const token = this.settingForm.get('apiToken').value;
         const key = this.settingForm.get('apiKey').value;
         if (url && token && key) {
-            this.lps.checkTokenAccess(token, key).subscribe(() => {
+            this.lps.tokenAccess(token, key).subscribe(() => {
                     this.isApiTokenKeyValid = true;
                     this.iaas.success('Access token is valid.', this.messages);
-                    this.us.updateApiToken(token);
-                    this.us.updateApiKey(key);
+                    this.us.setApiToken(token);
+                    this.us.setApiKey(key);
                 },
                 (err) => {
                     console.log(err);
@@ -113,7 +113,7 @@ export class MandatorySettingComponent implements OnInit {
     updateServerMonitorConfig() {
         this.settingForm.controls.serverMonitorInterval.valueChanges
           .subscribe(value => {
-            this.us.updateServerMonitorInterval(value);
+            this.us.setServerMonitorInterval(value);
 
           });
         this.settingForm.controls.serverMonitorRetryInterval.valueChanges

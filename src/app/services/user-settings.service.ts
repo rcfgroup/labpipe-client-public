@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ElectronService} from 'ngx-electron';
-import {CodeName} from '../models/code-name.model';
-import {AdminOperator, RequiredParameterName, SupportedProjects} from '../models/parameter.model';
+import {CollectionName} from '../models/parameter.model';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -9,191 +9,160 @@ import {AdminOperator, RequiredParameterName, SupportedProjects} from '../models
 export class UserSettingsService {
 
   setting: any;
+  crypto: any;
+  algorithm = 'aes-256-ctr';
+  password = 'labpipe-piKachu-ThunDerBolt';
+  key: any;
+  cipher: any;
+  decipher: any;
+  iv: any;
+  path: any;
+  fs: any;
 
   constructor(
     private es: ElectronService
   ) {
     this.setting = this.es.remote.require('electron-settings');
+    this.crypto = this.es.remote.require('crypto');
+    this.iv = this.crypto.randomBytes(16);
+    this.key = this.crypto.scryptSync(this.password, 'pikapika', 32);
+    this.cipher = this.crypto.createCipheriv(this.algorithm, this.key, this.iv);
+    this.decipher = this.crypto.createDecipheriv(this.algorithm, this.key, this.iv);
+    this.path = this.es.remote.require('path');
+    this.fs = this.es.remote.require('fs-extra');
   }
 
-  updateSetting(paramName: string, paramValue: any): void {
-    this.setting.set(paramName, paramValue);
+  setParameter(p: string, v: any): void {
+    this.setting.set(p, v);
   }
 
-  getSetting(paramName: string): any {
-    return this.setting.get(paramName);
+  getParameter(p: string, d?: any): any {
+    return d ? this.setting.get(p, d) : this.setting.get(p);
   }
 
-  updateRegularStartup(isRegularStartup: boolean): void {
-    this.setting.set('regular-startup', isRegularStartup);
+  setStartupMode(regular: boolean): void {
+    this.setParameter('regular-startup', regular);
   }
 
-  getRegularStartup(): boolean {
-    return this.setting.get('regular-startup');
+  getStartupMode(): boolean {
+    return this.getParameter('regular-startup');
   }
 
-  updateApiToken(token: string): void {
-    this.setting.set('api_token', token);
+  setApiToken(v: string): void {
+    this.setParameter('api_token', v);
   }
 
   getApiToken(): string {
-    return this.setting.get('api_token');
+    return this.getParameter('api_token');
   }
 
-  updateApiKey(key: string): void {
-    this.setting.set('api_key', key);
+  setApiKey(v: string): void {
+    this.setParameter('api_key', v);
   }
 
   getApiKey(): string {
-    return this.setting.get('api_key');
+    return this.getParameter('api_key');
   }
 
   setDataDirectory(path: string): void {
-    this.setting.set('config_data_directory', path);
+    this.setParameter('config_data_directory', path);
+    const fileDir = this.path.join(path, 'files');
+    this.setFileDirectory(fileDir);
   }
 
   getDataDirectory(): string {
-    return this.setting.get('config_data_directory');
+    return this.getParameter('config_data_directory');
   }
 
-  updateApiRoot(apiRoot: string): void {
-    this.setting.set('api_root', apiRoot);
+  setFileDirectory(path: string): void {
+    this.fs.ensureDir(path).then(() => {
+      this.setParameter('config_file_directory', path);
+    })
+      .catch(err => {
+        console.log(err);
+        throw new Error('Cannot ensure files directory.');
+      });
+  }
+
+  getFileDirectory(): string {
+    return this.getParameter('config_file_directory');
+  }
+
+  setApiRoot(v: string): void {
+    this.setParameter('api_root', v);
   }
 
   getApiRoot(): string {
-    return this.setting.get('api_root');
+    return this.getParameter('api_root');
   }
 
-  updateServerMonitorInterval(interval: number) {
-    this.setting.set('server_monitor_interval', interval);
+  setServerMonitorInterval(interval: number) {
+    this.setParameter('server_monitor_interval', interval);
   }
 
   getServerMonitorInterval() {
-    return this.setting.get('server_monitor_interval', 30000);
+    return this.getParameter('server_monitor_interval', 30000);
   }
 
   updateServerMonitorRetryInterval(interval: number) {
-    this.setting.set('server_monitor_retry_interval', interval);
+    this.setParameter('server_monitor_retry_interval', interval);
   }
 
   getServerMonitorRetryInterval() {
-    return this.setting.get('server_monitor_retry_interval', 1000);
-  }
-
-  updateRunningMode(mode: string) {
-    this.setting.set('current_running_mode', mode);
-  }
-
-  getRunningMode() {
-    return this.setting.get('current_running_mode', 'local');
-  }
-
-  updateOperators(operators: any[]): void {
-    this.setting.set(RequiredParameterName.OPERATORS, operators);
+    return this.getParameter('server_monitor_retry_interval', 1000);
   }
 
   getOperators(): any[] {
-    return this.setting.get(RequiredParameterName.OPERATORS);
-  }
-
-  updateCollectors(collectors: any[]): void {
-    this.setting.set(RequiredParameterName.COLLECTORS, collectors);
+    return this.getParameter(CollectionName.OPERATORS);
   }
 
   getCollectors(): any[] {
-    return this.setting.get(RequiredParameterName.COLLECTORS);
+    return this.getParameter(CollectionName.COLLECTORS);
   }
 
-  updateCurrentOperator(operator: any): void {
-    this.setting.set('running_operator', operator);
+  setLocation(v: any): void {
+    this.setParameter('location', v);
   }
 
-  getCurrentOperator(): any {
-    return this.setting.get('running_operator');
+  getLocation(): any {
+    return this.getParameter('location');
   }
 
-  updateCurrentOperatorPassword(password: string): void {
-    this.setting.set('running_operator_password', password);
+  setInstrument(v: any): void {
+    this.setParameter('instrument', v);
   }
 
-  getCurrentOperatorPassword(): string {
-    return this.setting.get('running_operator_password');
-  }
-
-  updateInstruments(collectors: any[]): void {
-    this.setting.set(RequiredParameterName.INSTRUMENTS, collectors);
+  getInstrument(): any {
+    return this.getParameter('instrument');
   }
 
   getInstruments(): any[] {
-    return this.setting.get(RequiredParameterName.INSTRUMENTS);
-  }
-
-  updateCurrentInstrument(instrument: any): void {
-    this.setting.set('running_instrument', instrument);
-  }
-
-  getCurrentInstrument(): any {
-    return this.setting.get('running_instrument');
-  }
-
-  updateStudies(studies: any[]): void {
-    this.setting.set(RequiredParameterName.STUDIES, studies);
+    return this.getParameter(CollectionName.INSTRUMENTS);
   }
 
   getStudies(): any[] {
-    return this.setting.get(RequiredParameterName.STUDIES);
-  }
-
-  updateLocations(collectors: any[]): void {
-    this.setting.set(RequiredParameterName.LOCATIONS, collectors);
+    return this.getParameter(CollectionName.STUDIES);
   }
 
   getLocations(): any[] {
-    return this.setting.get(RequiredParameterName.LOCATIONS);
+    return this.getParameter(CollectionName.LOCATIONS);
   }
 
-  updateCurrentLocation(location: any): void {
-    this.setting.set('running_location', location);
+  getForms(): any {
+    return this.getParameter(CollectionName.FORMS, {});
   }
 
-  getCurrentLocation(): any {
-    return this.setting.get('running_location');
+  setForm(v: any) {
+    this.setParameter(`${CollectionName.FORMS}.${v.identifier}`, v);
   }
 
-
-  // ================================================
-
-  updateAdminOperators(admins: AdminOperator): void {
-    this.setting.set('config_admins', admins);
+  getForm(studyIdentifier: string, instrumentIdentifier: string) {
+    return Object.values(this.getForms()).filter((f: any) => f.studyIdentifier === studyIdentifier && f.instrumentIdentifier === instrumentIdentifier);
   }
 
-  getAdminOperators(): AdminOperator {
-    return this.setting.get('config_admins');
-  }
-
-  updateCurrentStudy(project: CodeName): void {
-    this.setting.set('running_project', project);
-  }
-
-  getCurrentProject(): CodeName {
-    return this.setting.get('running_project');
-  }
-
-  updateCurrentVisitType(isNormalVisit: boolean): void {
-    this.setting.set('running_is_normal_visit', isNormalVisit);
-  }
-
-  // =====================================================
-
-  clearForNewTask() {
-    this.setting.delete('running_project');
-    this.setting.delete('running_is_normal_visit');
-  }
-
-  clearForNewLogin() {
-    this.setting.delete('running_location');
-    this.setting.delete('running_is_normal_visit');
-    this.setting.delete('running_operator');
-    this.setting.delete('running_privilege');
+  getFormWithIdentifier(identifier: string) {
+    if (this.setting.has(`${CollectionName.FORMS}.${identifier}`)) {
+      return this.getParameter(`${CollectionName.FORMS}.${identifier}`);
+    }
   }
 }

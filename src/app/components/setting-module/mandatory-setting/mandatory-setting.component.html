@@ -1,13 +1,14 @@
 <app-in-app-alert [messages]="messages"></app-in-app-alert>
+<app-tour tour="settings"></app-tour>
 <form class="clr-form clr-form-vertical" [formGroup]="settingForm">
-  <div class="clr-form-control">
+  <div id="tour-data-directory" class="clr-form-control">
     <label class="clr-control-label">Data Directory</label>
     <div class="clr-control-container">
       <button class="btn btn-primary" (click)="setDataDirectory()">Browse</button>
       <span class="clr-subtext">{{this.settingForm.get('dirData').value}}</span>
     </div>
   </div>
-  <div class="clr-form-control">
+  <div id="tour-api-root" class="clr-form-control">
     <label class="clr-control-label">API Root URL</label>
     <div class="clr-control-container">
       <div class="clr-row">
@@ -29,7 +30,7 @@
               </span></span>
     </div>
   </div>
-  <div class="clr-form-control">
+  <div id="tour-api-token" class="clr-form-control">
     <label class="clr-control-label">API Token</label>
     <div class="clr-control-container">
       <div class="clr-row">
@@ -62,13 +63,13 @@
     </div>
   </div>
 
-  <clr-input-container>
+  <clr-input-container id="tour-monitor-interval" >
     <label>Server Monitor Interval (milliseconds)</label>
     <input clrInput type="number" step="1" min="5000" formControlName="serverMonitorInterval" required />
     <clr-control-helper>Updated value will take effect on next startup.</clr-control-helper>
   </clr-input-container>
 
-  <clr-input-container>
+  <clr-input-container id="tour-retry-interval" >
     <label>Server Monitor Retry Interval (milliseconds)</label>
     <input clrInput type="number" step="1" min="1000" formControlName="serverMonitorRetryInterval" required />
     <clr-control-helper>Updated value will take effect on next startup.</clr-control-helper>

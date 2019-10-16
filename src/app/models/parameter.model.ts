@@ -1,74 +1,72 @@
-import {CodeName} from './code-name.model';
+import {WizardPage} from './dynamic-form-models/wizard-page';
 
-export class Facility {
-  _id?: string;
-  param_name: string;
-  locations: CodeName[];
-  carts: CodeName[];
-  operators: CodeName[];
-  collectors: CodeName[];
-}
-
-export class SupportedProjects {
-  _id?: string;
-  param_name: string;
-  projects: CodeName[];
-}
-
-export class FileType {
-  type: string;
-  ext: string;
-}
-
-export class Instrument extends CodeName {
-  online_file_type?: FileType[];
-  offline_file_type?: FileType[];
-  use_collector: CodeName[];
-}
-
-export class SupportedInstruments {
-  _id?: string;
-  param_name: string;
-  instruments: Instrument[];
-}
-
-export class InstrumentCollectorSampleTypeSet {
-  instrument: string;
-  collector: string;
-  sample_type: string[];
-}
-
-export class ProjectConfig {
-  _id?: string;
-  param_name: string;
-  study_id_prefix: string[];
-  study_id_number_length: number;
-  visits: string[];
-  exa_visit_regex: string;
-  use_episode_normal: boolean;
-  use_episode_exa: boolean;
-  types: CodeName[];
-  use_sample_number: InstrumentCollectorSampleTypeSet[];
-}
-
-export class AdminOperator {
-  _id?: string;
-  param_name: string;
-  members: string[];
-}
-
-export enum RequiredParameterName {
+export enum CollectionName {
   ACCESS_TOKENS = 'ACCESS_TOKENS',
   ROLES = 'ROLES',
   CLIENT_SETTINGS = 'CLIENT_SETTINGS',
   API_ACCESS_ROLES = 'API_ACCESS_ROLES',
   OPERATORS = 'OPERATORS',
   STUDIES = 'STUDIES',
-  FORM_TEMPLATES = 'FORM_TEMPLATES',
+  FORMS = 'FORMS',
   REPORT_TEMPLATES = 'REPORT_TEMPLATES',
   INSTRUMENTS = 'INSTRUMENTS',
   COLLECTORS = 'COLLECTORS',
   SAMPLE_TYPES = 'SAMPLE_TYPES',
   LOCATIONS = 'LOCATIONS',
-  EMAIL_GROUPS = 'EMAIL_GROUPS'
+  EMAIL_GROUPS = 'EMAIL_GROUPS',
+  UPLOADED = 'UPLOADED'
+}
+
+export class Operator {
+  email: string;
+  username: string;
+  name: string;
+  projects: string[];
+  roles: string[];
+  notificationGroup: string[];
+  passwordHash: string;
+  active: boolean;
+}
+
+export class Role {
+  identifier: string;
+  name: string;
+}
+
+export class EmailGroup {
+  identifier: string;
+  name: string;
+  studyIdentifier: string;
+  formIdentifier: string;
+  admin: string[];
+  member: string[];
+}
+
+export class Instrument {
+  identifier: string;
+  name: string;
+  realtime: boolean;
+  fileType: string[];
+}
+
+export class Location {
+  identifier: string;
+  name: string;
+  type: string[];
+}
+
+export class Study {
+  identifier: string;
+  name: string;
+  config: any;
+}
+
+export class FormTemplate {
+  identifier: string;
+  name: string;
+  studyIdentifier: string;
+  instrumentIdentifier: string;
+  notificationStyle: string;
+  url: string;
+  template: {title: string; pages: WizardPage[]};
 }

@@ -36,7 +36,7 @@
         </div>
         <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
       </div>
-      <clr-datagrid *ngIf="this.form.get(qBase.key).value">
+      <clr-datagrid *ngIf="form.get(qBase.key).value && form.get(qBase.key).value.length > 0">
         <clr-dg-column>File</clr-dg-column>
 
         <clr-dg-row *ngFor="let file of this.form.get(qBase.key).value">

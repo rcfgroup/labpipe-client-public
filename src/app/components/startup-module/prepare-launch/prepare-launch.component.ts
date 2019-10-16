@@ -4,54 +4,60 @@ import {Router} from '@angular/router';
 import {DatabaseService} from '../../../services/database.service';
 import {forkJoin} from 'rxjs';
 import {LabPipeService} from '../../../services/lab-pipe.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
-    selector: 'app-prepare-launch',
-    templateUrl: './prepare-launch.component.html',
-    styleUrls: ['./prepare-launch.component.css']
+  selector: 'app-prepare-launch',
+  templateUrl: './prepare-launch.component.html',
+  styleUrls: ['./prepare-launch.component.css']
 })
 export class PrepareLaunchComponent implements OnInit {
 
-    parameterList: string[] = [];
+  parameterList: string[] = [];
 
-    constructor(private lps: LabPipeService, private us: UserSettingsService,
-                private ds: DatabaseService,
-                private router: Router) {
-    }
+  constructor(private lps: LabPipeService, private us: UserSettingsService,
+              private tds: TemporaryDataService,
+              private ds: DatabaseService,
+              private router: Router) {
+  }
 
-    ngOnInit() {
-        const component = this;
-        this.loadParameterList().subscribe(
-          (data: any) => {
-                console.log('init parameter list retrieved');
-                console.log(data);
-                this.parameterList = data.find(param => param.code === 'client_init').value;
+  ngOnInit() {
+    const component = this;
+    if (this.tds.connected) {
+      this.loadParameterList().subscribe(
+        (data: any) => {
+          console.log('init parameter list retrieved');
+          console.log(data);
+          this.parameterList = data.find(param => param.identifier === 'client_init').value;
+        },
+        error => {
+          console.warn('error loading init parameter list');
+        },
+        () => {
+          const observableList = this.parameterList.map(paramName => component.lps.getParameter(paramName));
+          forkJoin(observableList).subscribe(
+            (data: any[]) => {
+              data.forEach((param, index) => {
+                console.log(param);
+                console.log('loading parameter ' + component.parameterList[index]);
+                component.us.setParameter(String(component.parameterList[index]), param);
+              });
             },
             error => {
-                console.warn('error loading init parameter list');
+              console.log(error);
             },
             () => {
-                const observableList = this.parameterList.map(paramName => component.lps.getParameter(paramName));
-                forkJoin(observableList).subscribe(
-                    (data: any[]) => {
-                        data.forEach((param, index) => {
-                            console.log(param);
-                            console.log('loading parameter ' + component.parameterList[index]);
-                            component.us.updateSetting(String(component.parameterList[index]), param);
-                        });
-                    },
-                    error => {
-                        console.log(error);
-                    },
-                    () => {
-                        this.router.navigate(['login']);
-                    }
-                );
-            });
+              this.router.navigate(['login']);
+            }
+          );
+        });
+    } else {
+      this.router.navigate(['login']);
     }
+  }
 
-    loadParameterList() {
-        return this.lps.getParameter('CLIENT_SETTINGS');
-    }
+  loadParameterList() {
+    return this.lps.getParameter('CLIENT_SETTINGS');
+  }
 
 }

@@ -3,6 +3,7 @@ import {Router} from '@angular/router';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {ElectronService} from 'ngx-electron';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-task-portal',
@@ -10,41 +11,20 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
   styleUrls: ['./task-portal.component.css']
 })
 export class TaskPortalComponent implements OnInit {
-  currentOperator: object;
-  currentDataDirectory: string;
-  zscoremax: number;
-  zscoremin: number;
-  cmsQcRefValidPeriod: number;
-  isNormalVisit: true;
-
-  studyForm: FormGroup;
-
-  dialogVisitTypeOpened = false;
+  location: any;
+  instrument: any;
+  operator: object;
 
   constructor(private formBuilder: FormBuilder,
               private es: ElectronService,
-              private ss: UserSettingsService,
-              private router: Router ) {
-                this.studyForm = this.formBuilder.group({
-                  study: ['', Validators.required]
-                });
-              }
+              private uss: UserSettingsService,
+              private tds: TemporaryDataService) {
+    this.operator = this.tds.operator;
+    this.location = this.tds.location;
+    this.instrument = this.tds.instrument;
+  }
 
   ngOnInit() {
-    this.currentOperator = this.ss.getCurrentOperator();
-  }
-
-  hideVisitTypeDialog() {
-    this.dialogVisitTypeOpened = false;
-  }
-
-  goToSampleCollection() {
-    this.dialogVisitTypeOpened = false;
-    if (this.studyForm.valid) {
-      this.ss.updateCurrentStudy(this.studyForm.get('study').value);
-      this.ss.updateCurrentVisitType(this.isNormalVisit);
-      this.router.navigate(['sample-collection-portal']);
-    }
   }
 
 }

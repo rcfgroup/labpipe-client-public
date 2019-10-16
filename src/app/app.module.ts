@@ -15,7 +15,7 @@ import {ConnectionMonitorComponent} from './components/monitor-module/connection
 import {TaskPortalComponent} from './components/portal-module/task-portal/task-portal.component';
 import {TopNavigationComponent} from './components/navigation-module/top-navigation/top-navigation.component';
 import {ElectronService} from 'ngx-electron';
-import {LoginPageComponent} from './components/authentication-module/login-page/login-page.component';
+import {LoginPageComponent} from './components/authentication-module/login/login-page.component';
 import {AppRoutingModule} from './app-routing.module';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
@@ -24,6 +24,11 @@ import {ClarityModule, ClrIconModule} from '@clr/angular';
 import {StorageModule} from '@ngx-pwa/local-storage';
 import { ManagePortalComponent } from './components/portal-module/manage-portal/manage-portal.component';
 import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.component';
+import { StatusBarComponent } from './components/status-bar/status-bar.component';
+import { BrowsePortalComponent } from './components/portal-module/browse-portal/browse-portal.component';
+import { TourComponent } from './components/tour/tour.component';
+import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
+import { MultipleInputComponent } from './components/multiple-input/multiple-input.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +47,12 @@ import { InAppAlertComponent } from './components/in-app-alert/in-app-alert.comp
     TopNavigationComponent,
     LoginPageComponent,
     ManagePortalComponent,
-    InAppAlertComponent
+    InAppAlertComponent,
+    StatusBarComponent,
+    BrowsePortalComponent,
+    TourComponent,
+    MultipleSelectComponent,
+    MultipleInputComponent
   ],
   imports: [
     BrowserModule,

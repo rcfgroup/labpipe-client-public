@@ -1,15 +1,74 @@
 <app-in-app-alert [messages]="messages"></app-in-app-alert>
 <clr-tabs>
   <clr-tab>
-    <button clrTabLink>Manage</button>
+    <button clrTabLink>Access Control</button>
     <clr-tab-content *clrIfActive>
-      <button class="btn btn-primary-outline btn-sm" (click)="newOperator()">New Operator</button>
-      <button class="btn btn-primary-outline btn-sm" (click)="newToken()">New Access Token</button>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="addNewRecord('operator')">Operator</button>
+            <button class="btn btn-primary-outline" (click)="addNewRecord('token')">Access Token</button>
+            <button class="btn btn-primary-outline" (click)="addNewRecord('role')">Role</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Parameter</button>
+    <clr-tab-content *clrIfActive>
+
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="addNewRecord('study')" disabled>Study</button>
+            <button class="btn btn-primary-outline" (click)="addNewRecord('location')">Location</button>
+            <button class="btn btn-primary-outline" (click)="addNewRecord('instrument')">Instrument</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Notification</button>
+    <clr-tab-content *clrIfActive>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" (click)="addNewRecord('email-group')">Email Group</button>
+          </div>
+        </div>
+      </div>
+    </clr-tab-content>
+  </clr-tab>
+  <clr-tab>
+    <button clrTabLink>Form & Report</button>
+    <clr-tab-content *clrIfActive>
+      <div class="card">
+        <div class="card-header">
+          Add
+        </div>
+        <div class="card-block">
+          <div class="card-text">
+            <button class="btn btn-primary-outline" disabled>Form Template</button>
+            <button class="btn btn-primary-outline" disabled>Report Template</button>
+          </div>
+        </div>
+      </div>
     </clr-tab-content>
   </clr-tab>
 </clr-tabs>
 
-<clr-modal [(clrModalOpen)]="showNewOperatorModal">
+<clr-modal [(clrModalOpen)]="showModal.newOperator">
   <h3 class="modal-title">Add new operator</h3>
   <div class="modal-body">
     <form class="clr-form clr-form-vertical" [formGroup]="operatorForm">
@@ -21,21 +80,120 @@
         <label>Email</label>
         <input clrInput type="email" formControlName="email" required />
       </clr-input-container>
+      <app-multiple-select title="Study" [options]="studies" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'projects', $event)"></app-multiple-select>
+      <app-multiple-select title="Role" [options]="roles" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'roles', $event)"></app-multiple-select>
+      <app-multiple-select title="Email Group" [options]="notificationGroups" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'notificationGroup', $event)"></app-multiple-select>
     </form>
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline" type="button" (click)="onConfirmNewOperator(false)">Cancel</button>
-    <button class="btn btn-danger" type="button" [disabled]="!operatorForm.valid" (click)="onConfirmNewOperator(true)">Continue</button>
+    <button class="btn btn-outline" type="button" (click)="onConfirm('operator', false, operatorForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!operatorForm.valid" (click)="onConfirm('operator', true, operatorForm)">Continue</button>
   </div>
 </clr-modal>
 
-<clr-modal [(clrModalOpen)]="showNewTokenModal">
+<clr-modal [(clrModalOpen)]="showModal.newToken">
   <h3 class="modal-title">Add new token</h3>
   <div class="modal-body">
     Please confirm you are going to create a new access token.
   </div>
   <div class="modal-footer">
-    <button class="btn btn-outline" type="button" (click)="onConfirmNewToken(false)">Cancel</button>
-    <button class="btn btn-danger" type="button" (click)="onConfirmNewToken(true)">Continue</button>
+    <button class="btn btn-outline" type="button" (click)="onConfirm('token', false)">Cancel</button>
+    <button class="btn btn-danger" type="button" (click)="onConfirm('token', true)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showModal.newRole">
+  <h3 class="modal-title">Add new role</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="roleForm">
+      <clr-input-container>
+        <label>Identifier</label>
+        <input clrInput type="text" formControlName="identifier" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" formControlName="name" required />
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirm('role', false, roleForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!roleForm.valid" (click)="onConfirm('role', true, roleForm)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showModal.newLocation">
+  <h3 class="modal-title">Add new role</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="locationForm">
+      <clr-input-container>
+        <label>Identifier</label>
+        <input clrInput type="text" formControlName="identifier" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" formControlName="name" required />
+      </clr-input-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirm('location', false, locationForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!locationForm.valid" (click)="onConfirm('location', true, locationForm)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showModal.newInstrument">
+  <h3 class="modal-title">Add new instrument</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="instrumentForm">
+      <clr-input-container>
+        <label>Identifier</label>
+        <input clrInput type="text" formControlName="identifier" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" formControlName="name" required />
+      </clr-input-container>
+      <clr-toggle-container>
+        <label>Online instrument?</label>
+        <clr-checkbox-wrapper>
+          <input type="checkbox" clrToggle formControlName="realtime" />
+          <label>{{instrumentForm.get('realtime').value ? 'Yes' : 'No'}}</label>
+        </clr-checkbox-wrapper>
+      </clr-toggle-container>
+      <app-multiple-input title="File type" (valueChanged)="updateForm(instrumentForm, 'fileType', $event)"></app-multiple-input>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirm('instrument', false, instrumentForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!instrumentForm.valid" (click)="onConfirm('instrument', true, instrumentForm)">Continue</button>
+  </div>
+</clr-modal>
+
+<clr-modal [(clrModalOpen)]="showModal.newEmailGroup">
+  <h3 class="modal-title">Add new email group</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="emailGroupForm">
+      <clr-input-container>
+        <label>Identifier</label>
+        <input clrInput type="text" formControlName="identifier" required />
+      </clr-input-container>
+      <clr-input-container>
+        <label>Name</label>
+        <input clrInput type="text" formControlName="name" required />
+      </clr-input-container>
+      <clr-select-container>
+        <label>Form</label>
+        <select clrSelect formControlName="formIdentifier" required>
+          <option *ngFor="let f of formTemplates" [ngValue]="f.identifier">{{f.name}}</option>
+        </select>
+      </clr-select-container>
+      <app-multiple-select id="groupadmin" title="Group administrator" [options]="operators" displayField="name" valueField="username" (valueChanged)="updateForm(emailGroupForm, 'admin', $event)"></app-multiple-select>
+      <app-multiple-select id="groupmember" title="Group member" [options]="operators" displayField="name" valueField="username" (valueChanged)="updateForm(emailGroupForm, 'member', $event)"></app-multiple-select>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirm('email-group', false, emailGroupForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!emailGroupForm.valid" (click)="onConfirm('email-group', true, emailGroupForm)">Continue</button>
   </div>
 </clr-modal>

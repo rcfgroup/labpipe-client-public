@@ -1,5 +1,5 @@
 <form class="clr-form clr-form-vertical" [formGroup]="studyForm">
-  <clr-select-container>
+  <clr-select-container id="tour-select-study">
     <label>Study</label>
     <select clrSelect name="select-study" formControlName="study" required>
       <option *ngFor="let s of projects$" [ngValue]="s">{{s.name}}</option>

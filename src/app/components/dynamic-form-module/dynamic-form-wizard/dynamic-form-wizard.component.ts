@@ -16,6 +16,7 @@ import {TrueFalseQuestion} from '../../../models/dynamic-form-models/question-tr
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
+import {TemporaryDataService} from '../../../services/temporary-data.service';
 
 @Component({
   selector: 'app-dynamic-form-wizard',
@@ -24,8 +25,12 @@ import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.se
 })
 
 export class DynamicFormWizardComponent implements OnInit, OnDestroy {
+  location: any;
+  instrument: any;
+  study: any;
 
   messages: InAppMessage[] = [];
+  formMessages: InAppMessage[] = [];
 
   formCode: string;
   formTemplates: any;
@@ -41,30 +46,39 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   showNotSavedWarning: boolean;
   showMultipleFormCodeDialog: boolean;
   showNoFormDialog: boolean;
+  showSavedDialog: boolean;
+
+  sentToServer: boolean;
+
+  actionIdentifier: string;
 
   constructor(private us: UserSettingsService,
               private dfs: DynamicFormService,
               private ds: DatabaseService,
               private es: ElectronService,
               private lps: LabPipeService,
+              private tds: TemporaryDataService,
               private iaas: InAppAlertService,
               private zone: NgZone,
               private http: HttpClient,
               private router: Router) {
     this.formTemplates = [];
+    this.location = this.tds.location;
+    this.instrument = this.tds.instrument;
+    this.study = this.tds.study;
   }
 
   ngOnInit() {
-    // TODO get formCode from current study
+    // TODO getParameter formCode from current study
     this.getFormTemplate();
   }
 
   ngOnDestroy() {
-    this.us.clearForNewTask();
+    this.tds.resetTask();
   }
 
   getFormTemplate() {
-    this.lps.getForm(this.us.getCurrentProject().code, this.us.getCurrentInstrument().code).subscribe((data: any) => {
+    this.lps.getForm(this.study.identifier, this.instrument.identifier).subscribe((data: any) => {
         this.formTemplates = data;
         switch (this.formTemplates.length) {
           case 0:
@@ -78,24 +92,55 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
             break;
         }
       },
-      (error: any) => this.iaas.error(error.error.message, this.messages)
+      (error: any) => {
+        console.log(error);
+        this.iaas.warn('Unable to getParameter form from server. Trying local forms.', this.messages);
+        this.formTemplates = this.us.getForm(this.study.identifier, this.instrument.identifier);
+        switch (this.formTemplates.length) {
+          case 0:
+            this.showNoFormDialog = true;
+            break;
+          case 1:
+            this.prepareForm(this.formTemplates[0]);
+            break;
+          default:
+            this.showMultipleFormCodeDialog = true;
+            break;
+        }
+      }
     );
   }
 
   getFormTemplateWithCode() {
     if (this.formCode) {
       this.showMultipleFormCodeDialog = false;
-      this.lps.getFormWithCode(this.formCode).subscribe((data: any) => {
+      this.lps.getFormWithIdentifier(this.formCode).subscribe((data: any) => {
         this.iaas.success('Form loaded. Preparation in progress.', this.messages);
+        this.us.setForm(data);
         this.prepareForm(data);
         },
-        error => this.iaas.error(error.error.message, this.messages)
+        error => {
+          this.iaas.warn('Unable to getParameter form from server. Trying local forms.', this.messages);
+          const data = this.us.getFormWithIdentifier(this.formCode);
+          if (data) {
+            this.prepareForm(data);
+          } else {
+            this.showNoFormDialog = true;
+          }
+        }
       );
     }
   }
 
   prepareForm(data: any) {
-    this.formData = {form_code: data.code, study_code: data.study_code, instrument_code: data.instrument_code};
+    this.us.setForm(data);
+    this.actionIdentifier = this.lps.getUid();
+    this.formData = {
+      actionIdentifier: this.actionIdentifier,
+      formIdentifier: data.identifier,
+      studyIdentifier: data.studyIdentifier,
+      instrumentIdentifier: data.instrumentIdentifier,
+      record: {}};
     this.remoteUrl = data.url;
     this.wizardTemplate = new Wizard({title: data.template.title, pages: []});
     data.template.pages.forEach(page => {
@@ -125,6 +170,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
       page.formValidProcess.forEach(fvp => {
         p.formValidProcess.push(new FormValidProcess(fvp));
       });
+      p.formValidProcess = p.formValidProcess.sort((a, b) => a.order - b.order);
       this.wizardTemplate.pages.push(p);
     });
     this.wizardTemplate.pages = this.wizardTemplate.pages.sort((a, b) => a.order - b.order);
@@ -133,6 +179,7 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
         this.wizardTemplate.pages[index].pageForm = this.dfs.toFormGroup(page.questions));
       this.isFormReady = true;
       this.iaas.success('Form preparation completed.', this.messages);
+      this.isFormVisible = true;
     }
   }
 
@@ -149,25 +196,18 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   onFormValid(parentPage: WizardPage) {
     if (parentPage.pageForm.valid) {
-      this.formData[parentPage.key] = parentPage.pageForm.value;
+      this.formData.record[parentPage.key] = parentPage.pageForm.value;
       parentPage.formValidProcess.forEach((process, index) => {
-        switch (process.processType) {
-          case 'concat':
-            const df = process.dataField.split('::');
-            const separator = df.shift();
-            const data = df.map(fieldName => fieldName.startsWith('--')
-              ? fieldName.replace('--', '')
-              : this.formData[parentPage.key][fieldName]);
-            parentPage.formValidProcess[index].result = data.join(separator);
-            break;
+        if (process.auto) {
+          this.dfs.formValidProcessTriage(this.actionIdentifier, process, index, parentPage, this.formData.record);
         }
       });
-      parentPage.formValidProcess.forEach(page => {
-        if (page.newField) {
-          this.formData[parentPage.key][page.newField] = page.result;
-        }
-      });
+      console.log(parentPage.formValidProcess);
     }
+  }
+
+  activateProcess(parentPage: WizardPage, process: FormValidProcess, processIndex: number) {
+    this.dfs.formValidProcessTriage(this.actionIdentifier, process, processIndex, parentPage, this.formData.record, this.formMessages);
   }
 
   onWizardFinish() {
@@ -177,13 +217,25 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   saveResult() {
-    this.ds.saveData(this.result);
-    if (this.us.getRunningMode() === 'server') {
+    this.ds.saveData(this.actionIdentifier, {
+      created: new Date(),
+      saved_by: this.tds.operator.username,
+      url: this.remoteUrl,
+      ...this.result
+    });
+    if (this.tds.connected) {
+      this.sentToServer = true;
       this.lps.postRecord(this.remoteUrl, this.result)
-        .subscribe((data: any) => this.iaas.success(data.message, this.messages),
-          (error: any) => this.iaas.error(error.error.message, this.messages));
+        .subscribe((data: any) => {
+            this.iaas.success(data.message, this.messages);
+          },
+          (error: any) => {
+            this.iaas.error(error.error.message, this.messages);
+          });
+    } else {
+      this.sentToServer = false;
     }
-    this.router.navigate(['tasks']);
+    this.showSavedDialog = true;
   }
 
   clipboardCopy(value: any) {
@@ -192,7 +244,8 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
 
   toPortal() {
     this.showNoFormDialog = false;
-    this.us.clearForNewTask();
+    this.showSavedDialog = false;
+    this.tds.resetTask();
     this.router.navigate(['tasks']);
   }
 
