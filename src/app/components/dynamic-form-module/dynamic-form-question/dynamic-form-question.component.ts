@@ -112,4 +112,8 @@ export class DynamicFormQuestionComponent implements OnInit {
         });
   }
 
+  setNow(form: FormGroup, field) {
+    form.get(field).setValue(new Date().toISOString());
+  }
+
 }

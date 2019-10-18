@@ -1,11 +1,22 @@
 <div [formGroup]="form" class="clr-form clr-form-vertical">
   <div [ngSwitch]="qBase.controlType">
 
-    <clr-input-container *ngSwitchCase="'input'" >
-      <label>{{qBase.label}}</label>
-      <input clrInput [type]="qBase.type" [formControlName]="qBase.key" [id]="qBase.key" [pattern]="inputPattern" [required]="qBase.required" />
-      <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
-    </clr-input-container>
+    <div *ngSwitchCase="'input'">
+      <clr-input-container *ngIf="qBase.type != 'datetime-local' else datetime">
+        <label>{{qBase.label}}</label>
+        <input clrInput [type]="qBase.type" [formControlName]="qBase.key" [id]="qBase.key" [pattern]="inputPattern" [required]="qBase.required" />
+        <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+      </clr-input-container>
+      <ng-template #datetime>
+        <div class="clr-form-control">
+          <label class="clr-control-label">{{qBase.label}}</label>
+          <div class="clr-control-container">
+            <input clrInput [type]="qBase.type" [formControlName]="qBase.key" [id]="qBase.key" [pattern]="inputPattern" [required]="qBase.required" />
+            <button class="btn btn-sm btn-primary" (click)="setNow(form, qBase.key)">now</button>
+          </div>
+          <clr-control-helper>{{qBase.helperText}}</clr-control-helper>
+        </div></ng-template>
+    </div>
 
     <clr-select-container *ngSwitchCase="'select'">
       <label>{{qBase.label}}</label>
