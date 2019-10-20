@@ -8,6 +8,8 @@ import {LoginPageComponent} from './components/authentication-module/login/login
 import {DynamicFormWizardComponent} from './components/dynamic-form-module/dynamic-form-wizard/dynamic-form-wizard.component';
 import {ManagePortalComponent} from './components/portal-module/manage-portal/manage-portal.component';
 import {BrowsePortalComponent} from './components/portal-module/browse-portal/browse-portal.component';
+import {AuthGuardService} from './services/auth-guard.service';
+import {ProfilePortalComponent} from './components/portal-module/profile-portal/profile-portal.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'fresh-startup', pathMatch: 'full'},
@@ -15,10 +17,12 @@ const routes: Routes = [
   {path: 'settings', component: SettingPortalComponent},
   {path: 'prepare-launch', component: PrepareLaunchComponent},
   {path: 'login', component: LoginPageComponent},
-  {path: 'tasks', component: TaskPortalComponent},
-  {path: 'browse', component: BrowsePortalComponent},
-  {path: 'manage', component: ManagePortalComponent},
-  {path: 'dynamic-form-wizard', component: DynamicFormWizardComponent}
+  {path: 'tasks', component: TaskPortalComponent, canActivate: [AuthGuardService]},
+  {path: 'browse', component: BrowsePortalComponent, canActivate: [AuthGuardService]},
+  {path: 'manage', component: ManagePortalComponent, canActivate: [AuthGuardService]},
+  {path: 'profile', component: ProfilePortalComponent, canActivate: [AuthGuardService]},
+  {path: 'dynamic-form-wizard', component: DynamicFormWizardComponent, canActivate: [AuthGuardService]},
+  { path: '**', redirectTo: '' }
 ];
 
 @NgModule({

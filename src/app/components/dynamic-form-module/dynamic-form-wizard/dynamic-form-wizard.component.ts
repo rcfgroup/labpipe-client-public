@@ -217,15 +217,16 @@ export class DynamicFormWizardComponent implements OnInit, OnDestroy {
   }
 
   saveResult() {
-    this.ds.saveData(this.actionIdentifier, {
+    const record = {
       created: new Date(),
       saved_by: this.tds.operator.username,
       url: this.remoteUrl,
       ...this.result
-    });
+    };
+    this.ds.saveData(this.actionIdentifier, record);
     if (this.tds.connected) {
       this.sentToServer = true;
-      this.lps.postRecord(this.remoteUrl, this.result)
+      this.lps.postRecord(this.remoteUrl, record)
         .subscribe((data: any) => {
             this.iaas.success(data.message, this.messages);
           },

@@ -1,9 +1,19 @@
 import { Injectable } from '@angular/core';
+import {CanActivate, Router} from '@angular/router';
+import {TemporaryDataService} from './temporary-data.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuardService {
+export class AuthGuardService implements CanActivate {
 
-  constructor() { }
+  constructor(public tds: TemporaryDataService, public router: Router) {}
+
+  canActivate(): boolean {
+    if (!this.tds.operator) {
+      this.router.navigate(['login']);
+      return false;
+    }
+    return true;
+  }
 }

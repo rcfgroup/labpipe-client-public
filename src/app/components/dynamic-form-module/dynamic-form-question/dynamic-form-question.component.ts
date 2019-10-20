@@ -9,6 +9,7 @@ import {SelectQuestion} from '../../../models/dynamic-form-models/question-selec
 import {InputQuestion} from '../../../models/dynamic-form-models/question-input';
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 import {TemporaryDataService} from '../../../services/temporary-data.service';
+import {min} from 'rxjs/operators';
 
 @Component({
   selector: 'app-dynamic-form-question',
@@ -113,7 +114,14 @@ export class DynamicFormQuestionComponent implements OnInit {
   }
 
   setNow(form: FormGroup, field) {
-    form.get(field).setValue(new Date().toISOString());
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() > 9 ? date.getMonth() : `0${date.getMonth()}`;
+    const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`;
+    const hour = date.getHours() > 9 ? date.getHours() : `0${date.getHours()}`;
+    const minute = date.getMinutes() > 9 ? date.getMinutes() : `0${date.getMinutes()}`;
+    const value = `${year}-${month}-${day}T${hour}:${minute}`;
+    form.get(field).setValue(value);
   }
 
 }

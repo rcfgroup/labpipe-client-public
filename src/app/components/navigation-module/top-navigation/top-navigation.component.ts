@@ -45,6 +45,11 @@ export class TopNavigationComponent implements OnInit {
     this.router.navigate(['manage']);
   }
 
+  toProfile() {
+    this.tds.resetTask();
+    this.router.navigate(['profile']);
+  }
+
   toSettings() {
     this.tds.resetTask();
     this.router.navigate(['settings']);
