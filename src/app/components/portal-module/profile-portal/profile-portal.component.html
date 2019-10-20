@@ -1,0 +1,43 @@
+<app-in-app-alert [messages]="messages"></app-in-app-alert>
+<h1>{{operator.name}}</h1>
+<table class="table table-noborder">
+  <tbody>
+  <tr>
+    <td class="left">Name</td>
+    <td class="left">{{operator.name}}</td>
+  </tr>
+  <tr>
+    <td class="left">Username</td>
+    <td class="left">{{operator.username}}</td>
+  </tr>
+  <tr>
+    <td class="left">Email</td>
+    <td class="left">{{operator.email}}</td>
+  </tr>
+  </tbody>
+</table>
+<button class="btn btn-primary" type="button" (click)="showModal.changePassword = true">change password</button>
+
+<clr-modal [(clrModalOpen)]="showModal.changePassword">
+  <h3 class="modal-title">Change password</h3>
+  <div class="modal-body">
+    <form class="clr-form clr-form-vertical" [formGroup]="changePasswordForm">
+      <clr-password-container>
+        <label>Current password</label>
+        <input clrPassword formControlName="current" required/>
+      </clr-password-container>
+      <clr-password-container>
+        <label>New password</label>
+        <input clrPassword formControlName="newPassword" required/>
+      </clr-password-container>
+      <clr-password-container>
+        <label>Confirm new password</label>
+        <input clrPassword formControlName="confirm" required/>
+      </clr-password-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-outline" type="button" (click)="onConfirm('change-password', false, changePasswordForm)">Cancel</button>
+    <button class="btn btn-danger" type="button" [disabled]="!changePasswordForm.valid" (click)="onConfirm('change-password', true, changePasswordForm)">Continue</button>
+  </div>
+</clr-modal>
