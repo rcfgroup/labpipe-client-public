@@ -14,6 +14,18 @@
     <td class="left">Email</td>
     <td class="left">{{operator.email}}</td>
   </tr>
+  <tr>
+    <td class="left">Studies</td>
+    <td class="left"><span class="label" *ngFor="let s of operator.projects">{{s}}</span></td>
+  </tr>
+  <tr>
+    <td class="left">Notification Group</td>
+    <td class="left"><span class="label" *ngFor="let n of operator.notificationGroup">{{n}}</span></td>
+  </tr>
+  <tr>
+    <td class="left">Roles</td>
+    <td class="left"><span class="label" *ngFor="let r of operator.roles">{{r}}</span></td>
+  </tr>
   </tbody>
 </table>
 <button class="btn btn-primary" type="button" (click)="showModal.changePassword = true">change password</button>
