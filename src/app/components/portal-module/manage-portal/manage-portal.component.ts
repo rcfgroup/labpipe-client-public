@@ -1,8 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Form, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {InAppAlertService} from '../../../services/in-app-alert.service';
 import {CollectionName, EmailGroup, FormTemplate, Operator, Role, Study} from '../../../models/parameter.model';
+import {DynamicFormResultPreviewComponent} from '../../dynamic-form-module/dynamic-form-result-preview/dynamic-form-result-preview.component';
+import {MultipleSelectComponent} from '../../multiple-select/multiple-select.component';
 
 @Component({
   selector: 'app-manage-portal',
@@ -31,6 +33,10 @@ export class ManagePortalComponent implements OnInit {
   emailGroupForm: FormGroup;
   formTemplateForm: FormGroup;
   reportTemplateForm: FormGroup;
+
+  @ViewChild('aosvc', {static: false}) aosvc: MultipleSelectComponent;
+  @ViewChild('aorvc', {static: false}) aorvc: MultipleSelectComponent;
+  @ViewChild('aoegvc', {static: false}) aoegvc: MultipleSelectComponent;
 
   studies: Study[] = [];
   roles: Role[] = [];
@@ -136,6 +142,9 @@ export class ManagePortalComponent implements OnInit {
         }
         this.showModal.newOperator = false;
         form.reset();
+        this.aosvc.clear();
+        this.aorvc.clear();
+        this.aoegvc.clear();
         break;
       case 'token':
         if (confirm) {

@@ -80,9 +80,9 @@
         <label>Email</label>
         <input clrInput type="email" formControlName="email" required />
       </clr-input-container>
-      <app-multiple-select title="Study" [options]="studies" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'projects', $event)"></app-multiple-select>
-      <app-multiple-select title="Role" [options]="roles" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'roles', $event)"></app-multiple-select>
-      <app-multiple-select title="Email Group" [options]="notificationGroups" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'notificationGroup', $event)"></app-multiple-select>
+      <app-multiple-select #aosvc title="Study" [options]="studies" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'projects', $event)"></app-multiple-select>
+      <app-multiple-select #aorvc title="Role" [options]="roles" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'roles', $event)"></app-multiple-select>
+      <app-multiple-select #aoegvc title="Email Group" [options]="notificationGroups" [displayField]="'name'" [valueField]="'identifier'" (valueChanged)="updateForm(operatorForm, 'notificationGroup', $event)"></app-multiple-select>
     </form>
   </div>
   <div class="modal-footer">

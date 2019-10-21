@@ -36,7 +36,6 @@ export class MultipleSelectComponent implements OnInit, OnChanges {
       this.selected[this.id].add(this.select);
     }
     this.update();
-    console.log(this.selected);
   }
 
   unselect(element: any) {
@@ -46,6 +45,11 @@ export class MultipleSelectComponent implements OnInit, OnChanges {
 
   update() {
     this.valueChanged.emit(Array.from(this.selected[this.id]));
+  }
+
+  clear() {
+    this.selected[this.id] = new Set();;
+    this.select = undefined;
   }
 
 }
