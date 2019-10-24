@@ -93,6 +93,8 @@ export class LabPipeService {
     const url = `${this.apiRoot}/api/upload/file/form`;
     const options = {
       params: new HttpParams().set('identifier', identifier),
+      // reportProgress: true,
+      // observe: 'events',
       ...this.userAuthRequestOptions()
     };
     const formData = new FormData();

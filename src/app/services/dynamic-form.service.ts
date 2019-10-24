@@ -7,6 +7,8 @@ import {UserSettingsService} from './user-settings.service';
 import * as _ from 'lodash';
 import {InAppAlertService, InAppMessage} from './in-app-alert.service';
 import {LabPipeService} from './lab-pipe.service';
+import {map} from 'rxjs/operators';
+import {HttpEvent, HttpEventType} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -141,6 +143,23 @@ export class DynamicFormService {
             // TODO add file upload api access
             uploadedFiles.push(f);
           });
+          // this.lps.uploadFormFiles(identifier, uploadedFiles).pipe(
+          //   map((event: HttpEvent<any>) => {
+          //     switch (event.type) {
+          //       case HttpEventType.UploadProgress:
+          //         const progress = Math.round(100 * event.loaded / event.total);
+          //         console.log({ status: 'progress', message: progress });
+          //         break;
+          //       case HttpEventType.Response:
+          //         process.result = event.ok ? uploadedFiles : undefined;
+          //         console.log(event.body);
+          //         break;
+          //       default:
+          //         console.log(`Unhandled event: ${event.type}`);
+          //         break;
+          //     }
+          //   })
+          // );
           this.lps.uploadFormFiles(identifier, uploadedFiles).subscribe(
             (data: any) => {
               process.result = true;
