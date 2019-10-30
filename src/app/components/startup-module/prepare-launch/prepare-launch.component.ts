@@ -23,37 +23,33 @@ export class PrepareLaunchComponent implements OnInit {
 
   ngOnInit() {
     const component = this;
-    if (this.tds.connected) {
-      this.loadParameterList().subscribe(
-        (data: any) => {
-          console.log('init parameter list retrieved');
-          console.log(data);
-          this.parameterList = data.find(param => param.identifier === 'client_init').value;
-        },
-        error => {
-          console.warn('error loading init parameter list');
-        },
-        () => {
-          const observableList = this.parameterList.map(paramName => component.lps.getParameter(paramName));
-          forkJoin(observableList).subscribe(
-            (data: any[]) => {
-              data.forEach((param, index) => {
-                console.log(param);
-                console.log('loading parameter ' + component.parameterList[index]);
-                component.us.setParameter(String(component.parameterList[index]), param);
-              });
-            },
-            error => {
-              console.log(error);
-            },
-            () => {
-              this.router.navigate(['login']);
-            }
-          );
-        });
-    } else {
-      this.router.navigate(['login']);
-    }
+    this.loadParameterList().subscribe(
+      (data: any) => {
+        console.log('init parameter list retrieved');
+        console.log(data);
+        this.parameterList = data.find(param => param.identifier === 'client_init').value;
+      },
+      error => {
+        console.warn('error loading init parameter list');
+      },
+      () => {
+        const observableList = this.parameterList.map(paramName => component.lps.getParameter(paramName));
+        forkJoin(observableList).subscribe(
+          (data: any[]) => {
+            data.forEach((param, index) => {
+              console.log(param);
+              console.log('loading parameter ' + component.parameterList[index]);
+              component.us.setParameter(String(component.parameterList[index]), param);
+            });
+          },
+          error => {
+            console.log(error);
+          },
+          () => {
+            this.router.navigate(['login']);
+          }
+        );
+      });
   }
 
   loadParameterList() {
