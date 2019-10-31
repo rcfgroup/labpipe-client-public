@@ -104,13 +104,13 @@ export class DynamicFormQuestionComponent implements OnInit {
       filters: this.fileFilter,
       properties: this.fileInputProperties
     };
-    this.es.remote.dialog.showOpenDialog(
-        options, filePaths => {
-          if (filePaths === undefined) { return; }
-          this.zone.run(() => {
-            this.form.controls[this.qBase.key].setValue(filePaths);
-          });
-        });
+    this.es.remote.dialog.showOpenDialog(this.es.remote.getCurrentWindow(),
+        options).then(result => {
+      if (result.filePaths === undefined) { return; }
+      this.zone.run(() => {
+        this.form.controls[this.qBase.key].setValue(result.filePaths);
+      });
+    });
   }
 
   setNow(form: FormGroup, field) {
