@@ -74,7 +74,7 @@ jobs:
       run: cd electron-app; npm install
     - name: Build Electron for release [tag only]
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: cd electron-app; $version = $TAG.substring(1)  sed "s/0.0.0/$version/g" package.json > _package.json; del package.json; ren _package.json package.json; electron-builder -w --publish=never; ls dist
+      run: cd electron-app; $version = $TAG.substring(1); sed "s/0.0.0/$version/g" package.json > _package.json; del package.json; ren _package.json package.json; electron-builder -w --publish=never; ls dist
       env:
         TAG: ${{github.event.ref}}
     - name: Create release [tag only]
