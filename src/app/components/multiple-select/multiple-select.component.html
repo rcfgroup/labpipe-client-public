@@ -3,6 +3,7 @@
   <div class="clr-control-container">
     <a *ngFor="let s of selected[id]" class="label clickable cursor-hand" (click)="unselect(s)">{{s}} <clr-icon shape="times"></clr-icon></a>
     <select clrSelect [(ngModel)]="select" (ngModelChange)="onSelect()">
+      <option [ngValue]="undefined">------</option>
       <option *ngFor="let o of options"
               [ngValue]="valueField ? o[valueField] : o">
         {{displayField ? o[displayField] : o}}

@@ -60,19 +60,19 @@ export class MandatorySettingComponent implements OnInit {
     }
 
     setDataDirectory() {
-        this.es.remote.dialog.showOpenDialog(
+        this.es.remote.dialog.showOpenDialog(this.es.remote.getCurrentWindow(),
             {
                 properties: [
                     'openDirectory'
                 ]
-            }, folderPaths => {
-                if (folderPaths !== undefined && folderPaths.length > 0) {
-                    this.us.setDataDirectory(folderPaths[0]);
-                    this.zone.run(() => {
-                        this.settingForm.get('dirData').setValue(this.us.getDataDirectory());
-                    });
-                }
+            }).then(result => {
+          if (result.filePaths !== undefined && result.filePaths.length > 0) {
+            this.us.setDataDirectory(result.filePaths[0]);
+            this.zone.run(() => {
+              this.settingForm.get('dirData').setValue(this.us.getDataDirectory());
             });
+          }
+        });
     }
 
     validateApiRoot() {

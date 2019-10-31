@@ -29,6 +29,7 @@ import { BrowsePortalComponent } from './components/portal-module/browse-portal/
 import { TourComponent } from './components/tour/tour.component';
 import { MultipleSelectComponent } from './components/multiple-select/multiple-select.component';
 import { MultipleInputComponent } from './components/multiple-input/multiple-input.component';
+import { ProfilePortalComponent } from './components/portal-module/profile-portal/profile-portal.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { MultipleInputComponent } from './components/multiple-input/multiple-inp
     BrowsePortalComponent,
     TourComponent,
     MultipleSelectComponent,
-    MultipleInputComponent
+    MultipleInputComponent,
+    ProfilePortalComponent
   ],
   imports: [
     BrowserModule,

@@ -93,6 +93,8 @@ export class LabPipeService {
     const url = `${this.apiRoot}/api/upload/file/form`;
     const options = {
       params: new HttpParams().set('identifier', identifier),
+      // reportProgress: true,
+      // observe: 'events',
       ...this.userAuthRequestOptions()
     };
     const formData = new FormData();
@@ -100,9 +102,10 @@ export class LabPipeService {
     return this.http.post(url, formData, options );
   }
 
-  getAllRecord(studyIdentifier?: string) {
+  getAllRecord(useAuth: boolean = false, studyIdentifier?: string) {
     const url = studyIdentifier ? `${this.apiRoot}/api/query/record/all/${studyIdentifier}` : `${this.apiRoot}/api/query/record/all`;
-    return this.http.get(url, this.userAuthRequestOptions());
+    const options = useAuth ? this.userAuthRequestOptions() : this.tokenAuthRequestOptions();
+    return this.http.get(url, options);
   }
 
   getAllStudies() {
@@ -140,6 +143,11 @@ export class LabPipeService {
   addOperator(operator: Operator) {
     const url = `${this.apiRoot}/api/manage/create/operator`;
     return this.http.post(url, operator, this.userAuthRequestOptions());
+  }
+
+  updatePassword(newPassword: string) {
+    const url = `${this.apiRoot}/api/manage/update/password`;
+    return this.http.put(url, btoa(newPassword), this.userAuthRequestOptions());
   }
 
   addToken() {

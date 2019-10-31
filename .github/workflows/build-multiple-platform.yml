@@ -3,7 +3,7 @@ name: Node CI
 on: [push, create]
 
 jobs:
-  build_for_mac:
+  build_for_mac_linux:
     runs-on: macOS-latest
     steps:
     - uses: actions/checkout@v1
@@ -47,7 +47,7 @@ jobs:
           electron-app/dist/latest-linux.yml
 
       
-  build_for_win_linux:
+  build_for_win:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v1
@@ -66,15 +66,15 @@ jobs:
       run: ng build --prod
     - name: Build Angular app for release [tag only]
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: sed "s/0.0.0/%TAG:~1%/g" package.json > _package.json && mv _package.json package.json && ng build
+      run: $version = $Env:TAG.substring(1); sed "s/0.0.0/$version/g" package.json > _package.json; del package.json; ren _package.json package.json; ng build
       env:
         TAG: ${{github.event.ref}}
     - name: Install node modules for electron app [tag only]
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: cd electron-app && npm install
+      run: cd electron-app; npm install
     - name: Build Electron for release [tag only]
       if: github.event_name == 'create' && github.event.ref_type == 'tag'
-      run: cd electron-app &&  sed "s/0.0.0/%TAG:~1%/g" package.json > _package.json && mv _package.json package.json && electron-builder -w --publish=never && ls dist
+      run: cd electron-app; $version = $Env:TAG.substring(1); sed "s/0.0.0/$version/g" package.json > _package.json; del package.json; ren _package.json package.json; electron-builder -w --publish=never; ls dist
       env:
         TAG: ${{github.event.ref}}
     - name: Create release [tag only]

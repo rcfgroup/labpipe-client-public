@@ -9,6 +9,7 @@ import {SelectQuestion} from '../../../models/dynamic-form-models/question-selec
 import {InputQuestion} from '../../../models/dynamic-form-models/question-input';
 import {FileQuestion} from '../../../models/dynamic-form-models/question-file';
 import {TemporaryDataService} from '../../../services/temporary-data.service';
+import {min} from 'rxjs/operators';
 
 @Component({
   selector: 'app-dynamic-form-question',
@@ -64,14 +65,17 @@ export class DynamicFormQuestionComponent implements OnInit {
         break;
       case 'input':
         const iq = this.qBase as InputQuestion;
-        if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
-          const patternIndex = iq.pattern.replace(/__/g, '').split('::');
-          let patternValues = this.tds.study;
-          patternIndex.forEach((oi: string) => {
-            patternValues = patternValues[oi];
-          });
-          this.inputPattern = '[0-9]{' + patternValues + '}';
+        if (iq.pattern) {
+          this.inputPattern = `[0-9]{${iq.pattern}}`;
         }
+        // if (iq.pattern.startsWith('__') && iq.pattern.endsWith('__')) {
+        //   const patternIndex = iq.pattern.replace(/__/g, '').split('::');
+        //   let patternValues = this.tds.study;
+        //   patternIndex.forEach((oi: string) => {
+        //     patternValues = patternValues[oi];
+        //   });
+        //   this.inputPattern = '[0-9]{' + patternValues + '}';
+        // }
         break;
       case 'file':
         const fq = this.qBase as FileQuestion;
@@ -100,13 +104,24 @@ export class DynamicFormQuestionComponent implements OnInit {
       filters: this.fileFilter,
       properties: this.fileInputProperties
     };
-    this.es.remote.dialog.showOpenDialog(
-        options, filePaths => {
-          if (filePaths === undefined) { return; }
-          this.zone.run(() => {
-            this.form.controls[this.qBase.key].setValue(filePaths);
-          });
-        });
+    this.es.remote.dialog.showOpenDialog(this.es.remote.getCurrentWindow(),
+        options).then(result => {
+      if (result.filePaths === undefined) { return; }
+      this.zone.run(() => {
+        this.form.controls[this.qBase.key].setValue(result.filePaths);
+      });
+    });
+  }
+
+  setNow(form: FormGroup, field) {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth() > 9 ? date.getMonth() : `0${date.getMonth()}`;
+    const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate()}`;
+    const hour = date.getHours() > 9 ? date.getHours() : `0${date.getHours()}`;
+    const minute = date.getMinutes() > 9 ? date.getMinutes() : `0${date.getMinutes()}`;
+    const value = `${year}-${month}-${day}T${hour}:${minute}`;
+    form.get(field).setValue(value);
   }
 
 }

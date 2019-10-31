@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {UserSettingsService} from '../../../services/user-settings.service';
 import {Router} from '@angular/router';
+import {ElectronService} from 'ngx-electron';
 
 @Component({
   selector: 'app-fresh-startup',
@@ -9,8 +10,11 @@ import {Router} from '@angular/router';
 })
 export class FreshStartupComponent implements OnInit {
   isRegularStartup: boolean;
+  dialogRequireRestartOpened: boolean;
+  dialogRestartOpened: boolean;
 
   constructor(private us: UserSettingsService,
+              private es: ElectronService,
               private router: Router) {
   }
 
@@ -24,11 +28,27 @@ export class FreshStartupComponent implements OnInit {
     }
   }
 
-  continueLaunch() {
-    if (this.us.getDataDirectory() && this.us.getApiToken() && this.us.getApiKey()) {
+  onConfirmRestart(confirm) {
+    if (confirm) {
+      this.dialogRequireRestartOpened = false;
+      this.dialogRestartOpened = true;
       this.isRegularStartup = true;
       this.us.setStartupMode(this.isRegularStartup);
-      this.router.navigate(['prepare-launch']);
+      this.restart();
+    } else {
+      this.dialogRequireRestartOpened = false;
+    }
+  }
+
+  restart() {
+    const app = this.es.remote.app;
+    app.relaunch();
+    app.exit(0);
+  }
+
+  continueLaunch() {
+    if (this.us.getDataDirectory() && this.us.getApiToken() && this.us.getApiKey()) {
+      this.dialogRequireRestartOpened = true;
     }
   }
 

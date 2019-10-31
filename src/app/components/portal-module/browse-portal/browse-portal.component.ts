@@ -1,6 +1,8 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {LabPipeService} from '../../../services/lab-pipe.service';
 import {DatabaseService} from '../../../services/database.service';
+import * as _ from 'lodash';
+import {InAppAlertService, InAppMessage} from '../../../services/in-app-alert.service';
 
 @Component({
   selector: 'app-browse-portal',
@@ -8,13 +10,15 @@ import {DatabaseService} from '../../../services/database.service';
   styleUrls: ['./browse-portal.component.css']
 })
 export class BrowsePortalComponent implements OnInit {
+  messages: InAppMessage[] = [];
+
   remoteRecords: any[] = [];
   localRecords: any[] = [];
 
   remoteReport: any = {};
 
   showRemoteRecordReport: boolean;
-  constructor(private lps: LabPipeService, private dbs: DatabaseService, private zone: NgZone) { }
+  constructor(private lps: LabPipeService, private dbs: DatabaseService, private iaas: InAppAlertService) { }
 
   ngOnInit() {
     this.loadRemoteRecords();
@@ -22,7 +26,7 @@ export class BrowsePortalComponent implements OnInit {
   }
 
   loadRemoteRecords() {
-    this.lps.getAllRecord().subscribe(
+    this.lps.getAllRecord(true).subscribe(
       (data: any) => {
         this.remoteRecords = data;
       },
@@ -37,7 +41,13 @@ export class BrowsePortalComponent implements OnInit {
   }
 
   upload(record: any) {
-
+    this.lps.postRecord(record.data.url, record.data)
+      .subscribe((data: any) => {
+          this.iaas.success(data.message, this.messages);
+        },
+        (error: any) => {
+          this.iaas.error(error.error.message, this.messages);
+        });
   }
 
   report(record: any) {
