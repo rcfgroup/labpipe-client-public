@@ -11,8 +11,8 @@
   "author": "Bo Zhao",
   "license": "NPOSL-3.0",
   "devDependencies": {
-    "electron": "^7.0.0",
-    "electron-builder": "^22.1.0"
+    "electron": "^7.1.2",
+    "electron-builder": "^21.2.0"
   },
   "repository": {
     "type": "git",
