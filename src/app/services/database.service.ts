@@ -61,4 +61,23 @@ export class DatabaseService {
       reject('Data directory does not exist.');
     });
   }
+
+  async findRecord(query) {
+    return new Promise((resolve, reject) => {
+      const root = this.us.getDataDirectory();
+      if (root) {
+        const dbDir = this.path.join(root, 'nedb');
+        const db = new this.nedb({filename: this.path.join(dbDir, this.DefaultDatabase), autoload: true});
+        return db.find(query, (err, docs) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          }
+          console.log(docs);
+          resolve(docs);
+        });
+      }
+      reject('Data directory does not exist.');
+    });
+  }
 }

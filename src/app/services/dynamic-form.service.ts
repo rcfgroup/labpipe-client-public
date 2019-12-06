@@ -9,6 +9,7 @@ import {InAppAlertService, InAppMessage} from './in-app-alert.service';
 import {LabPipeService} from './lab-pipe.service';
 import {map} from 'rxjs/operators';
 import {HttpEvent, HttpEventType} from '@angular/common/http';
+import {DatabaseService} from './database.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,7 @@ export class DynamicFormService {
               private es: ElectronService,
               private uss: UserSettingsService,
               private lps: LabPipeService,
+              private ds: DatabaseService,
               private iaas: InAppAlertService) {
     this.path = this.es.remote.require('path');
     this.fs = this.es.remote.require('fs-extra');
@@ -60,6 +62,9 @@ export class DynamicFormService {
         break;
       case 'folder-watch':
         this.folderWatch(process, processIndex, parentPage, formData, messages);
+        break;
+      case 'check-duplicate':
+        this.duplicateCheck(process, processIndex, parentPage, formData);
         break;
     }
   }
@@ -176,7 +181,6 @@ export class DynamicFormService {
     }
   }
 
-
   folderWatch(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any, messages?: InAppMessage[]) {
     const params = _.cloneDeep(process.parameters);
     if (params.length === 4) {
@@ -231,6 +235,20 @@ export class DynamicFormService {
           }, periodWatching * 1000);
         }
       }
+    }
+  }
+
+  duplicateCheck(process: FormValidProcess, processIndex: number, parentPage: WizardPage, formData: any) {
+    const params = _.cloneDeep(process.parameters);
+    if (params.length > 0) {
+      const query: any = {};
+      params.forEach(p => p.startsWith('::')
+        ? query[`data.record.${parentPage.key}.${p.replace('::', '')}`] = formData[parentPage.key][p.replace('::', '')]
+        : query[`data.record.${parentPage.key}.${p}`] = formData[parentPage.key][p]);
+      console.log(query);
+      this.ds.findRecord(query)
+        .then((data: any[]) => process.result = data.length > 0 ? 'Already exist' : 'No existing record')
+        .catch((error: any) => process.result = 'Error checking duplicates');
     }
   }
 }

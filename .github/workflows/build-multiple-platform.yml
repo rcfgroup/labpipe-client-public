@@ -33,6 +33,8 @@ jobs:
       run: cd electron-app && sed "s/0.0.0/${TAG:1}/g" package.json > _package.json && mv _package.json package.json && electron-builder -ml --publish=never && ls dist
       env:
         TAG: ${{github.event.ref}}
+        CSC_LINK: ${{secrets.MAC_CERT_BASE64}}
+        CSC_KEY_PASSWORD: ${{secrets.CSC_KEY_PASSWORD}}
     - name: Create release [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
@@ -46,7 +48,7 @@ jobs:
           electron-app/dist/latest-mac.yml
           electron-app/dist/latest-linux.yml
 
-      
+
   build_for_win:
     runs-on: windows-latest
     steps:
@@ -77,6 +79,8 @@ jobs:
       run: cd electron-app; $version = $Env:TAG.substring(1); sed "s/0.0.0/$version/g" package.json > _package.json; del package.json; ren _package.json package.json; electron-builder -w --publish=never; ls dist
       env:
         TAG: ${{github.event.ref}}
+        CSC_LINK: ${{secrets.MAC_CERT_BASE64}}
+        CSC_KEY_PASSWORD: ${{secrets.CSC_KEY_PASSWORD}}
     - name: Create release [tag only]
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
