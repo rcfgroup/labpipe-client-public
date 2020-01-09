@@ -47,12 +47,12 @@
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "electron-debug": "^3.0.1",
-    "electron-log": "^3.0.8",
+    "electron-log": "^4.0.2",
     "electron-settings": "^3.2.0",
     "fs-extra": "^8.1.0",
     "nedb": "^1.8.0",
-    "nedb-promises": "^4.0.0",
+    "nedb-promises": "^4.0.1",
     "uuid": "^3.3.3",
-    "chokidar": "^3.2.3"
+    "chokidar": "^3.3.1"
   }
 }
