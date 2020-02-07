@@ -1,6 +1,5 @@
 const {app, BrowserWindow} = require('electron');
 const path = require('path');
-const url = require('url');
 const settings = require('electron-settings');
 
 let win;
