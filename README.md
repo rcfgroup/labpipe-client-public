@@ -18,7 +18,7 @@ Download latest release [here](../../releases) based on your operating system:
 
 * Windows
     * labpipe-client.Setup.[version].exe
-* macOs
+* macOS
     * labpipe-client-[version]-mac.zip
 * Linux
     * labpipe-client-[version].AppImage
@@ -32,13 +32,13 @@ Click and run the binary executable. If this is the first time you run LabPipe C
 * Server Monitor Interval
 * Server Monitor Retry Interval
 
-Details about these parameters can be found [here](https://docs.labpipe.org/client-stable/configuration).
+Details about these parameters can be found [here](https://docs.labpipe.org/client/configuration).
 
 If you wish to try out the client without setting up your own server, you can use the following settings:
 
 | Parameter | Value |
 | :--- | :--- |
-| API Root URL | `http://try-server.labpipe.org` |
+| API Root URL | `https://try-server.labpipe.org` |
 | API Token/Key | `token`/`key` |
 
 > This server is only for test purposes. Please DO NOT use this for production. Data saved on this test server will be removed on a regular basis.
@@ -56,4 +56,4 @@ You can use this test user account to try out different features.
 > Although we DO NOT monitor or use any data saved on the test server, if you are going to try out adding a new operator, it is recommended that you use a TEMPORARY email address and FAKE name.
 
 ## License
-This project is open  under Non-Profit Open Software License 3.0 (NPOSL-3.0).
+This project is made available under GNU General Public License v3.0 (GPL-3.0).
